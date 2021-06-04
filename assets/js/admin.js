@@ -16,6 +16,7 @@ import Modal from './components/Modal.js';
 import Modalize from './components/Modalize.js';
 import Navigation from './components/Navigation.js';
 import Notes from './components/Notes.js';
+import QuickAction from './components/QuickAction.js';
 import Repeater from './components/Repeater.js';
 import Revealer from './components/Revealer.js';
 import ScrollToFirstError from './components/ScrollToFirstError.js'
@@ -367,6 +368,13 @@ window
         'Notes',
         function(controller) {
             return new Notes(controller);
+        }
+    )
+    .registerPlugin(
+        window.NAILS.ADMIN.namespace,
+        'QuickAction',
+        function(controller) {
+            return new QuickAction(controller);
         }
     )
     .registerPlugin(
