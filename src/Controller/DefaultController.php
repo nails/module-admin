@@ -2326,6 +2326,13 @@ abstract class DefaultController extends Base
                 case Form::FIELD_DROPDOWN_MULTIPLE:
                     $aOut[$sKey] = is_array($aOut[$sKey]) ? implode(',', $aOut[$sKey]) : null;
                     break;
+
+                //  @todo (Pablo 2021-07-28) - Refactor this method so that the model can format things, i.e this won't catch cms_widget type fields
+                case Form::FIELD_JSON:
+                    $aOut[$sKey] = $aOut[$sKey] === ''
+                        ? null
+                        : $aOut[$sKey];
+                    break;
             }
         }
 
