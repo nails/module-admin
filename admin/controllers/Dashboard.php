@@ -41,7 +41,7 @@ class Dashboard extends Base
         $oNavGroup
             ->setLabel('Dashboard')
             ->setIcon('fa-home')
-            ->addAction('Site Overview');
+            ->addAction('Dashboard');
 
         return $oNavGroup;
     }
