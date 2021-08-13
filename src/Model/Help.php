@@ -30,28 +30,28 @@ class Help extends Base
      * This method applies the conditionals which are common across the get_*()
      * methods and the count() method.
      *
-     * @param array $data Data passed from the calling method
+     * @param array $aData Data passed from the calling method
      *
      * @return void
      **/
-    protected function getCountCommon(array $data = []): void
+    protected function getCountCommon(array $aData = []): void
     {
-        if (!empty($data['keywords'])) {
+        if (!empty($aData['keywords'])) {
 
-            if (empty($data['or_like'])) {
-                $data['or_like'] = [];
+            if (empty($aData['or_like'])) {
+                $aData['or_like'] = [];
             }
 
-            $data['or_like'][] = [
+            $aData['or_like'][] = [
                 'column' => $this->tableAlias . '.label',
-                'value'  => $data['keywords'],
+                'value'  => $aData['keywords'],
             ];
-            $data['or_like'][] = [
+            $aData['or_like'][] = [
                 'column' => $this->tableAlias . '.description',
-                'value'  => $data['keywords'],
+                'value'  => $aData['keywords'],
             ];
         }
 
-        parent::getCountCommon($data);
+        parent::getCountCommon($aData);
     }
 }
