@@ -34,7 +34,7 @@ class Help extends Base
      *
      * @return void
      **/
-    protected function getCountCommon(array $aData = []): void
+    protected function getCountCommon(array &$aData = []): void
     {
         if (!empty($aData['keywords'])) {
 
