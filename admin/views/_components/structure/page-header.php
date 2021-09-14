@@ -98,7 +98,9 @@ $aAlerts = [
 foreach ($aAlerts as $sType => $aAlert) {
 
     //  Variable variable
-    if (!empty($$sType)) {
+    $sType = (string) $$sType;
+
+    if (!empty($sType)) {
 
         [$sClass, $sIcon, $sTitle] = array_pad($aAlert, 3, null);
 
@@ -106,6 +108,7 @@ foreach ($aAlerts as $sType => $aAlert) {
         <div class="alert alert-<?=$sClass?>">
             <span class="alert__close">&times;</span>
             <?php
+
             if (!empty($sTitle)) {
                 echo sprintf(
                     '<p><strong>%s %s</strong></p>',
@@ -116,8 +119,9 @@ foreach ($aAlerts as $sType => $aAlert) {
 
             echo sprintf(
                 '<p>%s</p>',
-                $$sType
-            )
+                $sType
+            );
+
             ?>
         </div>
         <?php
