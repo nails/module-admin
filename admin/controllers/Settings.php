@@ -14,7 +14,6 @@ use Nails\Common\Factory\Model\Field;
 use Nails\Common\Service\AppSetting;
 use Nails\Common\Service\FormValidation;
 use Nails\Common\Service\Input;
-use Nails\Common\Service\UserFeedback;
 use Nails\Components;
 use Nails\Factory;
 use Nails\Common\Interfaces;
@@ -161,8 +160,6 @@ class Settings extends Base
         $oInput = Factory::service('Input');
         /** @var FormValidation $oFormValidation */
         $oFormValidation = Factory::service('FormValidation');
-        /** @var UserFeedback $oUserFeedback */
-        $oUserFeedback = Factory::service('UserFeedback');
 
         static::discoverSettings();
 
@@ -208,7 +205,7 @@ class Settings extends Base
                     }
                 }
 
-                $oUserFeedback->success(sprintf(
+                $this->oUserFeedback->success(sprintf(
                     '%s settings saved',
                     $oSetting->label
                 ));
@@ -216,7 +213,7 @@ class Settings extends Base
                 redirect($this->compileFormUrl($oSetting));
 
             } catch (ValidationException $e) {
-                $this->data['error'] = $e->getMessage();
+                $this->oUserFeedback->error($e->getMessage());
             }
         }
 

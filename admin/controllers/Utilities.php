@@ -88,18 +88,19 @@ class Utilities extends Base
 
         $oInput = Factory::service('Input');
         if ($oInput->post('go')) {
-
             try {
 
                 /** @var Event $oEventService */
                 $oEventService = Factory::service('Event');
                 $oEventService->trigger(Events::ROUTES_UPDATE);
 
-                $this->data['success'] = 'Routes rewritten successfully.';
+                $this->oUserFeedback->success('Routes rewritten successfully.');
 
             } catch (\Exception $e) {
-                $this->data['error'] = 'There was a problem writing the routes. ';
-                $this->data['error'] .= $e->getMessage();
+                $this->oUserFeedback->success(sprintf(
+                    'Routes rewritten successfully. %s',
+                    $e->getMessage()
+                ));
             }
         }
 
@@ -129,9 +130,10 @@ class Utilities extends Base
 
         // --------------------------------------------------------------------------
 
+        /** @var \Nails\Common\Service\Input $oInput */
         $oInput = Factory::service('Input');
-        if ($oInput->post()) {
 
+        if ($oInput->post()) {
             try {
 
                 $oFormValidation = Factory::service('FormValidation');
@@ -173,10 +175,10 @@ class Utilities extends Base
                     throw new NailsException('Failed to schedule export.');
                 }
 
-                $this->data['success'] = 'Export Scheduled';
+                $this->oUserFeedback->success('Routes rewritten successfully.');
 
             } catch (\Exception $e) {
-                $this->data['error'] = $e->getMessage();
+                $this->oUserFeedback->error($e->getMessage());
             }
         }
 
@@ -229,8 +231,10 @@ class Utilities extends Base
 
         //  Cron running?
         if (!$oDataExport->isRunning()) {
-            $this->data['warning'] = '<strong>The data export cron job is not running</strong>';
-            $this->data['warning'] .= '<br>The cron job has not been executed within the past 5 minutes.';
+            $this->oUserFeedback->warning(
+                '<strong>The data export cron job is not running</strong>' .
+                '<br>The cron job has not been executed within the past 5 minutes.'
+            );
         }
 
         // --------------------------------------------------------------------------

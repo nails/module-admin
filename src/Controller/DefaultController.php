@@ -33,7 +33,6 @@ use Nails\Common\Service\Database;
 use Nails\Common\Service\FormValidation;
 use Nails\Common\Service\Input;
 use Nails\Common\Service\Locale;
-use Nails\Common\Service\UserFeedback;
 use Nails\Common\Service\Uri;
 use Nails\Common\Traits\Model\Copyable;
 use Nails\Common\Traits\Model\Localised;
@@ -727,9 +726,7 @@ abstract class DefaultController extends Base
                     $sLink = '';
                 }
 
-                /** @var UserFeedback $oUserFeedback */
-                $oUserFeedback = Factory::service('UserFeedback');
-                $oUserFeedback->success(sprintf(static::CREATE_SUCCESS_MESSAGE, $sLink));
+                $this->oUserFeedback->success(sprintf(static::CREATE_SUCCESS_MESSAGE, $sLink));
 
                 if (static::isEditButtonEnabled($oItem)) {
                     if (classUses($oModel, Localised::class)) {
@@ -743,7 +740,7 @@ abstract class DefaultController extends Base
 
             } catch (\Exception $e) {
                 $oDb->transaction()->rollback();
-                $this->data['error'] = $e->getMessage();
+                $this->oUserFeedback->error($e->getMessage());
             }
         }
 
@@ -795,9 +792,7 @@ abstract class DefaultController extends Base
                     );
 
                     if (empty($aDiff)) {
-                        /** @var UserFeedback $oUserFeedback */
-                        $oUserFeedback = Factory::service('UserFeedback');
-                        $oUserFeedback->error('No more variations of this item can be created.');
+                        $this->oUserFeedback->error('No more variations of this item can be created.');
                         $this->returnToIndex();
                     }
 
@@ -902,9 +897,7 @@ abstract class DefaultController extends Base
                     $sLink = '';
                 }
 
-                /** @var UserFeedback $oUserFeedback */
-                $oUserFeedback = Factory::service('UserFeedback');
-                $oUserFeedback->success(sprintf(static::EDIT_SUCCESS_MESSAGE, $sLink));
+                $this->oUserFeedback->success(sprintf(static::EDIT_SUCCESS_MESSAGE, $sLink));
 
                 if (classUses($oModel, Localised::class)) {
                     $sRedirectUrl = $aConfig['BASE_URL'] . '/edit/' . $oItem->id . '/' . $oItem->locale;
@@ -964,7 +957,7 @@ abstract class DefaultController extends Base
 
             } catch (\Exception $e) {
                 $oDb->transaction()->rollback();
-                $this->data['error'] = $e->getMessage();
+                $this->oUserFeedback->error($e->getMessage());
             }
         }
 
@@ -993,8 +986,6 @@ abstract class DefaultController extends Base
 
         /** @var Database $oDb */
         $oDb = Factory::service('Database');
-        /** @var UserFeedback $oUserFeedback */
-        $oUserFeedback = Factory::service('UserFeedback');
 
         $aConfig = $this->getConfig();
         $oModel  = $this->getModel();
@@ -1035,12 +1026,12 @@ abstract class DefaultController extends Base
                 $sRestoreLink = '';
             }
 
-            $oUserFeedback->success(static::DELETE_SUCCESS_MESSAGE . ' ' . $sRestoreLink);
+            $this->oUserFeedback->success(static::DELETE_SUCCESS_MESSAGE . ' ' . $sRestoreLink);
             $this->returnToIndex();
 
         } catch (\Exception $e) {
             $oDb->transaction()->rollback();
-            $oUserFeedback->error(static::DELETE_ERROR_MESSAGE . ' ' . $e->getMessage());
+            $this->oUserFeedback->error(static::DELETE_ERROR_MESSAGE . ' ' . $e->getMessage());
             $this->returnToIndex();
         }
     }
@@ -1062,8 +1053,6 @@ abstract class DefaultController extends Base
         $oUri = Factory::service('Uri');
         /** @var Database $oDb */
         $oDb = Factory::service('Database');
-        /** @var UserFeedback $oUserFeedback */
-        $oUserFeedback = Factory::service('UserFeedback');
 
         $aConfig = $this->getConfig();
         $oModel  = $this->getModel();
@@ -1088,12 +1077,12 @@ abstract class DefaultController extends Base
 
             $this->addToChangeLog(static::EDIT_MODE_RESTORE, $oItem);
             $oDb->transaction()->commit();
-            $oUserFeedback->success(static::RESTORE_SUCCESS_MESSAGE);
+            $this->oUserFeedback->success(static::RESTORE_SUCCESS_MESSAGE);
             $this->returnToIndex();
 
         } catch (\Exception $e) {
             $oDb->transaction()->rollback();
-            $oUserFeedback->error(static::RESTORE_ERROR_MESSAGE . ' ' . $e->getMessage());
+            $this->oUserFeedback->error(static::RESTORE_ERROR_MESSAGE . ' ' . $e->getMessage());
             $this->returnToIndex();
         }
     }
@@ -1155,16 +1144,13 @@ abstract class DefaultController extends Base
                 //  @todo (Pablo - 2019-10-30) - Add changelog support here
 
                 $oDb->transaction()->commit();
-
-                /** @var UserFeedback $oUserFeedback */
-                $oUserFeedback = Factory::service('UserFeedback');
-                $oUserFeedback->success(static::ORDER_SUCCESS_MESSAGE);
+                $this->oUserFeedback->success(static::ORDER_SUCCESS_MESSAGE);
 
                 redirect($aConfig['BASE_URL'] . '/sort');
 
             } catch (\Exception $e) {
                 $oDb->transaction()->rollback();
-                $this->data['error'] = $e->getMessage();
+                $this->oUserFeedback->error($e->getMessage());
             }
         }
 
@@ -1238,8 +1224,6 @@ abstract class DefaultController extends Base
 
         /** @var Database $oDb */
         $oDb = Factory::service('Database');
-        /** @var UserFeedback $oUserFeedback */
-        $oUserFeedback = Factory::service('UserFeedback');
 
         $aConfig = $this->getConfig();
         $oModel  = $this->getModel();
@@ -1269,11 +1253,11 @@ abstract class DefaultController extends Base
             $this->addToChangeLog(static::EDIT_MODE_CREATE, $oNewItem);
             $oDb->transaction()->commit();
 
-            $oUserFeedback->success(static::COPY_SUCCESS_MESSAGE);
+            $this->oUserFeedback->success(static::COPY_SUCCESS_MESSAGE);
             redirect($aConfig['BASE_URL'] . '/edit/' . $oNewItem->id);
 
         } catch (\Exception $e) {
-            $oUserFeedback->error('Failed to copy item. ' . $e->getMessage());
+            $this->oUserFeedback->error('Failed to copy item. ' . $e->getMessage());
             $this->returnToIndex();
         }
     }
