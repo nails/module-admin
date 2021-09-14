@@ -18,6 +18,7 @@ use Nails\Admin\Events;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Service\Asset;
 use Nails\Common\Service\Event;
+use Nails\Common\Service\UserFeedback;
 use Nails\Components;
 use Nails\Config;
 use Nails\Factory;
@@ -30,12 +31,22 @@ use Nails\Factory;
 if (class_exists('\App\Admin\Controller\Base')) {
     abstract class BaseMiddle extends \App\Admin\Controller\Base
     {
+        protected UserFeedback $oUserFeedback;
+
+        public function __construct()
+        {
+            parent::__construct();
+            $this->oUserFeedback = Factory::service('UserFeedback');
+        }
     }
 } else {
     abstract class BaseMiddle
     {
+        protected UserFeedback $oUserFeedback;
+
         public function __construct()
         {
+            $this->oUserFeedback = Factory::service('UserFeedback');
         }
     }
 }
