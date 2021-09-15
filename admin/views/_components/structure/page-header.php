@@ -1,10 +1,18 @@
 <?php
 
+use Nails\Common\Service\UserFeedback;
+use Nails\Factory;
+
+/** @var UserFeedback $oUserFeedback */
+$oUserFeedback = Factory::service('UserFeedback');
+
 //  Page title
 if (!empty($page->module->name) && !empty($page->title)) {
     $sPageTitle = $page->module->name . ' &rsaquo; ' . $page->title;
+
 } elseif (empty($page->module->name) && !empty($page->title)) {
     $sPageTitle = $page->title;
+
 } elseif (!empty($page->module->name)) {
     $sPageTitle = $page->module->name;
 }
@@ -82,27 +90,40 @@ if (!empty($sPageTitle) || !empty($aHeaderButtons)) {
     <?php
 }
 
-$aAlerts = [
-    'error'    => ['danger', 'fa-times-circle', 'Sorry, something went wrong.'],
-    'success'  => ['success', 'fa-check-circle', 'Success!'],
-    'info'     => ['info'],
-    'warning'  => ['warning'],
-
-    //  @deprecated (Pablo - 2021-07-22)
-    'negative' => ['danger'],
-    'positive' => ['success'],
-    'message'  => ['warning'],
-    'notice'   => ['info'],
+$aAlertConf = [
+    $oUserFeedback::TYPE_ERROR    => [
+        'class' => 'danger',
+        'icon'  => 'fa-times-circle',
+        'title' => 'Sorry, something went wrong.',
+    ],
+    $oUserFeedback::TYPE_SUCCESS  => [
+        'icon'  => 'fa-check-circle',
+        'title' => 'Success!',
+    ],
+    $oUserFeedback::TYPE_NEGATIVE => [
+        'class' => 'danger',
+    ],
+    $oUserFeedback::TYPE_POSITIVE => [
+        'class' => 'success',
+    ],
+    $oUserFeedback::TYPE_MESSAGE  => [
+        'class' => 'warning',
+    ],
+    $oUserFeedback::TYPE_NOTICE   => [
+        'class' => 'info',
+    ],
 ];
 
-foreach ($aAlerts as $sType => $aAlert) {
 
-    //  Variable variable
-    $sType = (string) $$sType;
+foreach ($oUserFeedback->getTypes() as $sType) {
 
-    if (!empty($sType)) {
+    $sValue = (string) $oUserFeedback->get($sType);
 
-        [$sClass, $sIcon, $sTitle] = array_pad($aAlert, 3, null);
+    if (!empty($sValue)) {
+
+        $sClass = $aAlertConf[$sType]['class'] ?? strtolower($sType);
+        $sIcon  = $aAlertConf[$sType]['info'] ?? null;
+        $sTitle = $aAlertConf[$sType]['title'] ?? null;
 
         ?>
         <div class="alert alert-<?=$sClass?>">
@@ -119,7 +140,7 @@ foreach ($aAlerts as $sType => $aAlert) {
 
             echo sprintf(
                 '<p>%s</p>',
-                $sType
+                $sValue
             );
 
             ?>
