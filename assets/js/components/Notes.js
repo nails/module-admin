@@ -39,6 +39,7 @@ class Notes {
 
                 if (showCount) {
                     $btn.append($counter);
+                    this.setCounter($counter, '...');
                 }
 
                 $btn
@@ -68,12 +69,42 @@ class Notes {
 
                         return false;
                     });
+            });
 
-                if (showCount) {
-                    this.countNotes(modelName, modelProvider, itemId)
-                        .done((count) => {
-                            this.setCounter($counter, count);
-                        });
+
+        let itemsToCount = {};
+
+        $('.js-admin-notes:not(.js-admin-notes--count-processed[data-show-count="true"])')
+            .addClass('js-admin-notes--count-processed')
+            .each((index, item) => {
+
+                let modelName = item.dataset.modelName;
+                let modelProvider = item.dataset.modelProvider;
+                let id = item.dataset.id;
+
+                if (!itemsToCount.hasOwnProperty(modelProvider)) {
+                    itemsToCount[modelProvider] = {};
+                }
+
+                if (!itemsToCount[modelProvider].hasOwnProperty(modelName)) {
+                    itemsToCount[modelProvider][modelName] = [];
+                }
+
+                itemsToCount[modelProvider][modelName].push(id);
+
+            });
+
+        this.countNotes(itemsToCount)
+            .done((response) => {
+                for (const [provider, models] of Object.entries(response)) {
+                    for (const [model, ids] of Object.entries(models)) {
+                        for (const [id, count] of Object.entries(ids)) {
+                            let counter = $(`.js-admin-notes.js-admin-notes--processed[data-model-name="${model}"][data-model-provider="${provider}"][data-id="${id}"]`)
+                                .find('.admin-notes__counter');
+
+                            this.setCounter(counter, count);
+                        }
+                    }
                 }
             });
 
@@ -198,19 +229,17 @@ class Notes {
 
     /**
      * Loads notes from the server
-     * @param {String} modelName The model name
-     * @param {String} modelProvider The model provider
-     * @param {Number} itemId The ID of the item
+     * @param {object} dataBundle
      * @return {jQuery.Deferred}
      */
-    countNotes(modelName, modelProvider, itemId) {
+    countNotes(dataBundle) {
+
         let $deferred = new $.Deferred();
         $.ajax({
             'url': window.SITE_URL + 'api/admin/note/count',
+            'method': 'POST',
             'data': {
-                'model_name': modelName,
-                'model_provider': modelProvider,
-                'item_id': itemId
+                'dataBundle': dataBundle,
             }
         })
             .done((response) => {

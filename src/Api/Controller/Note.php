@@ -6,6 +6,8 @@ use Nails\Admin\Constants;
 use Nails\Admin\Traits\Api\RestrictToAdmin;
 use Nails\Api;
 use Nails\Common\Exception\FactoryException;
+use Nails\Common\Helper\ArrayHelper;
+use Nails\Common\Helper\Model\Where;
 use Nails\Common\Service\Input;
 use Nails\Factory;
 
@@ -58,18 +60,48 @@ class Note extends Api\Controller\CrudController
      * @throws Api\Exception\ApiException
      * @throws FactoryException
      */
-    public function getCount(array $aData = [])
+    public function postCount(array $aData = [])
     {
-        [$sModel, $iItemId] = $this->getModelClassAndId();
-        $aData['where'] = [
-            ['model', $sModel],
-            ['item_id', $iItemId],
-        ];
+        $aData   = $this->getRequestData();
+        $aBundle = ArrayHelper::get('dataBundle', $aData, []);
+        $aOut    = [];
+
+        foreach ($aBundle as $sProvider => $aModels) {
+
+            $aOut[$sProvider] = [];
+
+            foreach ($aModels as $sModel => $aIds) {
+
+                $aOut[$sProvider][$sModel] = [];
+
+                try {
+
+                    $oModel      = Factory::model($sModel, $sProvider);
+                    $sModelClass = get_class($oModel);
+
+                } catch (\Exception $e) {
+                    throw new Api\Exception\ApiException(
+                        '"' . $sProvider . ':' . $sModel . '" is not a valid model'
+                    );
+                }
+
+                $aIds = array_unique($aIds);
+                $aIds = array_filter($aIds);
+
+                foreach ($aIds as $sId) {
+
+                    $aOut[$sProvider][$sModel][$sId] = $this->oModel->countAll([
+                        new Where('model', $sModelClass),
+                        new Where('item_id', $sId),
+                    ]);
+                }
+            }
+        }
 
         /** @var Api\Factory\ApiResponse $oApiResponse */
         $oApiResponse = Factory::factory('ApiResponse', Api\Constants::MODULE_SLUG);
         $oApiResponse
-            ->setData($this->oModel->countAll($aData));
+            ->setData($aOut);
 
         return $oApiResponse;
     }
@@ -108,7 +140,7 @@ class Note extends Api\Controller\CrudController
     protected function getModelClassAndId(): array
     {
         /** @var Input $oInput */
-        $oInput         = Factory::service('Input');
+        $oInput = Factory::service('Input');
 
         $sModelName     = $oInput->get('model_name') ?: $oInput->post('model_name');
         $sModelProvider = $oInput->get('model_provider') ?: $oInput->post('model_provider');
