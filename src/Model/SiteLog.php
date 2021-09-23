@@ -55,7 +55,7 @@ class SiteLog extends Base
      *
      * @return void
      */
-    public function getAll($iPage = null, $iPerPage = null, array $aData = [], $bIncludeDeleted = false): array
+    public function getAll($iPage = null, $iPerPage = null, array $aData = [], bool $bIncludeDeleted = false): array
     {
         $aLogFiles = Directory::map($this->sLogPath, null, false);
 
