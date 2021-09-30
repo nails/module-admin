@@ -8,7 +8,8 @@ class Notes {
      */
     constructor(adminController) {
 
-        adminController
+        this.adminController = adminController;
+        this.adminController
             .onRefreshUi((e, domElement) => {
                 this.init();
             });
@@ -246,7 +247,7 @@ class Notes {
                 $deferred.resolve(response.data);
             })
             .fail((response) => {
-                Notes.showError(response.responseText);
+                this.showError(response.responseText);
                 $deferred.reject(response.responseText);
             });
 
@@ -276,7 +277,7 @@ class Notes {
                 $deferred.resolve(response);
             })
             .fail((response) => {
-                Notes.showError(response.responseText);
+                this.showError(response.responseText);
                 $deferred.reject(response.responseText);
             });
 
@@ -309,7 +310,7 @@ class Notes {
                 $deferred.resolve(response);
             })
             .fail((response) => {
-                Notes.showError(response.responseText);
+                this.showError(response.responseText);
                 $deferred.reject(response.responseText);
             });
 
@@ -333,7 +334,7 @@ class Notes {
                 $deferred.resolve(response);
             })
             .fail((response) => {
-                Notes.showError(response.responseText);
+                this.showError(response.responseText);
                 $deferred.reject(response.responseText);
             });
 
@@ -406,17 +407,15 @@ class Notes {
      * Renders an error
      * @param {String} responseText The response text from the server
      */
-    static showError(responseText) {
+    showError(responseText) {
         let data;
         try {
             data = JSON.parse(responseText);
-
         } catch (e) {
             data = {'error': 'An unknown error occurred'};
         }
 
-        //  @todo (Pablo - 2018-08-01) - Nicer errors
-        alert(data.error);
+        this.adminController.error(data.error);
     }
 }
 
