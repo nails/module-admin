@@ -310,6 +310,7 @@ class Helper
      *
      * @return \stdClass
      * @throws FactoryException
+     * @deprecated
      */
     public static function searchFilterObject($sColumn, $sLabel, $aOptions)
     {
@@ -351,6 +352,7 @@ class Helper
      * @param bool    $bQuery   Whether the supplied value is an SQL query
      *
      * @return \stdClass
+     * @deprecated
      */
     public static function searchFilterObjectOption($sLabel = '', $sValue = '', $bChecked = false, $bQuery = false)
     {
