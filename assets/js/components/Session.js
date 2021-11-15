@@ -169,7 +169,7 @@ class Session {
         clearTimeout(this.inactiveTimeout);
 
         this.inactiveTimeout = setTimeout(() => {
-            ithis.setInactive();
+            this.setInactive();
         }, this.inactiveAfter);
 
         return this;
