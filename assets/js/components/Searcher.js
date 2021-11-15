@@ -78,6 +78,7 @@ class SearcherInstance {
 
         this.api = this.coalesce(this.$input.data('api'), options.api);
         this.isMultiple = this.coalesce(this.$input.data('multiple'), options.isMultiple, false);
+        this.isSortable = this.coalesce(this.$input.data('sortable'), options.isSortable, false);
         this.isClearable = this.coalesce(this.$input.data('clearable'), options.isClearable, true);
         this.placeholder = this.coalesce(this.$input.data('placeholder'), options.placeholder, 'Search for an item');
         this.minLength = this.coalesce(this.$input.data('min-length'), options.minLength, 2);
@@ -132,6 +133,21 @@ class SearcherInstance {
                         }
                     }
                 });
+
+            if (this.isSortable) {
+                this.$input
+                    .select2('container')
+                    .find('ul.select2-choices')
+                    .sortable({
+                        containment: 'parent',
+                        start: () => {
+                            this.$input.select2('onSortStart');
+                        },
+                        update: () => {
+                            this.$input.select2('onSortEnd');
+                        }
+                    });
+            }
 
         } else {
             this.adminController.warn('Element is configured as a Searcher but no api has been defined', this.$input);
