@@ -24,7 +24,7 @@
     "mustache": "^4.0",
     "vue": "^2.6.12",
     "vue-grid-layout": "^2.3.12",
-    "vue-loader": "^15.9.6",
+    "vue-loader": "^17.0.0",
     "vue-template-compiler": "^2.6.12"
   },
   "scripts": {
