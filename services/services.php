@@ -167,6 +167,13 @@ return [
                 return new Factory\Nav\Alert();
             }
         },
+        'QuickActionAction'            => function (string $sLabel, string $sSubLabel, string $sUrl): Factory\QuickAction\Action {
+            if (class_exists('\App\Admin\Factory\QuickAction\Action')) {
+                return new \App\Admin\Factory\QuickAction\Action($sLabel, $sSubLabel, $sUrl);
+            } else {
+                return new Factory\QuickAction\Action($sLabel, $sSubLabel, $sUrl);
+            }
+        },
         'DataExportSourceResponse'     => function () {
             if (class_exists('\App\Admin\DataExport\SourceResponse')) {
                 return new \App\Admin\DataExport\SourceResponse();

@@ -13,8 +13,10 @@
 namespace Nails\Admin\Api\Controller;
 
 use Nails\Admin\Controller\BaseApi;
+use Nails\Admin\Interfaces\QuickAction\Action;
 use Nails\Admin\Traits\Api\RestrictToAdmin;
 use Nails\Api;
+use Nails\Common\Exception\NailsException;
 use Nails\Components;
 use Nails\Factory;
 
@@ -36,14 +38,23 @@ class QuickAction extends BaseApi
         $sOrigin = $oInput->get('origin');
         $sQuery  = trim($oInput->get('query'));
 
-        $aActions = $this->discoverActions();
-        $aResults = [];
+        $aDiscoveredActions = $this->discoverActions();
+        $aResults           = [];
 
-        foreach ($aActions as $oAction) {
-            $aResults = array_merge(
-                $aResults,
-                $oAction->getActions($sQuery, $sOrigin)
-            );
+        foreach ($aDiscoveredActions as $oAction) {
+
+            foreach ($oAction->getActions($sQuery, $sOrigin) as $oAction) {
+
+                if (!$oAction instanceof Action) {
+                    throw new NailsException('Action must be an instance of ' . Action::class);
+                }
+
+                $aResults[] = (object) [
+                    'label'    => $oAction->getLabel(),
+                    'sublabel' => $oAction->getSubLabel(),
+                    'url'      => $oAction->getUrl(),
+                ];
+            }
         }
 
         arraySortMulti($aResults, 'label');
