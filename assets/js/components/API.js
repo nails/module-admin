@@ -16,7 +16,8 @@ const API = {
         destroy: (token) => `admin/session/${token}/destroy`,
         heartbeat: (token) => `admin/session/${token}/heartbeat`,
         inactive: (token) => `admin/session/${token}/inactive`,
-    }
+    },
+    quickAction: (query, origin) => `admin/quickAction?query=${query}&origin=${origin}`
 };
 
 export default API;
