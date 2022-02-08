@@ -1,7 +1,5 @@
 /* export QuickAction */
 
-//  @todo (Pablo 2021-06-04) - keybaord navigation of results
-
 import API from './API'
 import services from './Services'
 
@@ -34,6 +32,7 @@ class QuickAction {
         this.inner.classList.add('admin-quick-action__inner');
 
         this.input = document.createElement('input');
+        this.input.placeholder = 'Search for anything...';
         this.input.classList.add('admin-quick-action__input');
         this.input.autocomplete = 'off';
         this.input.autocapitalize = 'off';
@@ -54,16 +53,24 @@ class QuickAction {
     bindEvents() {
 
         //  Open on cmd/ctr + k
+        //  Close if the escape key is hit
         window.addEventListener('keypress', (e) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                 this.show();
+
+            } else if (e.key === 'Escape') {
+                this.hide();
             }
         });
 
-        //  Close if the escape key is hit
-        window.addEventListener('keypress', (e) => {
-            if (e.key === 'Escape') {
-                this.hide();
+        //  Bind to arrows for result navigation
+        window.addEventListener('keydown', (e) => {
+            if (this.isShown()) {
+                if (e.key === 'ArrowUp') {
+                    this.focusPreviousResult();
+                } else if (e.key === 'ArrowDown') {
+                    this.focusNextResult();
+                }
             }
         });
 
@@ -80,8 +87,6 @@ class QuickAction {
         this.input.addEventListener('keyup', () => {
             this.search(this.input.value);
         });
-
-        //  @todo (Pablo 2021-06-04) - bind to arrows to navigate results
 
         return this;
     }
@@ -120,7 +125,10 @@ class QuickAction {
                 this.lastSearch = query;
                 if (query.length) {
 
-                    this.adminController.log('doing a search');
+                    this.adminController.log(`Searching; query: ${query}`);
+
+                    this.input.classList.add('searching');
+
                     let res = await services.apiRequest({
                         url: API.quickAction(
                             encodeURIComponent(query),
@@ -132,6 +140,7 @@ class QuickAction {
                     res.data.data.map((item) => {
                         this.addResult(item);
                     });
+                    this.focusFirstResult();
 
                 } else {
                     this.clear();
@@ -145,20 +154,65 @@ class QuickAction {
         let a = document.createElement('a');
 
         a.href = item.url;
-
         a.innerHTML = item.label;
+
         if (item.sublabel) {
             a.innerHTML += `<small>${item.sublabel}</small>`;
         }
 
         li.append(a);
 
+        a.addEventListener('mouseover', () => {
+            a.focus();
+        });
+
         this.results.append(li);
+    }
+
+    focusPreviousResult() {
+        let current = this.results.querySelector('a:focus');
+        if (current) {
+            let next = current.closest('li').previousSibling;
+            if (next) {
+                next.querySelector('a').focus();
+            } else {
+                this.input.focus();
+            }
+        }
+    }
+
+    focusNextResult() {
+        let current = this.results.querySelector('a:focus');
+        if (current) {
+            let next = current.closest('li').nextSibling;
+            if (next) {
+                next.querySelector('a').focus();
+            }
+        }
+    }
+
+    focusFirstResult() {
+
+        this.adminController.log('Focusing first result');
+        let results = this.results.querySelectorAll('li');
+        if (results.length) {
+            results[0].querySelector('a').focus();
+        }
+    }
+
+    focusLastResult() {
+
+        this.adminController.log('Focusing last result');
+        let results = this.results.querySelectorAll('li');
+        if (results.length) {
+            results[results.length - 1].querySelector('a').focus();
+        }
     }
 
     clear(clearInput) {
         this.adminController.log('Resetting UI');
         this.results.innerHTML = '';
+        this.input.classList.remove('searching');
         return this;
     }
 }
