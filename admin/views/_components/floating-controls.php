@@ -3,10 +3,11 @@
 /** @var \Nails\Common\Resource\Entity $oItem */
 $oItem = $aFloatingConfig['item'] ?? $oItem ?? null;
 
-$sSaveBtnText  = $aFloatingConfig['save']['text'] ?? 'Save Changes';
-$sSaveBtnClass = $aFloatingConfig['save']['class'] ?? 'btn btn-primary';
-$sSaveBtnName  = $aFloatingConfig['save']['name'] ?? null;
-$sSaveBtnValue = $aFloatingConfig['save']['value'] ?? null;
+$bSaveBtnEnabled = (bool) ($aFloatingConfig['save']['enabled'] ?? true);
+$sSaveBtnText    = $aFloatingConfig['save']['text'] ?? 'Save Changes';
+$sSaveBtnClass   = $aFloatingConfig['save']['class'] ?? 'btn btn-primary';
+$sSaveBtnName    = $aFloatingConfig['save']['name'] ?? null;
+$sSaveBtnValue   = $aFloatingConfig['save']['value'] ?? null;
 
 $aSaveBtnAttributes = array_filter([
     'type="submit"',
@@ -33,11 +34,17 @@ $sNotesProvider = $aFloatingConfig['notes']['provider'] ?? null;
 
 ?>
 <div class="admin-floating-controls">
-    <?=$sHtmlLeft?>
-    <button <?=implode(' ', $aSaveBtnAttributes)?>>
-        <?=$sSaveBtnText?>
-    </button>
     <?php
+
+    echo $sHtmlLeft;
+
+    if ($bSaveBtnEnabled) {
+        ?>
+        <button <?=implode(' ', $aSaveBtnAttributes)?>>
+            <?=$sSaveBtnText?>
+        </button>
+        <?php
+    }
 
     echo $sHtmlCenter;
 
