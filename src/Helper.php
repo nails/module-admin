@@ -492,6 +492,10 @@ class Helper
             $oUser = $mUser;
         }
 
+        if (empty($oUser)) {
+            return '<td class="no-data">&mdash;</td>';
+        }
+
         $aUser = [
             'id'          => !empty($oUser->id) ? $oUser->id : null,
             'profile_img' => !empty($oUser->profile_img) ? $oUser->profile_img : null,
