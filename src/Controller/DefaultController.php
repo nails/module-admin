@@ -35,6 +35,7 @@ use Nails\Common\Service\Input;
 use Nails\Common\Service\Locale;
 use Nails\Common\Service\Uri;
 use Nails\Common\Traits\Model\Copyable;
+use Nails\Common\Traits\Model\HasDataColumns;
 use Nails\Common\Traits\Model\Localised;
 use Nails\Common\Traits\Model\Nestable;
 use Nails\Common\Traits\Model\Publishable;
@@ -615,6 +616,12 @@ abstract class DefaultController extends Base
                         : [$sSortKey, $sSortOrder],
                 ]),
             ] + $aConfig['INDEX_DATA'];
+
+        // --------------------------------------------------------------------------
+
+        if (classUses($oModel, HasDataColumns::class)) {
+            $aData['select'] = $oModel->describeFieldsExcludingData();
+        }
 
         // --------------------------------------------------------------------------
 
