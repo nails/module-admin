@@ -2368,12 +2368,13 @@ abstract class DefaultController extends Base
 
         $aData['where'][] = [$oModel->getTableAlias() . '.' . $oModel->getColumn('id'), $iItemId];
 
-        $aItems = $oModel->skipCache()->getAll(
-            null,
-            null,
-            $aData,
-            $bIncludeDeleted
-        );
+        if ($bIncludeDeleted) {
+            $oModel->includeDeleted();
+        }
+
+        $aItems = $oModel
+            ->skipCache()
+            ->getAll($aData);
 
         $oItem = reset($aItems);
 
