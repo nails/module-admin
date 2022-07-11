@@ -1,6 +1,6 @@
 <?php
 
-$sNoDataClass = isset($id) && $id ? '' : 'no-data';
+$sNoDataClass = isset($id) && $id ? '' : 'text-muted';
 
 ?>
 <td class="user-cell <?=$sNoDataClass?>">
@@ -33,7 +33,7 @@ $sNoDataClass = isset($id) && $id ? '' : 'no-data';
         if (!empty($id) && userHasPermission('admin:auth:accounts:editOthers')) {
 
             echo anchor(
-                'admin/auth/accounts/edit/' . $id,
+                \Nails\Auth\Admin\Controller\Accounts::url('edit/' . $id),
                 $sName,
                 'class="fancybox" data-fancybox-type="iframe"'
             );

@@ -1,0 +1,47 @@
+// Utilities: Spacing
+// ==================
+
+$spaceamounts: (-5, 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 58, 60, 65, 70, 75, 80, 85, 90, 100);
+$sides: (
+    '': 'all',
+    't': 'top',
+    'b': 'bottom',
+    'l': 'left',
+    'r': 'right',
+);
+
+@mixin create-mq($breakpoint, $min-or-max) {
+    @if ($breakpoint == 0) {
+        @content;
+    } @else {
+        @media screen and (#{$min-or-max}-width: $breakpoint) {
+            @content;
+        }
+    }
+}
+
+@each $space in $spaceamounts {
+    @each $prefix, $value in $sides {
+        $property: if($prefix == '', '', -#{$value});
+
+        .u-m#{$prefix}#{$space} {
+            margin#{$property}: #{$space}px;
+        }
+
+        .u-p#{$prefix}#{$space} {
+            padding#{$property}: #{$space}px;
+        }
+
+        @each $modifier, $breakpoint in $grid-breakpoints {
+            @include create-mq($breakpoint, 'max') {
+                .u-#{$modifier}-m#{$prefix}#{$space} {
+                    margin#{$property}: #{$space}px !important;
+                }
+
+                .u-#{$modifier}-p#{$prefix}#{$space} {
+                    padding#{$property}: #{$space}px !important;
+                }
+            }
+        }
+    }
+}

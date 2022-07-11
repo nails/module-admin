@@ -1,0 +1,28 @@
+// Helpers: Breakpoints
+// ====================
+
+//Bootstrap variables for grid
+
+$grid-cols: 12;
+$grid-gutter: 30px;
+
+$grid-breakpoints: (
+    xs: 0,
+    sm: 767px,
+    md: 991px,
+    lg: 1200px,
+);
+
+$container-max-widths: (
+    md: 991px,
+    lg: 1200px,
+);
+
+//Include-media variables for media query
+
+$breakpoints: (
+    "phone": 767px,
+    "tablet": 991px,
+    "desktop": 1200px,
+    "largeDesktop": 1400px,
+);

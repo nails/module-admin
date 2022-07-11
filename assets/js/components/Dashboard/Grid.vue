@@ -15,7 +15,7 @@
             </p>
             <p>
                 <button
-                    class="btn btn-default"
+                    class="btn btn-secondary"
                     v-on:click="add"
                     v-bind:disabled="!widgets.length"
                 >
@@ -56,22 +56,22 @@
                             <span
                                 v-bind:class="classes.instance.controls"
                             >
-                                <span
-                                    class="btn btn-xs btn-default"
+                                <button
+                                    class="btn btn-xs btn-secondary"
                                     v-on:click="loadBody(item)"
                                 >
-                                    <b class="fa fa-sync-alt"></b></span>
-                                <span
-                                    class="btn btn-xs btn-default"
+                                    <b class="fa fa-sync-alt"></b></button>
+                                <button
+                                    class="btn btn-xs btn-secondary"
                                     v-on:click="configure(item)"
                                     v-if="item.configurable"
                                 >
-                                    <b class="fa fa-pencil-alt"></b></span>
-                                <span
+                                    <b class="fa fa-pencil-alt"></b></button>
+                                <button
                                     class="btn btn-xs btn-danger"
                                     v-on:click="remove(item)"
                                 >
-                                    <b class="fa fa-times"></b></span>
+                                    <b class="fa fa-times"></b></button>
                             </span>
                         </legend>
                         <div
@@ -269,8 +269,10 @@ export default {
             let p = document.createElement('p');
             let button = document.createElement('button');
 
+            p.classList.add('d-grid', 'gap-2');
+
             form.innerHTML = res.data.data;
-            button.classList.add('btn', 'btn-primary', 'btn-block');
+            button.classList.add('btn', 'btn-primary');
             button.innerHTML = 'Save';
             button.addEventListener('click', (e) => {
                 this.saveConfig(instance, form);
@@ -303,14 +305,16 @@ export default {
             let confirm = document.createElement('button');
             let cancel = document.createElement('button');
 
-            confirm.classList.add('btn', 'btn-danger', 'btn-block');
+            p.classList.add('d-grid', 'gap-2');
+
+            confirm.classList.add('btn', 'btn-danger');
             confirm.innerText = 'Remove Widget';
             confirm.addEventListener('click', () => {
                 this.removeItem(instance);
                 this.modals.confirm.hide();
             });
 
-            cancel.classList.add('btn', 'btn-default', 'btn-block');
+            cancel.classList.add('btn', 'btn-secondary');
             cancel.innerText = 'Cancel';
             cancel.addEventListener('click', () => {
                 this.modals.confirm.hide();

@@ -404,11 +404,6 @@ abstract class DefaultController extends Base
     const CHANGELOG_ENABLED = true;
 
     /**
-     * The name to use when creating changelog items, defaults to the resource class name
-     */
-    const CHANGELOG_ENTITY_NAME = null;
-
-    /**
      * An array of fields to ignore when processing change log updates
      */
     const CHANGELOG_FIELDS_IGNORE = [
@@ -418,13 +413,6 @@ abstract class DefaultController extends Base
         'created_by',
         'modified',
         'modified_by',
-    ];
-
-    /**
-     * An array of fields to redact/mask when processing changelog updates
-     */
-    const CHANGELOG_FIELDS_REDACT = [
-        'password',
     ];
 
     /**
@@ -501,12 +489,6 @@ abstract class DefaultController extends Base
 
     // --------------------------------------------------------------------------
 
-    /**
-     * Announces this controller's navGroups
-     *
-     * @return array|Nav
-     * @throws NailsException
-     */
     public static function announce()
     {
         /** @var Nav $oNavGroup */
@@ -514,7 +496,7 @@ abstract class DefaultController extends Base
         $oNavGroup
             ->setLabel(static::getSidebarGroup())
             ->setIcon(static::CONFIG_SIDEBAR_ICON)
-            ->setSearchTerms(static::CONFIG_SIDEBAR_SEARCH_TERMS);
+            ->setKeywords(static::CONFIG_SIDEBAR_SEARCH_TERMS);
 
         if (static::userCan(static::EDIT_MODE_BROWSE)) {
             $oNavGroup
@@ -529,11 +511,6 @@ abstract class DefaultController extends Base
 
     // --------------------------------------------------------------------------
 
-    /**
-     * Returns an array of extra permissions for this controller
-     *
-     * @return array
-     */
     public static function permissions(): array
     {
         $aPermissions = parent::permissions();
@@ -1703,10 +1680,7 @@ abstract class DefaultController extends Base
             return static::CONFIG_BASE_URL;
         }
 
-        $aBits   = explode('\\', get_called_class());
-        $sModule = strtolower($aBits[count($aBits) - 2]);
-        $sClass  = lcfirst($aBits[count($aBits) - 1]);
-        return 'admin/' . $sModule . '/' . $sClass;
+        return self::url();
     }
 
     // --------------------------------------------------------------------------
@@ -2669,7 +2643,7 @@ abstract class DefaultController extends Base
             ->add(
                 'created',
                 'a',
-                static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
+                get_class($oItem),
                 $oItem->id,
                 $oItem->label ?? 'Item #' . $oItem->id,
                 $this->aConfig['BASE_URL'] . '/edit/' . $oItem->id
@@ -2686,8 +2660,9 @@ abstract class DefaultController extends Base
      */
     protected function addToChangeLogEdit(Resource\Entity $oItem, Resource\Entity $oOldItem = null): void
     {
-        $aNew = $this->changeLogFlattenObject($oItem);
-        $aOld = $this->changeLogFlattenObject($oOldItem);
+        $oModel = static::getModel();
+        $aNew   = $this->changeLogFlattenObject($oItem);
+        $aOld   = $this->changeLogFlattenObject($oOldItem);
 
         $aSameKeys    = array_keys(array_intersect_key($aNew, $aOld));
         $aAddedKeys   = array_keys(array_diff_key($aNew, $aOld));
@@ -2717,7 +2692,7 @@ abstract class DefaultController extends Base
 
             [$sOldValue, $sNewValue] = $aValues;
             $bForce = false;
-            if (in_array($sKey, static::CHANGELOG_FIELDS_REDACT)) {
+            if (in_array($sKey, $oModel::SENSITIVE_FIELDS)) {
                 $bForce    = $sOldValue !== $sNewValue;
                 $sOldValue = '[REDACTED]';
                 $sNewValue = '[REDACTED]';
@@ -2728,7 +2703,7 @@ abstract class DefaultController extends Base
                 ->add(
                     'updated',
                     'a',
-                    static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
+                    get_class($oItem),
                     $oItem->id,
                     $oItem->label ?? 'Item #' . $oItem->id,
                     $this->aConfig['BASE_URL'] . '/edit/' . $oItem->id,
@@ -2755,7 +2730,7 @@ abstract class DefaultController extends Base
             ->add(
                 'deleted',
                 'a',
-                static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
+                get_class($oItem),
                 $oItem->id,
                 $oItem->label ?? 'Item #' . $oItem->id
             );
@@ -2775,7 +2750,7 @@ abstract class DefaultController extends Base
             ->add(
                 'restored',
                 'a',
-                static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
+                get_class($oItem),
                 $oItem->id,
                 $oItem->label ?? 'Item #' . $oItem->id,
                 $this->aConfig['BASE_URL'] . '/edit/' . $oItem->id

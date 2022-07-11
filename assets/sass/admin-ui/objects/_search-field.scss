@@ -1,0 +1,29 @@
+.search-field {
+    background-image: url("../svg/search-icon.svg");
+    padding-left: 60px;
+    background-size: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    width: 100%;
+
+    @include media('<=tablet') {
+        padding-left: 40px;
+        background-size: 28px;
+        height: 28px;
+    }
+
+    input {
+        border: none;
+        height: 100%;
+        padding: 0;
+        font-size: 24px;
+        width: 100%;
+        outline: none;
+
+        &:focus {
+            border: none;
+            box-shadow: none;
+            color: inherit;
+        }
+    }
+}

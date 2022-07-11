@@ -1,0 +1,34 @@
+// Base
+
+html {
+    font-size: 14px;
+    font-family: "Open Sans", serif;
+}
+
+body {
+    background-color: rgb($brand-color-secondary);
+
+    &.blank {
+        background-color: $light-grey;
+    }
+}
+
+img {
+    max-width: 100%;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+hr {
+    height: 1px !important;
+    background-color: $hover-grey;
+    opacity: 1;
+}
+
+a {
+    color: inherit;
+}

@@ -1,17 +1,22 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const {VueLoaderPlugin} = require('vue-loader');
 const path = require('path');
 
+const mode = process.env.NODE_ENV || 'development';
+
 module.exports = {
+    mode: mode,
     entry: {
         'admin': './assets/js/admin.js',
-        'admin.legacy': './assets/js/admin.legacy.js',
         'admin.forms': './assets/js/admin.forms.js',
-        'admin.logs.site': './assets/js/admin.logs.site.js'
+        'admin.logs.site': './assets/js/admin.logs.site.js',
+        'admin.plugins': './assets/js/admin.plugins.js',
+        'admin.ui': './assets/js/admin.ui.js',
     },
     output: {
         filename: '[name].min.js',
-        path: path.resolve(__dirname, 'assets/js/')
+        path: path.resolve(__dirname, 'assets/js/'),
+        publicPath: '/assets/js/'
     },
     module: {
         rules: [
@@ -41,5 +46,7 @@ module.exports = {
         }),
         new VueLoaderPlugin()
     ],
-    mode: 'production'
+    devServer: {
+        port: 9000,
+    }
 };

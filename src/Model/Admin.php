@@ -210,22 +210,13 @@ class Admin extends Base
     /**
      * Extracts the user ID to use
      *
-     * @param int $userId The User ID, or null for active user
+     * @param int $iUserId The User ID, or null for active user
      *
      * @return int
      */
-    protected function adminDataGetUserId($userId)
+    protected function adminDataGetUserId(?int $iUserId): ?int
     {
-        if (is_null($userId)) {
-
-            $userId = activeUser('id');
-
-        } else {
-
-            $userId = $userId;
-        }
-
-        return $userId;
+        return $iUserId ?? activeUser('id');
     }
 
     // --------------------------------------------------------------------------

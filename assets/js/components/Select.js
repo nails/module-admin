@@ -61,7 +61,8 @@ class SelectInstance {
             .select2({
                 placeholder: this.placeholder,
                 multiple: this.isMultiple,
-                allowClear: this.isClearable
+                allowClear: this.isClearable,
+                width: this.$input.outerWidth()
             });
     }
 }

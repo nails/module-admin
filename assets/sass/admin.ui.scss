@@ -1,0 +1,54 @@
+// Libraries and helpers
+// ---------------------
+@import 'admin-ui/helpers/helpers';
+@import 'admin-ui/lib/lib';
+
+// Variables
+// ---------
+@import 'admin-ui/variables/palette';
+@import 'admin-ui/variables/colors';
+@import 'admin-ui/variables/typography';
+@import 'admin-ui/variables/misc';
+
+// Vendor
+@import "~bootstrap/scss/bootstrap";
+@import "~vue-select/dist/vue-select";
+@import '~vue-simple-scrollbar/dist/vue-simple-scrollbar';
+@import '~sweetalert2/dist/sweetalert2';
+
+// Reset and base files
+// --------------------
+@import 'admin-ui/base/base';
+@import 'admin-ui/base/animation';
+
+// Objects
+@import 'admin-ui/objects/alert';
+@import 'admin-ui/objects/btn';
+@import 'admin-ui/objects/checkbox';
+@import 'admin-ui/objects/create-item';
+@import 'admin-ui/objects/fieldset';
+@import 'admin-ui/objects/floating-controls';
+@import 'admin-ui/objects/forms';
+@import 'admin-ui/objects/input-field';
+@import 'admin-ui/objects/search-field';
+@import 'admin-ui/objects/search-filter';
+@import 'admin-ui/objects/table';
+
+// Layouts
+// -------
+@import 'admin-ui/layouts/layouts';
+
+// Components
+// ----------
+@import 'admin-ui/vendor/nestable';
+@import 'admin-ui/vendor/swal2';
+
+// Utilities
+// ---------
+@import 'admin-ui/utilities/alignment';
+@import 'admin-ui/utilities/spacing';
+@import 'admin-ui/utilities/flexbox';
+
+// Patches
+//--------
+@import "admin-ui/vendor/bootstrap-patch";

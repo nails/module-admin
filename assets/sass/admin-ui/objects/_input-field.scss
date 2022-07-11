@@ -1,0 +1,21 @@
+.u-input {
+    height: 34px;
+    border-radius: 100rem;
+    font-size: 12px;
+    border: none;
+    background-color: $white;
+    padding: 0 14px;
+    outline: none;
+
+    &__search {
+        background-image: url("../svg/search-icon.svg");
+        padding-left: 36px;
+        background-size: 16px;
+        background-repeat: no-repeat;
+        background-position: 12px center;
+    }
+
+    &::placeholder {
+        color: rgba($black, 0.5);
+    }
+}

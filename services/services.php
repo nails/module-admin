@@ -7,6 +7,13 @@ use Nails\Admin\Service;
 
 return [
     'services'  => [
+        'Controller'      => function (): Service\Controller {
+            if (class_exists('\App\Admin\Service\Controller')) {
+                return new \App\Admin\Service\Controller();
+            } else {
+                return new Service\Controller();
+            }
+        },
         'DataExport'      => function (): Service\DataExport {
             if (class_exists('\App\Admin\Service\DataExport')) {
                 return new \App\Admin\Service\DataExport();
@@ -153,11 +160,31 @@ return [
                 return new Factory\Helper\DynamicTable();
             }
         },
-        'Nav'                          => function (): Factory\Nav {
+        'Nav'                          => function (
+            string $sLabel = '',
+            string $sIcon = '',
+            string $sUrl = '',
+            array $aActions = [],
+            array $aKeywords = [],
+            bool $bIsOpen = false
+        ): Factory\Nav {
             if (class_exists('\App\Admin\Factory\Nav')) {
-                return new \App\Admin\Factory\Nav();
+                return new \App\Admin\Factory\Nav($sLabel, $sIcon, $sUrl, $aActions, $aKeywords, $bIsOpen);
             } else {
-                return new Factory\Nav();
+                return new Factory\Nav($sLabel, $sIcon, $sUrl, $aActions, $aKeywords, $bIsOpen);
+            }
+        },
+        'NavAction'                    => function (
+            string $sLabel,
+            string $sUrl,
+            array $aAlerts = [],
+            int $iOrder = null,
+            array $aKeywords = []
+        ): Factory\Nav\Action {
+            if (class_exists('\App\Admin\Factory\Nav\Action')) {
+                return new \App\Admin\Factory\Nav\Action($sLabel, $sUrl, $aAlerts, $iOrder, $aKeywords);
+            } else {
+                return new Factory\Nav\Action($sLabel, $sUrl, $aAlerts, $iOrder, $aKeywords);
             }
         },
         'NavAlert'                     => function (): Factory\Nav\Alert {

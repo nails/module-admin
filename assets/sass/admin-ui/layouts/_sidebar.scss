@@ -1,0 +1,176 @@
+.sidebar {
+    width: 235px;
+    height: 100%;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+
+    @include media('<=tablet') {
+        width: 0;
+    }
+
+    .sidenav {
+        padding-top: 15px;
+
+        @include media('<=tablet') {
+            display: none;
+        }
+
+        &__mobile {
+            display: none;
+            height: calc(100vh - 63px);
+
+            @include media('<=tablet') {
+                padding-top: 0;
+                margin-top: 0;
+                display: block;
+                position: fixed;
+                top: 63px;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                background-color: rgb($brand-color-highlight);
+                overflow-y: auto;
+                overflow-x: hidden;
+                z-index: 1;
+            }
+        }
+
+        ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        &__list-item {
+            @include media('<=tablet') {
+                border-bottom: 1px solid rgba($white, 0.2);
+            }
+        }
+
+        &__item {
+            color: $white;
+            text-decoration: none;
+            background-color: transparent;
+            transition: background-color 0.3s ease;
+            display: block;
+            padding: 14px 20px;
+            cursor: pointer;
+            position: relative;
+            width: 100%;
+            border: none;
+            text-align: left;
+
+            i {
+                display: inline-block;
+                text-align: center;
+                width: 18px;
+                margin-right: 8px;
+            }
+
+            &--small {
+                font-size: 12px;
+                padding: 3px 20px;
+                color: rgba($white, 0.5);
+            }
+
+            &--open,
+            &:hover {
+                background-color: rgb($brand-color-highlight);
+            }
+
+            &--active {
+                background-color: rgb($brand-color-highlight);
+                font-weight: bold;
+            }
+        }
+
+        &__icon {
+            position: relative;
+            cursor: grab;
+
+            span {
+                position: absolute;
+                opacity: 0;
+                top: 2px;
+                left: 3px;
+            }
+
+            &:hover {
+
+                span {
+                    opacity: 1;
+                }
+
+                i {
+                    opacity: 0;
+                }
+            }
+        }
+
+        &__caret {
+            width: 0;
+            height: 0;
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+            border-left: 6px solid $white;
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%) rotate(0);
+            transition: all 0.2s ease;
+
+            &--open {
+                transform: translateY(-50%) rotate(90deg);
+            }
+
+            @include media('<=tablet') {
+                right: 20px;
+            }
+        }
+
+        &__subitem {
+            background-color: rgb($brand-color-primary);
+            color: $white;
+            text-decoration: none;
+            padding: 14px 14px 14px 20px;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+
+            &--active {
+                font-weight: bold;
+            }
+        }
+
+        &__count {
+            background-color: rgba($white, 0.2);
+            border-radius: 16px;
+            padding: 2px 6px;
+            font-size: 11px;
+            height: 20px;
+            min-width: 30px;
+            font-weight: normal;
+            text-align: center;
+            margin-left: 6px;
+
+            //  @todo (Pablo 2022-04-28) - other severity
+
+            &--danger {
+                background-color: rgba($red, 0.8);
+            }
+
+            &--warning {
+                background-color: rgba($red, 0.8);
+            }
+        }
+    }
+}
+
+@keyframes caret-spin {
+    100% {
+        transform: rotate(90deg);
+    }
+}

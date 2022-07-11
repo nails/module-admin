@@ -1,0 +1,22 @@
+/* --------------------------------------------------------------
+   Nails Dashboard Admin Styles
+-------------------------------------------------------------- */
+
+.group-dashboard {
+    &.help {
+        th.duration,
+        td.duration,
+        th.actions,
+        td.actions {
+            width: 100px;
+            text-align: center;
+        }
+    }
+
+    .alert--dashboard {
+        & + .dashboard-widgets {
+            border-top: 1px solid #efefef;
+            padding-top: 20px;
+        }
+    }
+}

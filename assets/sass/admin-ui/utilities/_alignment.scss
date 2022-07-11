@@ -1,0 +1,10 @@
+// Utilities: Aligment
+// ===================
+
+$alignments: left center right;
+
+@each $align in $alignments {
+    .u-align-#{$align} {
+        text-align: #{$align};
+    }
+}

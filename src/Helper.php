@@ -21,6 +21,7 @@ use Nails\Common\Exception\ViewNotFoundException;
 use Nails\Common\Service\Input;
 use Nails\Common\Service\Output;
 use Nails\Common\Service\View;
+use Nails\Config;
 use Nails\Factory;
 
 /**
@@ -32,6 +33,23 @@ class Helper
 {
     protected static $aHeaderButtons = [];
     protected static $aModals        = [];
+
+    // --------------------------------------------------------------------------
+
+    public static function logo(): string
+    {
+        $sUrl = static::logoUrl();
+        return $sUrl ? img($sUrl) : '';
+    }
+
+    // --------------------------------------------------------------------------
+
+    public static function logoUrl(): string
+    {
+        return Config::get('ADMIN_LOGO_URL')
+            ? siteUrl(Config::get('ADMIN_LOGO_URL'))
+            : '';
+    }
 
     // --------------------------------------------------------------------------
 
@@ -57,17 +75,8 @@ class Helper
 
         //  Are we in a modal?
         if ($oInput->get('isModal')) {
-
             if (!isset($aData['headerOverride']) && !isset($aData['isModal'])) {
                 $aData['isModal'] = true;
-            }
-
-            if (empty($aData['headerOverride'])) {
-                $aData['headerOverride'] = '_components/structure/headerBlank';
-            }
-
-            if (empty($aData['footerOverride'])) {
-                $aData['footerOverride'] = '_components/structure/footerBlank';
             }
         }
 
@@ -88,6 +97,7 @@ class Helper
             $sOut .= static::loadInlineView($sViewFile, $aData, true);
             $sOut .= $oView->load($sFooterView, $aData, true);
             return $sOut;
+
         } else {
             $oView->load($sHeaderView, $aData);
             static::loadInlineView($sViewFile, $aData);
@@ -170,62 +180,30 @@ class Helper
      */
     public static function loadInlineView($sViewFile, $aViewData = [], $bReturnView = false)
     {
-        $aCtrlData   =& getControllerData();
-        $sCtrlPath   = !empty($aCtrlData['currentRequest']['path']) ? $aCtrlData['currentRequest']['path'] : '';
-        $sCtrlName   = basename($sCtrlPath, '.php');
-        $aCtrlPath   = explode(DIRECTORY_SEPARATOR, $sCtrlPath);
-        $aCtrlPath   = array_splice($aCtrlPath, 0, count($aCtrlPath) - 2);
-        $aCtrlPath[] = 'views';
-        $aCtrlPath[] = $sCtrlName;
-        $aCtrlPath[] = $sViewFile;
-        $sViewPath   = implode(DIRECTORY_SEPARATOR, $aCtrlPath) . '.php';
-
         /** @var View $oView */
         $oView = Factory::service('View');
+        /** @var \Nails\Admin\Service\Controller $oControllerService */
+        $oControllerService = Factory::service('Controller', \Nails\Admin\Constants::MODULE_SLUG);
 
-        //  Load the view
-        try {
-            return $oView->load($sViewPath, $aViewData, $bReturnView);
-        } catch (ViewNotFoundException $e) {
-            //  If it fails, and the controller is a default admin controller then load up that view
-            $sClassName = $aCtrlData['currentRequest']['className'];
-            if (!classExtends($sClassName, 'Nails\\Admin\\Controller\\DefaultController')) {
-                throw new ViewNotFoundException(
-                    $e->getMessage(),
-                    $e->getCode()
-                );
-            }
+        $oController = $oControllerService->getRoute();
+        $aViewPaths  = $oControllerService->getViewPathsForController($oController);
 
-            //  Step through the class hierarchy and look there
-            $aParents = class_parents($sClassName);
-            foreach ($aParents as $sParent) {
-                try {
+        foreach ($aViewPaths as $sPath) {
+            try {
 
-                    if ($sParent !== 'Nails\\Admin\\Controller\\DefaultController') {
+                return $oView->load($sPath . $sViewFile, $aViewData, $bReturnView);
 
-                        $oReflection = new \ReflectionClass('\\' . $sParent);
-                        $sViewPath   = realpath(dirname($oReflection->getFileName()) . '/../views') . '/';
-                        $aClassBits  = explode('\\', $oReflection->getName());
-                        $sViewPath   .= end($aClassBits) . '/';
-
-                    } else {
-                        $sViewPath     = 'admin/DefaultController/';
-                        $bTriedDefault = true;
-                    };
-
-                    return $oView->load(
-                        $sViewPath . $sViewFile,
-                        $aViewData,
-                        $bReturnView
-                    );
-                } catch (ViewNotFoundException $e) {
-                    //  Allow the loop to continue, unless we've already tried the default views
-                    if (!empty($bTriedDefault)) {
-                        throw $e;
-                    }
-                }
+            } catch (ViewNotFoundException $e) {
             }
         }
+
+        throw new ViewNotFoundException(
+            sprintf(
+                'Could not resolve view "%s" in any of the following paths: %s',
+                $sViewFile,
+                implode(', ', $aViewPaths)
+            )
+        );
     }
 
     // --------------------------------------------------------------------------

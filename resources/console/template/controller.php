@@ -15,7 +15,7 @@ return <<<'EOD'
  * @category controller
  */
 
-namespace App\Admin\App;
+namespace App\Admin\Controller;
 
 use Nails\Admin\Controller\DefaultController;
 

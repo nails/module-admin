@@ -15,6 +15,7 @@ namespace Nails\Admin\Controller;
 
 use Nails\Admin\Constants;
 use Nails\Admin\Events;
+use Nails\Admin\Interfaces\Controller;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Service\Asset;
 use Nails\Common\Service\Event;
@@ -31,6 +32,7 @@ use Nails\Factory;
 if (class_exists('\App\Admin\Controller\Base')) {
     abstract class BaseMiddle extends \App\Admin\Controller\Base
     {
+        protected \AdminRouter $oRouter;
         protected UserFeedback $oUserFeedback;
 
         public function __construct()
@@ -58,7 +60,7 @@ if (class_exists('\App\Admin\Controller\Base')) {
  *
  * @package Nails\Admin\Controller
  */
-abstract class Base extends BaseMiddle
+abstract class Base extends BaseMiddle implements Controller
 {
     public $data;
 
@@ -85,8 +87,7 @@ abstract class Base extends BaseMiddle
 
         $this
             ->loadConfigs()
-            ->loadHelpers()
-            ->loadLanguages();
+            ->loadHelpers();
 
         // --------------------------------------------------------------------------
 
@@ -112,6 +113,28 @@ abstract class Base extends BaseMiddle
 
         //  Call the ADMIN:READY event, admin is all geared up and ready to go
         $oEventService->trigger(Events::ADMIN_READY, Events::getEventNamespace());
+    }
+
+    // --------------------------------------------------------------------------
+
+    public static function permissions(): array
+    {
+        return [];
+    }
+
+    public static function url(string $sUrl = ''): string
+    {
+        /** @var \Nails\Admin\Service\Controller $oControllerService */
+        $oControllerService = Factory::service('Controller', Constants::MODULE_SLUG);
+        $sBaseUrl           = $oControllerService->determineBaseUrl(static::class);
+
+        return siteUrl(
+            sprintf(
+                '%s%s',
+                $sBaseUrl,
+                $sUrl ? '/' . $sUrl : ''
+            )
+        );
     }
 
     // --------------------------------------------------------------------------
@@ -158,27 +181,13 @@ abstract class Base extends BaseMiddle
 
     // --------------------------------------------------------------------------
 
-    /**
-     * Load admin languages
-     *
-     * @return $this
-     * @deprecated
-     */
-    protected function loadLanguages(): self
-    {
-        //  @todo (Pablo - 2018-09-24) - Remove this
-        get_instance()->lang->load('admin/admin_generic');
-
-        return $this;
-    }
-
-    // --------------------------------------------------------------------------
-
     protected function loadCss(): self
     {
         /** @var Asset $oAsset */
         $oAsset = Factory::service('Asset');
         $oAsset
+            ->load('admin.ui.min.css', Constants::MODULE_SLUG)
+            ->load('admin.plugins.min.css', Constants::MODULE_SLUG)
             ->load('admin.min.css', Constants::MODULE_SLUG);
 
         return $this;
@@ -196,8 +205,8 @@ abstract class Base extends BaseMiddle
         /** @var Asset $oAsset */
         $oAsset = Factory::service('Asset');
         $oAsset
-            ->load('admin.min.js', Constants::MODULE_SLUG)
-            ->load('admin.legacy.min.js', Constants::MODULE_SLUG)
+            ->load('admin.ui.min.js', Constants::MODULE_SLUG)
+            ->load('admin.plugins.min.js', Constants::MODULE_SLUG)
             ->load('admin.forms.min.js', Constants::MODULE_SLUG);
 
         //  Inline assets
@@ -253,19 +262,19 @@ abstract class Base extends BaseMiddle
             ->load('https://cdnjs.cloudflare.com/ajax/libs/retina.js/1.3.0/retina.min.js')
 
             //  Bootstrap
-            ->load('https://cdn.jsdelivr.net/gh/twbs/bootstrap@v3.3.7/js/dropdown.js')
+            ->load('https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js')
 
             //  Fontawesome
             ->load('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css')
             ->load('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css')
 
-            //  Asset libraries
-            ->library('JQUERYUI')
-            ->library('SELECT2')
-            ->library('CKEDITOR')
-            ->library('KNOCKOUT')
-            ->library('MOMENT')
-            ->library('MUSTACHE');
+            //  Bundled libraries
+            ->jqueryui()
+            ->select2()
+            ->ckeditor()
+            ->knockout()
+            ->moment()
+            ->mustache();
 
         return $this;
     }
@@ -339,29 +348,5 @@ abstract class Base extends BaseMiddle
         }
 
         return $this;
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Defines the admin controller
-     *
-     * @return array
-     */
-    public static function announce()
-    {
-        return [];
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Returns an array of permissions which can be configured for the user
-     *
-     * @return array
-     */
-    public static function permissions(): array
-    {
-        return [];
     }
 }

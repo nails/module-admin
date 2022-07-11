@@ -1,0 +1,13 @@
+/* --------------------------------------------------------------
+   Floating controls
+-------------------------------------------------------------- */
+
+.admin-floating-controls {
+    position: sticky;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
+    background: rgba(230, 230, 230, 0.9);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+}

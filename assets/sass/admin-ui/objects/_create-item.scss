@@ -1,0 +1,45 @@
+.create-item {
+    $p: &;
+
+    border-bottom: 1px solid $light-grey;
+    padding: 12px 0;
+    display: flex;
+    align-items: center;
+
+    &__list {
+
+        #{$p} {
+
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+    }
+
+    &__badge {
+        width: 36px;
+        height: 36px;
+        background-color: rgb($brand-color-highlight);
+        border-radius: 5px;
+        font-size: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $white;
+        flex-shrink: 0;
+
+        &--light {
+            color: rgb($brand-color-secondary);
+            background-color: $light-grey;
+        }
+    }
+
+    &__title {
+        font-family: $font-heading-regular;
+    }
+
+    &__description {
+        font-size: 10px;
+        color: $grey;
+    }
+}
