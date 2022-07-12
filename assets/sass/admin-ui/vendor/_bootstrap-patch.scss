@@ -1,0 +1,36 @@
+/**
+ * This file to provide patches for backwards compatability between Bootstrap V3+
+ * https://getbootstrap.com/docs/4.0/migration
+ */
+
+// .btn-xs removed in V4
+.btn {
+    &-xs {
+        padding: 0.25rem 1rem;
+        font-size: 0.875rem;
+        height: 1.75rem;
+        line-height: 1.2rem;
+    }
+
+    &-block {
+        display: block;
+
+        & + & {
+            @extend .mt-1;
+        }
+    }
+
+    //  .btn-default became .btn-secondary in V4
+    &-default {
+        @extend .btn-secondary;
+    }
+
+    &-group-xs > .btn {
+        @extend .btn-xs;
+    }
+}
+
+// .panel became .card in V4
+.panel {
+    @extend .card;
+}
