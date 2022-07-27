@@ -4,10 +4,9 @@ use Nails\Admin\Helper;
 use Nails\Common\Service\Asset;
 use Nails\Factory;
 
-echo '<hr />';
-
 if (empty($isModal)) {
     ?>
+    <hr />
     <footer class="clearfix">
         <small class="float-start">
             Rendered in {elapsed_time} seconds

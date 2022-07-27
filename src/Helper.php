@@ -475,12 +475,13 @@ class Helper
         }
 
         $aUser = [
-            'id'          => !empty($oUser->id) ? $oUser->id : null,
-            'profile_img' => !empty($oUser->profile_img) ? $oUser->profile_img : null,
-            'gender'      => !empty($oUser->gender) ? $oUser->gender : null,
-            'first_name'  => !empty($oUser->first_name) ? $oUser->first_name : null,
-            'last_name'   => !empty($oUser->last_name) ? $oUser->last_name : null,
-            'email'       => !empty($oUser->email) ? $oUser->email : null,
+            'id'          => $oUser->id ?? null,
+            'profile_img' => $oUser->profile_img ?? null,
+            'gender'      => $oUser->gender ?? null,
+            'first_name'  => $oUser->first_name ?? null,
+            'last_name'   => $oUser->last_name ?? null,
+            'email'       => $oUser->email ?? null,
+            'group'       => $oUser->group_name ?? null,
         ];
 
         /** @var View $oView */

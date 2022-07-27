@@ -25,10 +25,9 @@ $sNoDataClass = isset($id) && $id ? '' : 'text-muted';
     <span class="user-data">
         <?php
 
-        $sName = '';
-        $sName .= !empty($first_name) ? $first_name . ' ' : '';
+        $sName = !empty($first_name) ? $first_name . ' ' : '';
         $sName .= !empty($last_name) ? $last_name . ' ' : '';
-        $sName = $sName ? $sName : 'Unknown User';
+        $sName = $sName ?: 'Unknown User';
 
         if (!empty($id) && userHasPermission('admin:auth:accounts:editOthers')) {
 
@@ -50,6 +49,13 @@ $sNoDataClass = isset($id) && $id ? '' : 'text-muted';
         } else {
 
             echo '<small>No email address</small>';
+        }
+
+        if (!empty($group)) {
+            echo sprintf(
+                '<span class="badge rounded-pill bg-secondary">%s</span>',
+                $group
+            );
         }
 
         ?>

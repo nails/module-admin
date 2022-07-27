@@ -114,6 +114,24 @@ class Controller
 
     // --------------------------------------------------------------------------
 
+    public function getPermissions(): array
+    {
+        $aAllPermissions = [];
+
+        foreach ($this->discover() as $aController) {
+
+            /** @var \Nails\Admin\Interfaces\Controller $sController */
+            $sController = $aController['class'];
+            $aPermissions = call_user_func([$sController, 'permissions']);
+
+            dd($aPermissions);
+        }
+
+        return $aAllPermissions;
+    }
+
+    // --------------------------------------------------------------------------
+
     /**
      * @return \Nails\Admin\Interfaces\Controller|null
      */

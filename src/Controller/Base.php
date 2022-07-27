@@ -29,7 +29,17 @@ use Nails\Factory;
 /**
  * Allow the app to add functionality, if needed
  */
-if (class_exists('\App\Admin\Controller\Base')) {
+if (!class_exists('\App\Admin\Controller\Base')) {
+    abstract class BaseMiddle
+    {
+        protected UserFeedback $oUserFeedback;
+
+        public function __construct()
+        {
+            $this->oUserFeedback = Factory::service('UserFeedback');
+        }
+    }
+} else {
     abstract class BaseMiddle extends \App\Admin\Controller\Base
     {
         protected \AdminRouter $oRouter;
@@ -38,16 +48,6 @@ if (class_exists('\App\Admin\Controller\Base')) {
         public function __construct()
         {
             parent::__construct();
-            $this->oUserFeedback = Factory::service('UserFeedback');
-        }
-    }
-} else {
-    abstract class BaseMiddle
-    {
-        protected UserFeedback $oUserFeedback;
-
-        public function __construct()
-        {
             $this->oUserFeedback = Factory::service('UserFeedback');
         }
     }

@@ -23,7 +23,7 @@ class ChangeLog extends DefaultController
     const CONFIG_MODEL_NAME     = 'ChangeLog';
     const CONFIG_MODEL_PROVIDER = Constants::MODULE_SLUG;
     const CONFIG_SIDEBAR_GROUP  = 'Logs';
-    const CONFIG_SIDEBAR_FORMAT = 'Browse Admin Logs';
+    const CONFIG_SIDEBAR_FORMAT = 'Browse Change Logs';
     const CONFIG_SORT_OPTIONS   = [
         'Created' => 'created',
     ];
@@ -195,6 +195,8 @@ class ChangeLog extends DefaultController
 
         return $oFilter;
     }
+
+    // --------------------------------------------------------------------------
 
     public function view()
     {

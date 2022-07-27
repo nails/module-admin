@@ -1,1 +1,87 @@
-.group-dashboard.help th.duration,.group-dashboard.help td.duration,.group-dashboard.help th.actions,.group-dashboard.help td.actions{width:100px;text-align:center}.group-dashboard .alert--dashboard+.dashboard-widgets{border-top:1px solid #efefef;padding-top:20px}.group-logs.sitelog table th.date{min-width:175px}.group-logs.sitelog table th.lines,.group-logs.sitelog table td.lines{text-align:center;width:75px}.group-logs.sitelog table th.actions{width:75px}.group-logs.sitelog.view ol{padding:0;margin:0;border:1px solid #ccc;background:#fff}.group-logs.sitelog.view ol li{padding:.25em .5em;margin:0;font-family:monospace;border-bottom:1px solid #efefef;margin-left:0;list-style-position:inside}.group-logs.sitelog.view ol li:nth-child(even){background:#fefefe}.group-logs.sitelog.view ol li:hover{background:#efefef}.group-logs.events table th.actions{width:175px}.group-utilities.user-access .field{min-height:50px}.group-utilities.user-access .field .label{position:relative}.group-utilities.user-access .field .label small{position:absolute;right:17px;z-index:999}.group-admin-styleguide>section{margin-bottom:3em}.group-admin-styleguide>section>.title{font-weight:bold;font-size:1.2em;margin-bottom:1em}.group-admin-styleguide>section>.description{margin-bottom:1em}.group-admin-styleguide>section>.body{border-top:2px dashed #ccc;border-bottom:2px dashed #ccc;padding:2em 0}
+/*!***********************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-1.use[1]!./node_modules/postcss-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./assets/sass/admin.scss ***!
+  \***********************************************************************************************************************************************************************************/
+/* --------------------------------------------------------------
+   Nails Dashboard Admin Styles
+-------------------------------------------------------------- */
+.group-dashboard.help th.duration,
+.group-dashboard.help td.duration,
+.group-dashboard.help th.actions,
+.group-dashboard.help td.actions {
+  width: 100px;
+  text-align: center;
+}
+.group-dashboard .alert--dashboard + .dashboard-widgets {
+  border-top: 1px solid #efefef;
+  padding-top: 20px;
+}
+
+/* --------------------------------------------------------------
+   Nails Logs Module Admin Styles
+-------------------------------------------------------------- */
+.group-logs.sitelog table th.date {
+  min-width: 175px;
+}
+.group-logs.sitelog table th.lines,
+.group-logs.sitelog table td.lines {
+  text-align: center;
+  width: 75px;
+}
+.group-logs.sitelog table th.actions {
+  width: 75px;
+}
+.group-logs.sitelog.view ol {
+  padding: 0;
+  margin: 0;
+  border: 1px solid #cccccc;
+  background: #ffffff;
+}
+.group-logs.sitelog.view ol li {
+  padding: 0.25em 0.5em;
+  margin: 0;
+  font-family: monospace;
+  border-bottom: 1px solid #efefef;
+  margin-left: 0;
+  list-style-position: inside;
+}
+.group-logs.sitelog.view ol li:nth-child(even) {
+  background: #fefefe;
+}
+.group-logs.sitelog.view ol li:hover {
+  background: #efefef;
+}
+.group-logs.events table th.actions {
+  width: 175px;
+}
+
+/* --------------------------------------------------------------
+   Nails Utilities Module Admin Styles
+-------------------------------------------------------------- */
+.group-utilities.user-access .field {
+  min-height: 50px;
+}
+.group-utilities.user-access .field .label {
+  position: relative;
+}
+.group-utilities.user-access .field .label small {
+  position: absolute;
+  right: 17px;
+  z-index: 999;
+}
+
+.group-admin-styleguide > section {
+  margin-bottom: 3em;
+}
+.group-admin-styleguide > section > .title {
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-bottom: 1em;
+}
+.group-admin-styleguide > section > .description {
+  margin-bottom: 1em;
+}
+.group-admin-styleguide > section > .body {
+  border-top: 2px dashed #cccccc;
+  border-bottom: 2px dashed #cccccc;
+  padding: 2em 0;
+}

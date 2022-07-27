@@ -79,13 +79,6 @@ return [
                 return new Model\Session();
             }
         },
-        'SiteLog'         => function (): Model\SiteLog {
-            if (class_exists('\App\Admin\Model\SiteLog')) {
-                return new \App\Admin\Model\SiteLog();
-            } else {
-                return new Model\SiteLog();
-            }
-        },
     ],
     'resources' => [
         'ChangeLog'        => function ($mObj): Resource\ChangeLog {
