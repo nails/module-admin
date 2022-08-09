@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Admin\Controller;
 
+use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\Base;
 use Nails\Admin\Helper;
@@ -24,7 +25,7 @@ class Help extends Base
         /** @var \Nails\Admin\Model\Help $oHelpModel */
         $oHelpModel = Factory::model('Help', Constants::MODULE_SLUG);
 
-        if (userHasPermission('admin:admin:help:view') && $oHelpModel->countAll()) {
+        if (userHasPermission(Permission\Help\View::class) && $oHelpModel->countAll()) {
 
             /** @var \Nails\Admin\Factory\Nav $oNavGroup */
             $oNavGroup = Factory::factory('Nav', Constants::MODULE_SLUG);
@@ -39,18 +40,6 @@ class Help extends Base
 
     // --------------------------------------------------------------------------
 
-    public static function permissions(): array
-    {
-        return array_merge(
-            parent::permissions(),
-            [
-                'view' => 'Can view help videos',
-            ]
-        );
-    }
-
-    // --------------------------------------------------------------------------
-
     /**
      * Renders the admin help pagge
      *
@@ -58,7 +47,7 @@ class Help extends Base
      */
     public function index()
     {
-        if (!userHasPermission('admin:admin:help:view')) {
+        if (!userHasPermission(Permission\Help\View::class)) {
             unauthorised();
         }
 

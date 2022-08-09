@@ -137,7 +137,7 @@ if (empty($isModal)) {
                 <div class="topbar__avatar"
                      style="background-image: url('<?=cdnAvatar(activeUser('id'))?>')"
                 ></div>
-                <h3 class="heading--sm color--white bold  u-md-ml5 u-ml15 u-mb0 d-none d-md-inline">
+                <h3 class="topbar__name heading--sm color--white bold  u-md-ml5 u-ml15 u-mb0 d-none d-md-inline">
                     <?=activeUser('name')?>
                 </h3>
                 <a href="<?=siteUrl(\Nails\Auth\Admin\Controller\Accounts::url('edit/' . activeUser('id')))?>" class="btn btn__secondary u-md-ml5 u-ml15">

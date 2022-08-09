@@ -6,11 +6,14 @@ if (!function_exists('adminHelper')) {
     /**
      * Call an adminHelper static method, the first parameter should be the method to call,
      * all following params will be passed as if been called directly.
+     *
      * @return mixed
      * @throws HelperException
      */
     function adminHelper()
     {
+        trigger_error(__FUNCTION__ . 'is deprecated', E_USER_DEPRECATED);
+
         $aArgs   = func_get_args();
         $sMethod = array_shift($aArgs);
 
@@ -38,6 +41,7 @@ if (!function_exists('adminDynamicTable')) {
      */
     function adminDynamicTable($sKey, array $aFields, array $aData = [])
     {
+        trigger_error(__FUNCTION__ . 'is deprecated', E_USER_DEPRECATED);
         return \Nails\Admin\Helper::dynamicTable($sKey, $aFields, $aData);
     }
 }

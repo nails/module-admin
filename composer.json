@@ -54,6 +54,11 @@
             "moduleName": "admin",
             "type": "module",
             "namespace": "Nails\\Admin\\",
+            "autoload": {
+                "helpers": [
+                    "permission"
+                ]
+            },
             "data": {
                 "nails/module-api": {
                     "namespace": "admin"

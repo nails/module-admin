@@ -4,6 +4,7 @@ use Nails\Admin\Factory;
 use Nails\Admin\Model;
 use Nails\Admin\Resource;
 use Nails\Admin\Service;
+use Nails\Common\Factory\Component;
 
 return [
     'services'  => [
@@ -26,6 +27,13 @@ return [
                 return new \App\Admin\Service\Dashboard\Widget();
             } else {
                 return new Service\Dashboard\Widget();
+            }
+        },
+        'Permission'      => function (): Service\Permission {
+            if (class_exists('\App\Admin\Service\Permission')) {
+                return new \App\Admin\Service\Permission();
+            } else {
+                return new Service\Permission();
             }
         },
     ],
@@ -185,6 +193,13 @@ return [
                 return new \App\Admin\Factory\Nav\Alert();
             } else {
                 return new Factory\Nav\Alert();
+            }
+        },
+        'PermissionGroup'              => function (Component $oComponent, array $aPermissions = []): Factory\Permission\Group {
+            if (class_exists('\App\Admin\Factory\Permission\Group')) {
+                return new \App\Admin\Factory\Permission\Group($oComponent, $aPermissions);
+            } else {
+                return new Factory\Permission\Group($oComponent, $aPermissions);
             }
         },
         'QuickActionAction'            => function (string $sLabel, string $sSubLabel, string $sUrl): Factory\QuickAction\Action {

@@ -57,11 +57,6 @@ abstract class DefaultController extends Base
     const CONFIG_MODEL_PROVIDER = 'app';
 
     /**
-     * The permission string to use when checking permissions; if not provided then no permissions required
-     */
-    const CONFIG_PERMISSION = '';
-
-    /**
      * The singular and plural name of the item being managed; defaults to the model name
      */
     const CONFIG_TITLE_SINGLE = '';
@@ -138,9 +133,29 @@ abstract class DefaultController extends Base
     const CONFIG_CAN_CREATE = true;
 
     /**
+     * The permission required to create
+     */
+    const CONFIG_PERMISSION_CREATE = null;
+
+    /**
      * Specify whether the controller supports item editing
      */
     const CONFIG_CAN_EDIT = true;
+
+    /**
+     * The permission required to edit
+     */
+    const CONFIG_PERMISSION_EDIT = null;
+
+    /**
+     * Specify whether the controller supports browsing items
+     */
+    const CONFIG_CAN_BROWSE = true;
+
+    /**
+     * The permission required to browse
+     */
+    const CONFIG_PERMISSION_BROWSE = null;
 
     /**
      * Specify whether the controller supports linking to the item
@@ -148,9 +163,19 @@ abstract class DefaultController extends Base
     const CONFIG_CAN_VIEW = true;
 
     /**
+     * The permission required to view
+     */
+    const CONFIG_PERMISSION_VIEW = null;
+
+    /**
      * Specify whether the controller supports item deletion
      */
     const CONFIG_CAN_DELETE = true;
+
+    /**
+     * The permission required to delete
+     */
+    const CONFIG_PERMISSION_DELETE = null;
 
     /**
      * Specify whether the controller supports item restoration
@@ -158,14 +183,29 @@ abstract class DefaultController extends Base
     const CONFIG_CAN_RESTORE = true;
 
     /**
+     * The permission required to restore
+     */
+    const CONFIG_PERMISSION_RESTORE = null;
+
+    /**
      * Specify whether the controller supports item copying
      */
     const CONFIG_CAN_COPY = true;
 
     /**
+     * The permission required to copy
+     */
+    const CONFIG_PERMISSION_COPY = null;
+
+    /**
      * Specify whether the controller supports item sorting
      */
     const CONFIG_CAN_SORT = true;
+
+    /**
+     * The permission required to sort
+     */
+    const CONFIG_PERMISSION_SORT = null;
 
     /**
      * Additional data to pass into the getAll call on the index view
@@ -445,9 +485,8 @@ abstract class DefaultController extends Base
      *       // Additional attributes to add to the button
      *       'attr'       => '',
      *
-     *       // If required, a permission string to check in order to render the button;
-     *       // will be appended to `admin:$CONFIG['PERMISSION']:`
-     *       'permission' => 'edit',
+     *       // If required, a permission class to check in order to render the button;
+     *       'permission' => \Nails\Admin\Admin\Permission\SuperUser,
      *
      *       // An expression to determine if the button can be rendered
      *       'enabled'   => function($oItem) { return true; },
@@ -498,7 +537,7 @@ abstract class DefaultController extends Base
             ->setIcon(static::CONFIG_SIDEBAR_ICON)
             ->setKeywords(static::CONFIG_SIDEBAR_SEARCH_TERMS);
 
-        if (static::userCan(static::EDIT_MODE_BROWSE)) {
+        if (static::userCan(static::CONFIG_PERMISSION_BROWSE)) {
             $oNavGroup
                 ->addAction(
                     sprintf(static::CONFIG_SIDEBAR_FORMAT, static::getTitlePlural()),
@@ -511,32 +550,6 @@ abstract class DefaultController extends Base
 
     // --------------------------------------------------------------------------
 
-    public static function permissions(): array
-    {
-        $aPermissions = parent::permissions();
-
-        if (!empty(static::CONFIG_PERMISSION)) {
-
-            $aPermissions[static::EDIT_MODE_BROWSE]  = 'Can browse items';
-            $aPermissions[static::EDIT_MODE_CREATE]  = 'Can create items';
-            $aPermissions[static::EDIT_MODE_EDIT]    = 'Can edit items';
-            $aPermissions[static::EDIT_MODE_DELETE]  = 'Can delete items';
-            $aPermissions[static::EDIT_MODE_RESTORE] = 'Can restore items';
-
-            if (static::isCopyButtonEnabled()) {
-                $aPermissions[static::EDIT_MODE_COPY] = 'Can copy items';
-            }
-
-            if (static::isSortButtonEnabled()) {
-                $aPermissions[static::EDIT_MODE_SORT] = 'Can sort items';
-            }
-        }
-
-        return $aPermissions;
-    }
-
-    // --------------------------------------------------------------------------
-
     /**
      * Browse all items
      *
@@ -544,7 +557,7 @@ abstract class DefaultController extends Base
      */
     public function index(): void
     {
-        if (!static::userCan(static::EDIT_MODE_BROWSE)) {
+        if (!static::userCan(static::CONFIG_PERMISSION_BROWSE)) {
             unauthorised();
         }
 
@@ -643,8 +656,6 @@ abstract class DefaultController extends Base
     {
         if (!static::isCreateButtonEnabled()) {
             show404();
-        } elseif (!static::userCan(static::EDIT_MODE_CREATE)) {
-            unauthorised();
         }
 
         /** @var Database $oDb */
@@ -808,8 +819,8 @@ abstract class DefaultController extends Base
      */
     public function edit(): void
     {
-        if (!static::userCan(static::EDIT_MODE_EDIT)) {
-            unauthorised();
+        if (!static::isEditButtonEnabled()) {
+            show404();
         }
 
         /** @var Database $oDb */
@@ -964,8 +975,8 @@ abstract class DefaultController extends Base
      */
     public function delete(): void
     {
-        if (!static::userCan(static::EDIT_MODE_DELETE)) {
-            unauthorised();
+        if (!static::isDeleteButtonEnabled()) {
+            show404();
         }
 
         /** @var Database $oDb */
@@ -1029,8 +1040,8 @@ abstract class DefaultController extends Base
      */
     public function restore(): void
     {
-        if (!static::userCan(static::EDIT_MODE_RESTORE)) {
-            unauthorised();
+        if (!static::isRestoreButtonEnabled()) {
+            show404();
         }
 
         /** @var Uri $oUri */
@@ -1082,8 +1093,6 @@ abstract class DefaultController extends Base
     {
         if (!static::isSortButtonEnabled()) {
             show404();
-        } elseif (!static::userCan(static::EDIT_MODE_SORT)) {
-            unauthorised();
         }
 
         /** @var Input $oInput */
@@ -1202,8 +1211,8 @@ abstract class DefaultController extends Base
      */
     public function copy()
     {
-        if (!static::userCan(static::EDIT_MODE_COPY)) {
-            unauthorised();
+        if (!static::isCopyButtonEnabled()) {
+            show404();
         }
 
         /** @var Database $oDb */
@@ -1287,7 +1296,6 @@ abstract class DefaultController extends Base
             'CAN_RESTORE'            => static::CONFIG_CAN_RESTORE,
             'CAN_COPY'               => static::CONFIG_CAN_COPY,
             'CAN_SORT'               => static::CONFIG_CAN_SORT,
-            'PERMISSION'             => static::CONFIG_PERMISSION,
             'TITLE_SINGLE'           => static::getTitleSingle(),
             'TITLE_PLURAL'           => static::getTitlePlural(),
             'SIDEBAR_GROUP'          => static::getSidebarGroup(),
@@ -1589,7 +1597,7 @@ abstract class DefaultController extends Base
     protected static function localisedItemCanBeCreated(Resource $oItem)
     {
         //  New versions can only be created if the user has permissions and there is a remaining supported locale
-        if (static::CONFIG_CAN_CREATE && static::userCan(static::EDIT_MODE_CREATE)) {
+        if (static::CONFIG_CAN_CREATE && static::userCan(static::CONFIG_PERMISSION_CREATE)) {
             return !empty($oItem->missing_locales);
         }
         return false;
@@ -1688,13 +1696,13 @@ abstract class DefaultController extends Base
     /**
      * Determines whether a user has permission to perform an action
      *
-     * @param string $sPermission The permission to check
+     * @param \Nails\Admin\Interfaces\Permission|string $mPermission The permission to check
      *
      * @return bool
      */
-    protected static function userCan(string $sPermission): bool
+    protected static function userCan($mPermission): bool
     {
-        return empty(static::CONFIG_PERMISSION) || userHasPermission('admin:' . static::CONFIG_PERMISSION . ':' . $sPermission);
+        return empty($mPermission) || userHasPermission($mPermission);
     }
 
     // --------------------------------------------------------------------------
@@ -2369,7 +2377,7 @@ abstract class DefaultController extends Base
     protected static function isCreateButtonEnabled(): bool
     {
         return static::CONFIG_CAN_CREATE
-            && static::userCan(static::EDIT_MODE_CREATE);
+            && static::userCan(static::CONFIG_PERMISSION_CREATE);
     }
 
     // --------------------------------------------------------------------------
@@ -2399,7 +2407,7 @@ abstract class DefaultController extends Base
     protected static function isEditButtonEnabled($oItem = null): bool
     {
         return static::CONFIG_CAN_EDIT
-            && static::userCan(static::EDIT_MODE_EDIT);
+            && static::userCan(static::CONFIG_PERMISSION_EDIT);
     }
 
     // --------------------------------------------------------------------------
@@ -2414,7 +2422,7 @@ abstract class DefaultController extends Base
     protected static function isDeleteButtonEnabled($oItem = null): bool
     {
         return static::CONFIG_CAN_DELETE
-            && static::userCan(static::EDIT_MODE_DELETE);
+            && static::userCan(static::CONFIG_PERMISSION_DELETE);
     }
 
     // --------------------------------------------------------------------------
@@ -2429,7 +2437,7 @@ abstract class DefaultController extends Base
     protected static function isRestoreButtonEnabled($oItem = null): bool
     {
         return static::CONFIG_CAN_RESTORE
-            && static::userCan(static::EDIT_MODE_RESTORE)
+            && static::userCan(static::CONFIG_PERMISSION_RESTORE)
             && !static::getModel()->isDestructiveDelete();
     }
 
@@ -2445,7 +2453,7 @@ abstract class DefaultController extends Base
     protected static function isCopyButtonEnabled($oItem = null): bool
     {
         return static::CONFIG_CAN_COPY
-            && static::userCan(static::EDIT_MODE_COPY)
+            && static::userCan(static::CONFIG_PERMISSION_COPY)
             && classUses(static::getModel(), Copyable::class)
             && static::isEditButtonEnabled($oItem)
             && static::isCreateButtonEnabled();
@@ -2463,7 +2471,7 @@ abstract class DefaultController extends Base
     protected static function isSortButtonEnabled(): bool
     {
         return static::CONFIG_CAN_SORT
-            && static::userCan(static::EDIT_MODE_SORT)
+            && static::userCan(static::CONFIG_PERMISSION_SORT)
             && classUses(static::getModel(), Sortable::class)
             && static::isEditButtonEnabled();
     }

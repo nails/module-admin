@@ -12,6 +12,7 @@
 
 namespace Nails\Admin\Admin\Controller;
 
+use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\Base;
 use Nails\Admin\Helper;
@@ -35,32 +36,21 @@ class Utilities extends Base
 
     public static function announce()
     {
+        /** @var \Nails\Admin\Factory\Nav $oNavGroup */
         $oNavGroup = Factory::factory('Nav', Constants::MODULE_SLUG);
-        $oNavGroup->setLabel('Utilities');
-        $oNavGroup->setIcon('fa-sliders-h');
+        $oNavGroup
+            ->setLabel('Utilities')
+            ->setIcon('fa-sliders-h');
 
-        if (userHasPermission('admin:admin:utilities:rewriteRoutes')) {
+        if (userHasPermission(Permission\Utilities\Routes\Rewrite::class)) {
             $oNavGroup->addAction('Rewrite Routes', 'rewrite_routes');
         }
 
-        if (userHasPermission('admin:admin:utilities:export')) {
+        if (userHasPermission(Permission\DataExport\Generate::class)) {
             $oNavGroup->addAction('Export Data', 'export');
         }
 
         return $oNavGroup;
-    }
-
-    // --------------------------------------------------------------------------
-
-    public static function permissions(): array
-    {
-        return array_merge(
-            parent::permissions(),
-            [
-                'rewriteRoutes' => 'Can Rewrite Routes',
-                'export'        => 'Can Export Data',
-            ]
-        );
     }
 
     // --------------------------------------------------------------------------
@@ -72,7 +62,7 @@ class Utilities extends Base
      */
     public function rewrite_routes()
     {
-        if (!userHasPermission('admin:admin:utilities:rewriteRoutes')) {
+        if (!userHasPermission(Permission\Utilities\Routes\Rewrite::class)) {
             unauthorised();
         }
 
@@ -111,7 +101,7 @@ class Utilities extends Base
      */
     public function export()
     {
-        if (!userHasPermission('admin:admin:utilities:export')) {
+        if (!userHasPermission(Permission\DataExport\Generate::class)) {
             unauthorised();
         }
 

@@ -117,11 +117,14 @@ abstract class Base extends BaseMiddle implements Controller
 
     // --------------------------------------------------------------------------
 
-    public static function permissions(): array
-    {
-        return [];
-    }
-
+    /**
+     * Compiles the base URL for the controller
+     *
+     * @param string $sUrl
+     *
+     * @return string
+     * @throws \Nails\Common\Exception\FactoryException
+     */
     public static function url(string $sUrl = ''): string
     {
         /** @var \Nails\Admin\Service\Controller $oControllerService */

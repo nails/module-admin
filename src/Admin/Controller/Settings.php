@@ -2,6 +2,7 @@
 
 namespace Nails\Admin\Admin\Controller;
 
+use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\Base;
 use Nails\Admin\Factory\Nav;
@@ -40,10 +41,11 @@ class Settings extends Base
             ->setLabel('Settings')
             ->setIcon('fa-wrench');
 
-        static::discoverSettings();
+        if (userHasPermission(Permission\Settings\Manage::class)) {
 
-        foreach (static::$aSettings as $sSlug => $oSetting) {
-            if (static::userHasPermission($oSetting)) {
+            static::discoverSettings();
+
+            foreach (static::$aSettings as $sSlug => $oSetting) {
 
                 $oNav->addAction(
                     $oSetting->label,
@@ -146,6 +148,10 @@ class Settings extends Base
      */
     public function index()
     {
+        if (!userHasPermission(Permission\Settings\Manage::class)) {
+            unauthorised();
+        }
+
         /** @var Input $oInput */
         $oInput = Factory::service('Input');
         /** @var FormValidation $oFormValidation */
@@ -156,9 +162,6 @@ class Settings extends Base
         $oSetting = static::$aSettings[$oInput->get('setting')] ?? null;
         if (empty($oSetting)) {
             show404();
-
-        } elseif (!static::userHasPermission($oSetting)) {
-            unauthorised();
 
         } elseif ($oInput->post()) {
             try {
@@ -219,21 +222,6 @@ class Settings extends Base
         );
 
         Helper::loadView('index');
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Determines whether the user has permission to access a aprticular setting
-     *
-     * @param \stdClass $oSetting
-     *
-     * @return bool
-     */
-    protected static function userHasPermission(\stdClass $oSetting): bool
-    {
-        return userHasPermission('admin:admin:settings:' . $oSetting->slug)
-            || userHasPermission('admin:admin:settings:' . $oSetting->slug . ':*');
     }
 
     // --------------------------------------------------------------------------

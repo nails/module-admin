@@ -2,6 +2,7 @@
 
 namespace Nails\Admin\Admin\Controller;
 
+use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\DefaultController;
 use Nails\Admin\Factory\IndexFilter;
@@ -20,28 +21,28 @@ use Nails\Factory;
  */
 class ChangeLog extends DefaultController
 {
-    const CONFIG_MODEL_NAME     = 'ChangeLog';
-    const CONFIG_MODEL_PROVIDER = Constants::MODULE_SLUG;
-    const CONFIG_SIDEBAR_GROUP  = 'Logs';
-    const CONFIG_SIDEBAR_FORMAT = 'Browse Change Logs';
-    const CONFIG_SORT_OPTIONS   = [
+    const CONFIG_MODEL_NAME        = 'ChangeLog';
+    const CONFIG_MODEL_PROVIDER    = Constants::MODULE_SLUG;
+    const CONFIG_SIDEBAR_GROUP     = 'Logs';
+    const CONFIG_SIDEBAR_FORMAT    = 'Browse Change Logs';
+    const CONFIG_SORT_OPTIONS      = [
         'Created' => 'created',
     ];
-    const CONFIG_SORT_DIRECTION = self::SORT_DESCENDING;
-    const CONFIG_INDEX_FIELDS   = [
+    const CONFIG_SORT_DIRECTION    = self::SORT_DESCENDING;
+    const CONFIG_INDEX_FIELDS      = [
         'Changes' => null,
         'Date'    => 'created',
     ];
-    const CONFIG_INDEX_DATA     = [
+    const CONFIG_INDEX_DATA        = [
         'expand' => [
             'user',
         ],
     ];
-    const CONFIG_CAN_CREATE     = false;
-    const CONFIG_CAN_DELETE     = false;
-    const CONFIG_CAN_EDIT       = false;
-    const CONFIG_CAN_VIEW       = false;
-    const CONFIG_PERMISSION     = 'admin:logs:change';
+    const CONFIG_PERMISSION_BROWSE = Permission\ChangeLog\Browse::class;
+    const CONFIG_CAN_CREATE        = false;
+    const CONFIG_CAN_DELETE        = false;
+    const CONFIG_CAN_EDIT          = false;
+    const CONFIG_CAN_VIEW          = false;
 
     // --------------------------------------------------------------------------
 
@@ -63,7 +64,7 @@ class ChangeLog extends DefaultController
             'btn-default fancybox',
             null,
             null,
-            fn(\Nails\Admin\Resource\ChangeLog $oItem) => (bool) $oItem->getChangesAsList()
+            fn(\Nails\Admin\Resource\ChangeLog $oItem) => userHasPermission(Permission\ChangeLog\View::class) && $oItem->getChangesAsList()
         );
     }
 
@@ -200,6 +201,10 @@ class ChangeLog extends DefaultController
 
     public function view()
     {
+        if (!userHasPermission(Permission\ChangeLog\View::class)) {
+            show404();
+        }
+
         $this->data['oItem'] = $this->getItem();
         Helper::loadView('view');
     }

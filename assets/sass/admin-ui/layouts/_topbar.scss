@@ -40,4 +40,10 @@
         background-size: cover;
         flex-shrink: 0;
     }
+
+    &__name {
+        background: none;
+        border: none;
+        padding: 0;
+    }
 }

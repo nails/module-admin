@@ -32,7 +32,7 @@ class Dashboard extends Base
     /**
      * Announces this controller's navGroups
      *
-     * @return stdClass
+     * @return \Nails\Admin\Factory\Nav
      */
     public static function announce()
     {
