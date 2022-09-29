@@ -15,6 +15,7 @@ namespace Nails\Admin\Controller;
 
 use Nails\Admin\Constants;
 use Nails\Admin\Events;
+use Nails\Admin\Helper;
 use Nails\Admin\Interfaces\Controller;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Service\Asset;
@@ -62,7 +63,14 @@ if (!class_exists('\App\Admin\Controller\Base')) {
  */
 abstract class Base extends BaseMiddle implements Controller
 {
-    public $data;
+    /**
+     * Will be passed to the views
+     *
+     * @var array
+     */
+    public array $data = [];
+
+    // --------------------------------------------------------------------------
 
     /**
      * Construct the controller, load all the admin assets, etc
@@ -80,8 +88,15 @@ abstract class Base extends BaseMiddle implements Controller
 
         // --------------------------------------------------------------------------
 
-        //  Provide access to the main controller's data property
+        /**
+         * Provide access to the main controller's data property
+         */
         $this->data =& getControllerData();
+
+        // --------------------------------------------------------------------------
+
+        // Prevent the title being populated unnecessarily
+        $this->data['oMetaData']->setTitleAppendAppName(false);
 
         // --------------------------------------------------------------------------
 
@@ -184,6 +199,11 @@ abstract class Base extends BaseMiddle implements Controller
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @return $this
+     * @throws \Nails\Common\Exception\AssetException
+     * @throws \Nails\Common\Exception\FactoryException
+     */
     protected function loadCss(): self
     {
         /** @var Asset $oAsset */
@@ -201,6 +221,8 @@ abstract class Base extends BaseMiddle implements Controller
     /**
      * Load all Admin orientated JS
      *
+     * @return $this
+     * @throws \Nails\Common\Exception\AssetException
      * @throws \Nails\Common\Exception\FactoryException
      */
     protected function loadJs(): self
@@ -229,6 +251,7 @@ abstract class Base extends BaseMiddle implements Controller
     /**
      * Load services required by admin
      *
+     * @throws \Nails\Common\Exception\AssetException
      * @throws \Nails\Common\Exception\FactoryException
      */
     protected function loadLibraries(): self
@@ -287,7 +310,9 @@ abstract class Base extends BaseMiddle implements Controller
     /**
      * Autoload component items
      *
+     * @throws \Nails\Common\Exception\AssetException
      * @throws \Nails\Common\Exception\FactoryException
+     * @throws \Nails\Common\Exception\NailsException
      */
     protected function autoLoad(): self
     {
@@ -350,6 +375,59 @@ abstract class Base extends BaseMiddle implements Controller
             }
         }
 
+        return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Set the page titles for the admin header
+     *
+     * @param string[] $aTitles
+     *
+     * @return $this
+     */
+    protected function setTitles(array $aTitles): self
+    {
+        $this->data['oMetaData']
+            ->setTitles(
+                array_merge(
+                    ['Admin'],
+                    $aTitles
+                )
+            );
+        return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Set some data for the view
+     *
+     * @param string $sKey   The key to set
+     * @param mixed  $mValue The value to set
+     *
+     * @return $this
+     */
+    protected function setData(string $sKey, $mValue): self
+    {
+        $this->data[$sKey] = $mValue;
+        return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Chainable shortcut to Helper::loadView
+     *
+     * @param string $sView
+     *
+     * @return $this
+     * @throws \Nails\Common\Exception\FactoryException
+     */
+    protected function loadView(string $sView): self
+    {
+        Helper::loadView($sView);
         return $this;
     }
 }

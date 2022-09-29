@@ -17,7 +17,14 @@ const API = {
         heartbeat: (token) => `admin/session/${token}/heartbeat`,
         inactive: (token) => `admin/session/${token}/inactive`,
     },
-    quickAction: (query, origin) => `admin/quickAction?query=${query}&origin=${origin}`
+    UI: {
+        header: {
+            button: {
+                create: 'admin/ui/header/button/create',
+                search: (query) => `admin/ui/header/button/search?query=${query}`
+            }
+        }
+    }
 };
 
 export default API;

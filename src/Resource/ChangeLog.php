@@ -2,6 +2,7 @@
 
 namespace Nails\Admin\Resource;
 
+use Nails\Auth\Admin\Controller\Accounts;
 use Nails\Auth\Constants;
 use Nails\Auth\Resource\User;
 use Nails\Common\Resource\Entity;
@@ -67,7 +68,7 @@ class ChangeLog extends Entity
 
         return implode(' ', array_filter([
             $this->getUser()
-                ? anchor('admin/auth/accounts/edit/' . $this->getUser()->id, $this->getUser()->name)
+                ? anchor(Accounts::url('edit/' . $this->getUser()->id), $this->getUser()->name)
                 : 'Someone',
             $this->verb,
             $this->article,

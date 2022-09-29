@@ -33,6 +33,7 @@ class Dashboard extends Base
      * Announces this controller's navGroups
      *
      * @return \Nails\Admin\Factory\Nav
+     * @throws \Nails\Common\Exception\FactoryException
      */
     public static function announce()
     {
@@ -52,14 +53,16 @@ class Dashboard extends Base
      * The admin homepage/dashboard
      *
      * @return void
+     * @throws \Nails\Common\Exception\FactoryException
+     * @throws \Nails\Common\Exception\NailsException
      */
     public function index()
     {
-        $this->data['page']->title = 'Dashboard';
-        $this->data['aAlerts']     = $this->getDashboardAlerts();
-        $this->data['aWidgets']    = $this->getDashboardWidgets();
-
-        Helper::loadView('index');
+        $this
+            ->setTitles(['Dashboard'])
+            ->setData('aAlerts', $this->getDashboardAlerts())
+            ->setData('aWidgets', $this->getDashboardWidgets())
+            ->loadView('index');
     }
 
     // --------------------------------------------------------------------------
@@ -68,6 +71,7 @@ class Dashboard extends Base
      * Returns any dashboard alerts
      *
      * @return Alert[]
+     * @throws \Nails\Common\Exception\NailsException
      */
     protected function getDashboardAlerts(): array
     {
@@ -93,31 +97,39 @@ class Dashboard extends Base
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @return array
+     * @throws \Nails\Common\Exception\FactoryException
+     */
     protected function getDashboardWidgets(): array
     {
         /** @var Widget $oWidgets */
         $oWidgets = Factory::service('DashboardWidget', Constants::MODULE_SLUG);
-        return array_map(function (\Nails\Admin\Resource\Dashboard\Widget $oWidget) {
+        return array_values(
+            array_filter(
+                array_map(function (\Nails\Admin\Resource\Dashboard\Widget $oWidget) {
 
-            $sClass = $oWidget->slug;
-            /** @var \Nails\Admin\Interfaces\Dashboard\Widget $oInstance */
-            $oInstance = new $sClass($oWidget->config);
+                    $sClass = $oWidget->slug;
+                    /** @var \Nails\Admin\Interfaces\Dashboard\Widget $oInstance */
+                    $oInstance = new $sClass($oWidget->config);
 
-            return [
-                'id'           => $oWidget->id,
-                'slug'         => $oWidget->slug,
-                'title'        => $oInstance->getTitle(),
-                'description'  => $oInstance->getDescription(),
-                'image'        => $oInstance->getImage(),
-                'body'         => $oInstance->getBody(),
-                'padded'       => $oInstance->isPadded(),
-                'configurable' => $oInstance->isConfigurable(),
-                'x'            => $oWidget->x,
-                'y'            => $oWidget->y,
-                'w'            => $oWidget->w,
-                'h'            => $oWidget->h,
-                'config'       => (object) $oWidget->config,
-            ];
-        }, $oWidgets->getWidgetsForUser());
+                    return $oInstance->isEnabled() ? [
+                        'id'           => $oWidget->id,
+                        'slug'         => $oWidget->slug,
+                        'title'        => $oInstance->getTitle(),
+                        'description'  => $oInstance->getDescription(),
+                        'image'        => $oInstance->getImage(),
+                        'body'         => $oInstance->getBody(),
+                        'padded'       => $oInstance->isPadded(),
+                        'configurable' => $oInstance->isConfigurable(),
+                        'x'            => $oWidget->x,
+                        'y'            => $oWidget->y,
+                        'w'            => $oWidget->w,
+                        'h'            => $oWidget->h,
+                        'config'       => (object) $oWidget->config,
+                    ] : null;
+                }, $oWidgets->getWidgetsForUser())
+            )
+        );
     }
 }

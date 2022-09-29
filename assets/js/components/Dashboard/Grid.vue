@@ -19,7 +19,8 @@
                     v-on:click="add"
                     v-bind:disabled="!widgets.length"
                 >
-                    Add a widget
+                    <span v-if="!widgets.length">No widgets available</span>
+                    <span v-else>Add a widget</span>
                 </button>
             </p>
         </div>
@@ -380,10 +381,8 @@ export default {
          */
         buildWidgetSelectUi() {
 
-
             let list = document.createElement('ul');
             list.classList.add(this.classes.instance.cards);
-
 
             this.widgets.map((widget) => {
                 let li = document.createElement('li');

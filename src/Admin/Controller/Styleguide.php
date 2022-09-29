@@ -25,7 +25,8 @@ class Styleguide extends Base
 
     public function index()
     {
-        $this->data['page']->title = 'Admin Style Guide';
-        Helper::loadView('index');
+        $this
+            ->setTitles(['Admin Style Guide'])
+            ->loadView('index');
     }
 }

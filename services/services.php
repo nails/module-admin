@@ -36,6 +36,13 @@ return [
                 return new Service\Permission();
             }
         },
+        'Ui'              => function (): Service\Ui {
+            if (class_exists('\App\Admin\Service\Ui')) {
+                return new \App\Admin\Service\Ui();
+            } else {
+                return new Service\Ui();
+            }
+        },
     ],
     'models'    => [
         'Admin'           => function (): Model\Admin {
@@ -133,49 +140,48 @@ return [
         },
     ],
     'factories' => [
-        'DefaultControllerSortSection' => function (string $sLabel = '', array $aItems = []): Factory\DefaultController\Sort\Section {
+        'DefaultControllerSortSection'     => function (string $sLabel = '', array $aItems = []): Factory\DefaultController\Sort\Section {
             if (class_exists('\App\Admin\Factory\Nav')) {
                 return new \App\Admin\Factory\DefaultController\Sort\Section($sLabel, $aItems);
             } else {
                 return new Factory\DefaultController\Sort\Section($sLabel, $aItems);
             }
         },
-        'EmailDataExportSuccess'       => function (): Factory\Email\DataExport\Success {
+        'EmailDataExportSuccess'           => function (): Factory\Email\DataExport\Success {
             if (class_exists('\App\Admin\Factory\Email\DataExport\Success')) {
                 return new \App\Admin\Factory\Email\DataExport\Success();
             } else {
                 return new Factory\Email\DataExport\Success();
             }
         },
-        'EmailDataExportFail'          => function (): Factory\Email\DataExport\Fail {
+        'EmailDataExportFail'              => function (): Factory\Email\DataExport\Fail {
             if (class_exists('\App\Admin\Factory\Email\DataExport\Fail')) {
                 return new \App\Admin\Factory\Email\DataExport\Fail();
             } else {
                 return new Factory\Email\DataExport\Fail();
             }
         },
-        'HelperDynamicTable'           => function (): Factory\Helper\DynamicTable {
+        'HelperDynamicTable'               => function (): Factory\Helper\DynamicTable {
             if (class_exists('\App\Admin\Helper\DynamicTable')) {
                 return new \App\Admin\Helper\DynamicTable();
             } else {
                 return new Factory\Helper\DynamicTable();
             }
         },
-        'Nav'                          => function (
+        'Nav'                              => function (
             string $sLabel = '',
             string $sIcon = '',
-            string $sUrl = '',
             array $aActions = [],
             array $aKeywords = [],
             bool $bIsOpen = false
         ): Factory\Nav {
             if (class_exists('\App\Admin\Factory\Nav')) {
-                return new \App\Admin\Factory\Nav($sLabel, $sIcon, $sUrl, $aActions, $aKeywords, $bIsOpen);
+                return new \App\Admin\Factory\Nav($sLabel, $sIcon, $aActions, $aKeywords, $bIsOpen);
             } else {
-                return new Factory\Nav($sLabel, $sIcon, $sUrl, $aActions, $aKeywords, $bIsOpen);
+                return new Factory\Nav($sLabel, $sIcon, $aActions, $aKeywords, $bIsOpen);
             }
         },
-        'NavAction'                    => function (
+        'NavAction'                        => function (
             string $sLabel,
             string $sUrl,
             array $aAlerts = [],
@@ -188,60 +194,67 @@ return [
                 return new Factory\Nav\Action($sLabel, $sUrl, $aAlerts, $iOrder, $aKeywords);
             }
         },
-        'NavAlert'                     => function (): Factory\Nav\Alert {
+        'NavAlert'                         => function (): Factory\Nav\Alert {
             if (class_exists('\App\Admin\Factory\Nav\Alert')) {
                 return new \App\Admin\Factory\Nav\Alert();
             } else {
                 return new Factory\Nav\Alert();
             }
         },
-        'PermissionGroup'              => function (Component $oComponent, array $aPermissions = []): Factory\Permission\Group {
+        'PermissionGroup'                  => function (Component $oComponent, array $aPermissions = []): Factory\Permission\Group {
             if (class_exists('\App\Admin\Factory\Permission\Group')) {
                 return new \App\Admin\Factory\Permission\Group($oComponent, $aPermissions);
             } else {
                 return new Factory\Permission\Group($oComponent, $aPermissions);
             }
         },
-        'QuickActionAction'            => function (string $sLabel, string $sSubLabel, string $sUrl): Factory\QuickAction\Action {
-            if (class_exists('\App\Admin\Factory\QuickAction\Action')) {
-                return new \App\Admin\Factory\QuickAction\Action($sLabel, $sSubLabel, $sUrl);
-            } else {
-                return new Factory\QuickAction\Action($sLabel, $sSubLabel, $sUrl);
-            }
-        },
-        'DataExportSourceResponse'     => function () {
+        'DataExportSourceResponse'         => function () {
             if (class_exists('\App\Admin\DataExport\SourceResponse')) {
                 return new \App\Admin\DataExport\SourceResponse();
             } else {
                 return new \Nails\Admin\DataExport\SourceResponse();
             }
         },
-        'IndexFilter'                  => function (): Factory\IndexFilter {
+        'IndexFilter'                      => function (): Factory\IndexFilter {
             if (class_exists('\App\Admin\Factory\IndexFilter')) {
                 return new \App\Admin\Factory\IndexFilter();
             } else {
                 return new Factory\IndexFilter();
             }
         },
-        'IndexFilterOption'            => function (): Factory\IndexFilter\Option {
+        'IndexFilterOption'                => function (): Factory\IndexFilter\Option {
             if (class_exists('\App\Admin\Factory\IndexFilter\Option')) {
                 return new \App\Admin\Factory\IndexFilter\Option();
             } else {
                 return new Factory\IndexFilter\Option();
             }
         },
-        'ModelFieldDynamicTable'       => function (): Factory\Model\Field\DynamicTable {
+        'ModelFieldDynamicTable'           => function (): Factory\Model\Field\DynamicTable {
             if (class_exists('\App\Admin\Factory\Model\Field\DynamicTable')) {
                 return new \App\Admin\Factory\Model\Field\DynamicTable();
             } else {
                 return new Factory\Model\Field\DynamicTable();
             }
         },
-        'Setting'                      => function (): Factory\Setting {
+        'Setting'                          => function (): Factory\Setting {
             if (class_exists('\App\Admin\Factory\Setting')) {
                 return new \App\Admin\Factory\Setting();
             } else {
                 return new Factory\Setting();
+            }
+        },
+        'UiHeaderButtonSearchResult'       => function (): Factory\Ui\Header\Button\Search\Result {
+            if (class_exists('\App\Admin\Factory\Ui\Header\Button\Search\Result')) {
+                return new \App\Admin\Factory\Ui\Header\Button\Search\Result();
+            } else {
+                return new Factory\Ui\Header\Button\Search\Result();
+            }
+        },
+        'UiHeaderButtonSearchResultAction' => function (): Factory\Ui\Header\Button\Search\Result\Action {
+            if (class_exists('\App\Admin\Factory\Ui\Header\Button\Search\Result\Action')) {
+                return new \App\Admin\Factory\Ui\Header\Button\Search\Result\Action();
+            } else {
+                return new Factory\Ui\Header\Button\Search\Result\Action();
             }
         },
     ],

@@ -17,6 +17,14 @@
 
 .breadcrumbs {
 
+    span {
+        padding: 0 0.5rem;
+
+        &:first-child {
+            font-weight: bold;
+        }
+    }
+
     i {
         @include font-size(10px);
     }

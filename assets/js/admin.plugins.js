@@ -25,7 +25,6 @@ import Modal from './components/Modal.js';
 import Modalize from './components/Modalize.js';
 //import Navigation from './components/Navigation.js';
 import Notes from './components/Notes.js';
-import QuickAction from './components/QuickAction.js';
 import Repeater from './components/Repeater.js';
 import Revealer from './components/Revealer.js';
 import ScrollToFirstError from './components/ScrollToFirstError.js'
@@ -306,9 +305,7 @@ window
     .registerPlugin(namespace, 'MatchHeight', (controller) => new MatchHeight(controller))
     .registerPlugin(namespace, 'Modal', (controller) => new Modal(controller))
     .registerPlugin(namespace, 'Modalize', (controller) => new Modalize(controller))
-    //.registerPlugin(namespace, 'Navigation', (controller) => new Navigation(controller))
     .registerPlugin(namespace, 'Notes', (controller) => new Notes(controller))
-    .registerPlugin(namespace, 'QuickAction', (controller) => new QuickAction(controller))
     .registerPlugin(namespace, 'Repeater', (controller) => new Repeater(controller))
     .registerPlugin(namespace, 'Revealer', (controller) => new Revealer(controller))
     .registerPlugin(namespace, 'ScrollToFirstError', (controller) => new ScrollToFirstError(controller))

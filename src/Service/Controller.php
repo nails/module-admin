@@ -88,7 +88,7 @@ class Controller
     // --------------------------------------------------------------------------
 
     /**
-     * @return array
+     * @return \Nails\Admin\Factory\Nav[]
      * @throws \Nails\Common\Exception\NailsException
      */
     public function getSidebarGroups(): array
@@ -477,7 +477,7 @@ class Controller
         ksort($aGroups);
 
         /**
-         * Define the defualt order of items; if the user has any preferences then
+         * Define the default order of items; if the user has any preferences then
          * this'll be handled below.
          */
         $aGroups = array_merge(

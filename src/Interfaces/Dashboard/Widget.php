@@ -3,6 +3,7 @@
 namespace Nails\Admin\Interfaces\Dashboard;
 
 use Nails\Admin\DataExport\SourceResponse;
+use Nails\Auth\Resource\User;
 
 /**
  * Interface Widget
@@ -53,6 +54,17 @@ interface Widget
      * @return string
      */
     public function getBody(): string;
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Whether the widet is enabled or not
+     *
+     * @param \Nails\Auth\Resource\User|null $oUser
+     *
+     * @return bool
+     */
+    public function isEnabled(User $oUser = null): bool;
 
     // --------------------------------------------------------------------------
 

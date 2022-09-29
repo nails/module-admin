@@ -38,8 +38,6 @@ class Modal {
                 let title = $('.modal__title', el).get(0);
                 let body = $('.modal__body', el).get(0);
 
-                console.log(el, inner, close, title, body);
-
                 this.modals.push(new Instance(
                     this.adminController,
                     {
@@ -49,6 +47,21 @@ class Modal {
             });
 
         return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Creates a new modal instance
+     * @returns {Instance}
+     */
+    create() {
+
+        let instance = new Instance(this.adminController);
+
+        this.modals.push(instance);
+
+        return instance;
     }
 }
 

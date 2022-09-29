@@ -12138,12 +12138,6 @@ img {
   max-width: 100%;
 }
 
-ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 hr {
   border-color: #EAEAEA;
   opacity: 1;
@@ -12175,6 +12169,9 @@ a {
 }
 .alert a :not(.btn) {
   text-decoration: underline;
+}
+.alert > *:last-child {
+  margin-bottom: 0;
 }
 
 .btn {
@@ -12401,6 +12398,9 @@ fieldset legend {
   left: -1px;
   top: -1px;
 }
+fieldset legend + p, fieldset legend + .alert, fieldset legend + ul, fieldset legend + ol {
+  margin-top: 3em !important;
+}
 fieldset h1, fieldset .h1,
 fieldset h2,
 fieldset .h2,
@@ -12416,6 +12416,12 @@ fieldset .h6 {
   position: sticky;
   top: 62px;
   margin: 0;
+}
+fieldset > p,
+fieldset > .alert,
+fieldset > ul,
+fieldset > ol {
+  margin: 1em;
 }
 
 /* --------------------------------------------------------------
@@ -13224,6 +13230,12 @@ textarea.select2-input {
   }
 }
 
+.breadcrumbs span {
+  padding: 0 0.5rem;
+}
+.breadcrumbs span:first-child {
+  font-weight: bold;
+}
 .breadcrumbs i {
   font-size: 0.625rem;
 }
@@ -13237,7 +13249,7 @@ textarea.select2-input {
       align-items: center;
   position: fixed;
   width: 100%;
-  z-index: 9;
+  z-index: 1000;
 }
 .topbar__logo {
   display: -ms-flexbox;
@@ -13456,7 +13468,6 @@ textarea.select2-input {
   border-radius: 20px;
   max-width: 730px;
   width: 80%;
-  overflow: hidden;
   max-height: 70vh;
   display: -ms-flexbox;
   display: flex;
@@ -13482,7 +13493,7 @@ textarea.select2-input {
   -ms-flex-align: start;
       align-items: flex-start;
   padding-top: 150px;
-  z-index: 9;
+  z-index: 1001;
 }
 .u-modal__header {
   padding: 26px 30px;
@@ -18151,7 +18162,6 @@ textarea.select2-input {
 }
 
 p {
-  margin: 0;
   font-family: "Open Sans", sans-serif;
 }
 
@@ -18166,17 +18176,17 @@ strong {
   text-transform: uppercase;
 }
 
-h1, .h1,
-h2,
-.h2,
-h3,
-.h3,
-h4,
-.h4,
-h5,
-.h5,
-h6,
-.h6 {
+.main .content h1, .main .content .h1,
+.main .content h2,
+.main .content .h2,
+.main .content h3,
+.main .content .h3,
+.main .content h4,
+.main .content .h4,
+.main .content h5,
+.main .content .h5,
+.main .content h6,
+.main .content .h6 {
   font-size: 1rem;
   font-weight: bold;
   padding: 5px;
@@ -18296,4 +18306,7 @@ h6,
 }
 .btn-block {
   display: block;
+}
+.hidden {
+  display: none !important;
 }

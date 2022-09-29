@@ -3,7 +3,6 @@
     border-radius: 20px;
     max-width: 730px;
     width: 80%;
-    overflow: hidden;
     max-height: 70vh;
     display: flex;
     flex-direction: column;
@@ -24,7 +23,7 @@
         justify-content: center;
         align-items: flex-start;
         padding-top: 150px;
-        z-index: 9;
+        z-index: 1001;
     }
 
     &__header {
@@ -81,6 +80,13 @@
                 }
             }
         }
+
+        &--empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0 50px
+        }
     }
 
     // Modal Tabs
@@ -121,6 +127,8 @@
             font-style: normal;
             font-size: 11px;
             margin-left: 6px;
+            width: calc(1em + 10px);
+            height: calc(1em + 10px);
 
             &--brand {
                 background-color: rgb($brand-color-highlight);

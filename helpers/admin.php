@@ -12,7 +12,7 @@ if (!function_exists('adminHelper')) {
      */
     function adminHelper()
     {
-        trigger_error(__FUNCTION__ . 'is deprecated', E_USER_DEPRECATED);
+        trigger_error(__FUNCTION__ . ' is deprecated', E_USER_DEPRECATED);
 
         $aArgs   = func_get_args();
         $sMethod = array_shift($aArgs);
@@ -41,7 +41,7 @@ if (!function_exists('adminDynamicTable')) {
      */
     function adminDynamicTable($sKey, array $aFields, array $aData = [])
     {
-        trigger_error(__FUNCTION__ . 'is deprecated', E_USER_DEPRECATED);
+        trigger_error(__FUNCTION__ . ' is deprecated', E_USER_DEPRECATED);
         return \Nails\Admin\Helper::dynamicTable($sKey, $aFields, $aData);
     }
 }

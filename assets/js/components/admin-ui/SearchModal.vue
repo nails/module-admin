@@ -26,10 +26,10 @@
 
                 <ul
                     v-if="query"
-                    class="u-modal-tab"
+                    class="u-modal-tab list-unstyled"
                 >
                     <li
-                        v-for="(item, index) in sections"
+                        v-for="(item, index) in results"
                         v-bind:key="index"
                     >
                         <button
@@ -56,9 +56,14 @@
                     v-if="query"
                     class="u-modal__body u-modal__body--search u-pt0"
                 >
+                    <div
+                        v-if="loading"
+                        class="u-modal__body u-modal__body--empty">
+                        <Loader />
+                    </div>
                     <ul
-                        v-if="filteredItems.length"
-                        class="create-item__list"
+                        v-else-if="filteredItems"
+                        class="create-item__list list-unstyled"
                     >
                         <li
                             v-for="(item, index) in filteredItems"
@@ -68,39 +73,39 @@
                             <div class="u-flex w-100">
                                 <div
                                     class="create-item__badge u-mr10"
-                                    v-bind:class="{
-                                        'create-item__badge--light': item.type === 'secondary'
-                                    }"
                                 >
                                     <i
                                         class="fa"
-                                        v-bind:class="`fa-${item.icon}`"
+                                        v-bind:class="item.icon['class']"
                                     />
                                 </div>
-                                <div class="w-100">
+                                <div class="u-flex u-flex-center-v w-100">
                                     <div class="create-item__title u-m0">
                                         {{ item.label }}
-                                    </div>
-                                    <div class="create-item__description u-m0">
-                                        {{ item.info }}
                                     </div>
                                 </div>
                             </div>
                             <a
-                                v-for="(btn, i) in item.buttons"
-                                v-bind:key="i"
+                                v-for="(btn, index) in item.actions"
+                                v-bind:key="index"
                                 v-bind:href="btn.url"
-                                class="btn u-ml5 u-md-ml10"
-                                v-bind:class="`btn__${btn.type}`"
+                                class="btn btn-primary u-ml5 u-md-ml10"
                             >
                                 <i
+                                    v-if="btn.icon['class']"
                                     class="fa"
-                                    v-bind:class="`fa-${btn.icon}`"
+                                    v-bind:class="btn.icon['class']"
                                 />
                                 <span class="btn__label">{{ btn.label }}</span>
                             </a>
                         </li>
                     </ul>
+                    <div
+                        v-else-if="searched"
+                        class="u-modal__body u-modal__body--empty "
+                    >
+                        No results found
+                    </div>
                     <div
                         v-else
                         class="u-pt20"
@@ -111,10 +116,14 @@
     </transition>
 </template>
 <script>
-import axios from 'axios';
-import debounce from 'debounce';
 
-const PER_PAGE = 15;
+import API from '../API';
+import services from '../Services'
+import debounce from 'debounce'
+
+import Loader from '../../../svg/spinning-circles.svg';
+
+
 export default {
     props: {
         placeholder: {
@@ -123,92 +132,36 @@ export default {
             default: 'Begin typing to search...'
         }
     },
+    components: {
+        Loader
+    },
     data() {
         return {
             open: false,
-            sections: [],
             results: [],
             query: null,
             filter: null,
             loading: false,
-            url: '/',
-            dummyData: {
-                'sections': [
-                    {
-                        'label': 'All',
-                        'count': 1234
-                    },
-                    {
-                        'label': 'Admin Section',
-                        'count': 1234
-                    },
-                    {
-                        'label': 'Site Content',
-                        'count': 1234
-                    }
-                ],
-                'results': [
-                    {
-                        'label': 'Manage Insight Articles',
-                        'info': 'Admin Section',
-                        'icon': 'map',
-                        'type': 'primary',
-                        'buttons': [
-                            {
-                                'label': 'Index',
-                                'url': 'https://example.com',
-                                'icon': 'external-link-alt',
-                                'type': 'primary'
-                            },
-                            {
-                                'label': 'Create',
-                                'url': 'https://example.com',
-                                'icon': 'cog',
-                                'type': 'secondary'
-                            }
-                        ]
-                    },
-                    {
-                        'label': 'Another Result',
-                        'info': 'Admin Section',
-                        'icon': 'map',
-                        'type': 'secondary',
-                        'buttons': [
-                            {
-                                'label': 'View',
-                                'url': 'https://example.com',
-                                'icon': 'external-link-alt',
-                                'type': 'primary'
-                            },
-                            {
-                                'label': 'Create',
-                                'url': 'https://example.com',
-                                'icon': 'cog',
-                                'type': 'secondary'
-                            }
-                        ]
-                    }
-                ]
-            }
+            searched: false,
         };
     },
+
     computed: {
         filteredItems() {
-            if (!this.filter || this.filter.toLowerCase() === 'all') {
-                return this.results;
-            }
-            return this.results.filter(item => item.info === this.filter);
-        }
+            return this.results.find(item => item.label === this.filter)?.results ?? [];
+        },
     },
+
     watch: {
         query(val) {
-            this.url = '/search';
             this.sections = [];
-            this.results = [];
             this.searching();
         }
     },
+
     mounted() {
+
+        // Add open listener
         this.$bus.$on('open-search-modal', () => {
             document.body.style.overflow = 'hidden';
             this.open = true;
@@ -225,7 +178,7 @@ export default {
     },
     methods: {
         searching: debounce(function() {
-            if (!this.query || this.query === '') {
+            if (!this.query || this.query === '' || this.query.length <= 2) {
                 this.sections = [];
                 this.results = [];
                 return false;
@@ -233,27 +186,33 @@ export default {
             this.doSearch();
         }, 500),
         doSearch() {
-            // this.loading = true;
-            // axios.get(this.url, {
-            //     params: {
-            //         query: this.query.replace(/\s+/g, '+'),
-            //         perPage: PER_PAGE
-            //     }
-            // })
-            //     .then(({data}) => {
-            //         //
-            //         this.loading = false;
-            //     })
-            //     .catch((error) => {
-            //         //
-            //         this.loading = false;
-            //         this.$nextTick(() => {
-            //             this.$refs.input.focus();
-            //         });
-            //     });
+            this.loading = true;
+            this.searched = false;
+            services
+                .apiRequest({
+                    url: API.UI.header.button.search(this.query)
+                })
+                .then((response) => {
 
-            this.sections = this.dummyData['sections'];
-            this.results = this.dummyData['results'];
+                    if (response.status !== 200) {
+                        throw Error('There was an error searching. Please try agin soon or contact and administrator')
+                    } else {
+                        // Store results
+                        this.results = response.data.data;
+
+                        // Set first selected
+                        this.filter = this.results[0].label;
+                    }
+
+                })
+                .catch((error) => {
+                    //  @todo (Pablo 2022-09-21) - handle error
+                    console.log(error);
+                })
+                .finally(() => {
+                    this.searched = true;
+                    this.loading = false;
+                });
         },
         setFilter(value) {
             this.filter = value;

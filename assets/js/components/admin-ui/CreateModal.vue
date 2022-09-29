@@ -29,7 +29,7 @@
                                 <div class="create-item__badge u-mr10">
                                     <i
                                         class="fa fa-map"
-                                        v-bind:class="`fa-${item.icon}`"
+                                        v-bind:class="`${item.icon.class}`"
                                     />
                                 </div>
                                 <div class="w-100">
@@ -56,29 +56,22 @@
     </transition>
 </template>
 <script>
+
+import API from '../API';
+import services from '../Services'
+
 export default {
     props: {
         header: {
             type: String,
             required: false,
             default: ''
-        },
-        items: {
-            type: Array,
-            required: false, //true
-            default: () => [
-                {
-                    'label': 'Insight Article',
-                    'icon': 'map',
-                    'description': 'Curabitur blandit tempus porttitor.',
-                    'url': 'https://example.com'
-                }
-            ]
         }
     },
     data() {
         return {
-            open: false
+            open: false,
+            items: []
         };
     },
     mounted() {
@@ -89,6 +82,19 @@ export default {
         //Keydown listener
         this.listener = (e) => this.keysTrigger(e.key);
         window.addEventListener('keydown', this.listener);
+
+        services
+            .apiRequest({
+                url: API.UI.header.button.create
+            })
+            .then((response) => {
+                this.items = response.data.data;
+            })
+            .catch((error) => {
+                //  @todo (Pablo 2022-09-21) - handle error
+                console.log('error', error);
+            });
+
     },
     beforeDestroy() {
         window.removeEventListener('keydown', this.listener);

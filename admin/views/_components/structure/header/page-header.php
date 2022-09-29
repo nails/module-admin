@@ -1,17 +1,15 @@
 <?php
 
 use Nails\Admin\Helper;
+use Nails\Common\Service;
 
-//  Page title
-if (!empty($page->module->name) && !empty($page->title)) {
-    $sPageTitle = $page->module->name . ' <i class="fa fa-angle-right"></i> ' . $page->title;
+/**
+ * @var Service\MetaData $oMetaData
+ */
 
-} elseif (empty($page->module->name) && !empty($page->title)) {
-    $sPageTitle = $page->title;
-
-} elseif (!empty($page->module->name)) {
-    $sPageTitle = $page->module->name;
-}
+$sPageTitle = $oMetaData
+    ->getTitles()
+    ->implode('</span><i class="fa fa-angle-right"></i><span>');
 
 $aHeaderButtons = Helper::getHeaderButtons();
 
@@ -23,9 +21,7 @@ if (!empty($sPageTitle) || !empty($aHeaderButtons)) {
         if (!empty($sPageTitle)) {
             ?>
             <p class="breadcrumbs m-0">
-                <strong>Admin</strong>
-                <i class="fa fa-angle-right"></i>
-                <?=$sPageTitle?>
+                <span><?=$sPageTitle?></span>
             </p>
             <?php
         }

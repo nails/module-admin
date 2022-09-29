@@ -221,18 +221,14 @@ class Utilities extends Base
 
         // --------------------------------------------------------------------------
 
-        //  Set view data
-        $this->data['page']->title      = 'Export Data';
-        $this->data['aSources']         = $aSources;
-        $this->data['aFormats']         = $aFormats;
-        $this->data['aRecent']          = $aRecent;
-        $this->data['sDefaultFormat']   = $oDataExport::DEFAULT_FORMAT;
-        $this->data['iRetentionPeriod'] = $oDataExport->getRetentionPeriod();
-        $this->data['iUrlTtl']          = $oDataExport->getUrlTtl();
-
-        // --------------------------------------------------------------------------
-
-        //  Load views
-        Helper::loadView('export/index');
+        $this
+            ->setData('aSources', $aSources)
+            ->setData('aFormats', $aFormats)
+            ->setData('aRecent', $aRecent)
+            ->setData('sDefaultFormat', $oDataExport::DEFAULT_FORMAT)
+            ->setData('iRetentionPeriod', $oDataExport->getRetentionPeriod())
+            ->setData('iUrlTtl', $oDataExport->getUrlTtl())
+            ->setTitles(['Export Data'])
+            ->loadView('export/index');
     }
 }

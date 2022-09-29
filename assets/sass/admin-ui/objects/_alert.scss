@@ -13,4 +13,8 @@
             text-decoration: underline;
         }
     }
+
+    > *:last-child {
+        margin-bottom: 0;
+    }
 }

@@ -4,6 +4,7 @@ namespace Nails\Admin\Traits\Dashboard;
 
 use Nails\Admin\Service;
 use Nails\Admin\Interfaces;
+use Nails\Auth\Resource\User;
 
 /**
  * Trait Widget
@@ -37,6 +38,20 @@ trait Widget
     public function getConfig(): string
     {
         return '';
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Whether to pad the body or not
+     *
+     * @param \Nails\Auth\Resource\User|null $oUser
+     *
+     * @return bool
+     */
+    public function isEnabled(User $oUser = null): bool
+    {
+        return true;
     }
 
     // --------------------------------------------------------------------------

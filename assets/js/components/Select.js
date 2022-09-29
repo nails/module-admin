@@ -26,7 +26,7 @@ class Select {
      */
     init(domElement) {
 
-        $('select.select2:not(.select2-offscreen):not(.select2--processed)', domElement)
+        $('select.select2:not(.select2-offscreen):not(.select2--processed):visible', domElement)
             .addClass('select2--processed')
             .each((index, element) => {
                 $(element)
@@ -64,6 +64,11 @@ class SelectInstance {
                 allowClear: this.isClearable,
                 width: this.$input.outerWidth()
             });
+    }
+
+    destroy() {
+        this.$input
+            .select2('destroy');
     }
 }
 

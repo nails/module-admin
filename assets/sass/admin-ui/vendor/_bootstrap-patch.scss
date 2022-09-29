@@ -34,3 +34,9 @@
 .panel {
     @extend .card;
 }
+
+
+// .hidden removed in V4
+.hidden {
+    display: none!important;
+}

@@ -15,6 +15,7 @@ namespace Nails\Admin\Factory;
 use JetBrains\PhpStorm\Internal\TentativeType;
 use Nails\Admin\Constants;
 use Nails\Admin\Factory\Nav\Action;
+use Nails\Common\Helper\ArrayHelper;
 use Nails\Factory;
 
 /**
@@ -25,23 +26,23 @@ use Nails\Factory;
 class Nav implements \JsonSerializable
 {
     /** @var string */
-    protected $sLabel;
+    protected string $sLabel;
 
     /** @var string */
-    protected $sIcon;
+    protected string $sIcon;
 
     /** @var \Nails\Admin\Factory\Nav\Action[] */
-    protected $aActions;
+    protected array $aActions;
 
     /** @var string[] */
-    protected $aKeywords;
+    protected array $aKeywords;
 
     /** @var bool */
-    protected $bIsOpen;
+    protected bool $bIsOpen;
 
     // --------------------------------------------------------------------------
 
-    public function __construct(string $sLabel = '', string $sIcon = '', string $sUrl = '', array $aActions = [], array $aKeywords = [], bool $bIsOpen = false)
+    public function __construct(string $sLabel = '', string $sIcon = '', array $aActions = [], array $aKeywords = [], bool $bIsOpen = false)
     {
         $this
             ->setLabel($sLabel)
@@ -130,8 +131,13 @@ class Nav implements \JsonSerializable
     public function getActions(bool $bSorted = true): array
     {
         if ($bSorted) {
-            //  @todo (Pablo 2022-04-27) - sort actions
-            //dd('sort actions');
+            usort($this->aActions, function (Action $a, Action $b) {
+                if ($a->getOrder() === $b->getOrder()) {
+                    return $a->getLabel() <=> $b->getLabel();
+                }
+
+                return $a->getOrder() <=> $b->getOrder();
+            });
         }
 
         return array_values($this->aActions);
@@ -144,11 +150,12 @@ class Nav implements \JsonSerializable
      *
      * @param string|Action $mLabel    The label to give the action, or an Action object
      * @param string        $sUrl      The url this action applies to
-     * @param array         $aAlerts   An array of alerts to have along side this action
+     * @param array         $aAlerts   An array of alerts to have alongside this action
      * @param mixed         $iOrder    An optional order index, used to push menu items up and down the group
      * @param array         $aKeywords Additional search terms for the item
      *
      * @return $this
+     * @throws \Nails\Common\Exception\FactoryException
      */
     public function addAction($mLabel, string $sUrl = 'index', array $aAlerts = [], int $iOrder = null, array $aKeywords = []): self
     {
@@ -164,7 +171,7 @@ class Nav implements \JsonSerializable
     // --------------------------------------------------------------------------
 
     /**
-     * Removes a action
+     * Removes an action
      *
      * @param string $sUrl The URL/key of the action to remove
      *

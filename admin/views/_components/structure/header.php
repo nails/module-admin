@@ -1,16 +1,23 @@
 <?php
 
-use Nails\Common\Service\Asset;
-use Nails\Common\Service\View;
+use Nails\Admin\Constants;
+use Nails\Common\Service;
 use Nails\Config;
 use Nails\Environment;
 use Nails\Factory;
 use Nails\Functions;
 
-/** @var View $oView */
-$oView = Factory::service('View');
-/** @var \Nails\Admin\Service\Controller $oControllerService */
-$oControllerService = Factory::service('Controller', \Nails\Admin\Constants::MODULE_SLUG);
+/**
+ * @var Service\Asset                   $oAsset
+ * @var Service\Meta                    $oMetaService
+ * @var Service\MetaData                $oMetaData
+ * @var Service\View                    $oView
+ * @var \Nails\Admin\Service\Controller $oControllerService
+ */
+
+$oView              = Factory::service('View');
+$oAsset             = Factory::service('Asset');
+$oControllerService = Factory::service('Controller', Constants::MODULE_SLUG);
 
 //  Elements closed in another view, helps IDE
 echo '<!DOCTYPE html>';
@@ -19,16 +26,7 @@ echo '<html lang="en">';
 ?>
     <head>
         <meta charset="UTF-8" />
-        <title>
-            <?php
-
-            echo 'Admin - ';
-            echo !empty($page->module->name) ? $page->module->name . ' - ' : null;
-            echo !empty($page->title) ? $page->title . ' - ' : null;
-            echo Config::get('APP_NAME');
-
-            ?>
-        </title>
+        <title><?=$oMetaData->getTitles()->implode()?></title>
         <meta name="keywords" content="" />
         <meta name="description" content="" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -65,9 +63,9 @@ echo '<html lang="en">';
         $aColours = array_map(
             fn($sColor) => implode(',', sscanf($sColor, '#%02x%02x%02x')),
             [
-                'brand-color-primary'   => appSetting('primary_colour', \Nails\Admin\Constants::MODULE_SLUG) ?: '#171d20',
-                'brand-color-secondary' => appSetting('secondary_colour', \Nails\Admin\Constants::MODULE_SLUG) ?: '#2b2d2e',
-                'brand-color-highlight' => appSetting('highlight_colour', \Nails\Admin\Constants::MODULE_SLUG) ?: '#d27312',
+                'brand-color-primary'   => appSetting('primary_colour', Constants::MODULE_SLUG) ?: '#171d20',
+                'brand-color-secondary' => appSetting('secondary_colour', Constants::MODULE_SLUG) ?: '#2b2d2e',
+                'brand-color-highlight' => appSetting('highlight_colour', Constants::MODULE_SLUG) ?: '#d27312',
             ]
         );
 
@@ -83,8 +81,6 @@ echo '<html lang="en">';
         echo '}';
         echo '</style>';
 
-        /** @var Asset $oAsset */
-        $oAsset = Factory::service('Asset');
         $oAsset->output($oAsset::TYPE_CSS);
         $oAsset->output($oAsset::TYPE_CSS_INLINE);
         $oAsset->output($oAsset::TYPE_JS_INLINE_HEADER);
@@ -121,13 +117,21 @@ if (empty($isModal)) {
                     <i class="fa fa-plus-circle"></i>
                     <span class="btn__label">Create</span>
                 </modal-button>
-                <modal-button
-                    modal-name="search"
-                    class="btn btn__primary u-md-mr5 u-mr15"
-                >
-                    <i class="fa fa-search"></i>
-                    <span class="btn__label">Search</span>
-                </modal-button>
+                <?php
+
+                if (isSuperUser()) {
+                    ?>
+                    <modal-button
+                        modal-name="search"
+                        class="btn btn__primary u-md-mr5 u-mr15"
+                    >
+                        <i class="fa fa-search"></i>
+                        <span class="btn__label">Search</span>
+                    </modal-button>
+                    <?php
+                }
+
+                ?>
                 <a href="<?=siteUrl()?>" class="btn btn__primary" target="_blank">
                     <i class="fa fa-external-link-alt"></i>
                     <span class="btn__label">View Site</span>

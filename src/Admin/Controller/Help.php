@@ -20,6 +20,11 @@ use Nails\Factory;
 
 class Help extends Base
 {
+    /**
+     * @return \Nails\Admin\Factory\Nav|void
+     * @throws \Nails\Common\Exception\FactoryException
+     * @throws \Nails\Common\Exception\ModelException
+     */
     public static function announce()
     {
         /** @var \Nails\Admin\Model\Help $oHelpModel */
@@ -41,9 +46,11 @@ class Help extends Base
     // --------------------------------------------------------------------------
 
     /**
-     * Renders the admin help pagge
+     * Renders the admin help page
      *
      * @return void
+     * @throws \Nails\Common\Exception\FactoryException
+     * @throws \Nails\Common\Exception\ModelException
      */
     public function index()
     {
@@ -53,8 +60,7 @@ class Help extends Base
 
         // --------------------------------------------------------------------------
 
-        //  Page Title
-        $this->data['page']->title = 'Help Videos';
+        $this->setTitles(['Help Videos']);
 
         // --------------------------------------------------------------------------
 
@@ -105,7 +111,6 @@ class Help extends Base
 
         // --------------------------------------------------------------------------
 
-        //  Load views
-        Helper::loadView('index');
+        $this->loadView('index');
     }
 }

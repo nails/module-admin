@@ -25,6 +25,13 @@ fieldset {
         position: relative;
         left: -1px;
         top: -1px;
+
+        & + p,
+        & + .alert,
+        & + ul,
+        & + ol {
+            margin-top: 3em !important;
+        }
     }
 
     h1,
@@ -36,5 +43,12 @@ fieldset {
         position: sticky;
         top: 62px;
         margin: 0;
+    }
+
+    > p,
+    > .alert,
+    > ul,
+    > ol {
+        margin: 1em;
     }
 }

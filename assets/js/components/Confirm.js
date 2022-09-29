@@ -8,8 +8,8 @@ class Confirm {
      * @return {Confirm}
      */
     constructor(adminController) {
-
-        adminController
+        this.adminController = adminController;
+        this.adminController
             .onRefreshUi((e, domElement) => {
                 this.init(domElement);
             });
@@ -26,6 +26,10 @@ class Confirm {
      */
     init(domElement) {
 
+        if (!this.modal) {
+            this.modal = this.adminController.getInstance('Modal').create();
+        }
+
         $('a.confirm:not(.confirm--processed)', domElement)
             .addClass('confirm--processed')
             .on('click', (e) => {
@@ -38,23 +42,17 @@ class Confirm {
 
                 if (body.length) {
 
-                    $('<div>')
-                        .html(body)
-                        .dialog({
-                            'title': title,
-                            'resizable': false,
-                            'draggable': false,
-                            'modal': true,
-                            'dialogClass': 'no-close',
-                            'buttons': {
-                                'OK': function() {
-                                    window.location.href = $link.attr('href');
-                                },
-                                'Cancel': function() {
-                                    $(this).dialog('close');
-                                }
-                            }
-                        });
+                    this.modal
+                        .setTitle(title)
+                        .setBody(body)
+                        .clearActions()
+                        .addAction('OK', ['btn-primary'], (event, modal) => {
+                            window.location.href = $link.attr('href');
+                        })
+                        .addAction('Cancel', ['btn-danger'], (event, modal) => {
+                            modal.hide();
+                        })
+                        .show();
 
                     return false;
 

@@ -210,18 +210,18 @@ class Settings extends Base
             }
         }
 
-        $this->data['page']->title = 'Manage Settings &rsaquo; ' . $oSetting->label;
-        $this->data['sFormUrl']    = $this->compileFormUrl($oSetting);
-        $this->data['oComponent']  = $oSetting->component;
-        $this->data['oSetting']    = $oSetting->instance;
-        $this->data['aFieldSets']  = $this->compileFieldSets(
-            $this->getSettingsWithDefaults(
-                $oSetting->instance,
-                $oSetting->component
-            )
-        );
-
-        Helper::loadView('index');
+        $this
+            ->setData('sFormUrl', $this->compileFormUrl($oSetting))
+            ->setData('oComponent', $oSetting->component)
+            ->setData('oSetting', $oSetting->instance)
+            ->setData('aFieldSets', $this->compileFieldSets(
+                $this->getSettingsWithDefaults(
+                    $oSetting->instance,
+                    $oSetting->component
+                )
+            ))
+            ->setTitles(['Manage Settings', $oSetting->labe])
+            ->loadView('index');
     }
 
     // --------------------------------------------------------------------------
