@@ -117,21 +117,13 @@ if (empty($isModal)) {
                     <i class="fa fa-plus-circle"></i>
                     <span class="btn__label">Create</span>
                 </modal-button>
-                <?php
-
-                if (isSuperUser()) {
-                    ?>
-                    <modal-button
-                        modal-name="search"
-                        class="btn btn__primary u-md-mr5 u-mr15"
-                    >
-                        <i class="fa fa-search"></i>
-                        <span class="btn__label">Search</span>
-                    </modal-button>
-                    <?php
-                }
-
-                ?>
+                <modal-button
+                    modal-name="search"
+                    class="btn btn__primary u-md-mr5 u-mr15"
+                >
+                    <i class="fa fa-search"></i>
+                    <span class="btn__label">Search</span>
+                </modal-button>
                 <a href="<?=siteUrl()?>" class="btn btn__primary" target="_blank">
                     <i class="fa fa-external-link-alt"></i>
                     <span class="btn__label">View Site</span>
