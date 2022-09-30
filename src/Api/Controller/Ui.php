@@ -169,6 +169,9 @@ class Ui extends BaseApi
         /** @var \Nails\Common\Service\Input $oInput */
         $oInput = Factory::service('Input');
         $sQuery = $this->sanitiseQuery($oInput->get('query'));
+        if (strlen($sQuery) <= 2) {
+            throw new ApiException('Search query too short.', HttpCodes::STATUS_BAD_REQUEST);
+        }
 
         /** @var ApiResponse $oApiResponse */
         $oApiResponse = Factory::factory('ApiResponse', \Nails\Api\Constants::MODULE_SLUG);
