@@ -220,7 +220,7 @@ class Settings extends Base
                     $oSetting->component
                 )
             ))
-            ->setTitles(['Manage Settings', $oSetting->labe])
+            ->setTitles(['Manage Settings', $oSetting->label])
             ->loadView('index');
     }
 
