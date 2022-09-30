@@ -195,11 +195,12 @@ class Ui extends BaseApi
                                                 'actions'     => array_map(
                                                     function (Result\Action $oAction) {
                                                         return (object) [
-                                                            'label' => $oAction->getLabel(),
-                                                            'icon'  => [
+                                                            'label'   => $oAction->getLabel(),
+                                                            'icon'    => [
                                                                 'class' => $oAction->getIconClass(),
                                                             ],
-                                                            'url'   => $oAction->getUrl(),
+                                                            'url'     => $oAction->getUrl(),
+                                                            'new_tab' => $oAction->isNewTab(),
                                                         ];
                                                     },
                                                     $oResult->getActions()

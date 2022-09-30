@@ -8,6 +8,7 @@ class Action implements \Nails\Admin\Interfaces\Ui\Header\Button\Search\Result\A
     protected string $sIconClass = '';
     protected string $sLabel     = '';
     protected string $sUrl       = '';
+    protected bool   $bIsNewTab  = false;
 
     public function setIconClass(string $sIconClass): self
     {
@@ -40,5 +41,16 @@ class Action implements \Nails\Admin\Interfaces\Ui\Header\Button\Search\Result\A
     public function getUrl(): string
     {
         return $this->sUrl;
+    }
+
+    public function setIsNewTab(bool $bIsNewTab): self
+    {
+        $this->bIsNewTab = $bIsNewTab;
+        return $this;
+    }
+
+    public function isNewTab(): bool
+    {
+        return $this->bIsNewTab;
     }
 }

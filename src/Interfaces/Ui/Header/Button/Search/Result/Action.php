@@ -18,4 +18,9 @@ interface Action
      * Returns the item's URL
      */
     public function getUrl(): string;
+
+    /**
+     * Returns whether the action should open in a new tab
+     */
+    public function isNewTab(): bool;
 }
