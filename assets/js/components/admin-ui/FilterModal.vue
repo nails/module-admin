@@ -2,8 +2,12 @@
     <transition name="fade">
         <div
             v-show="open"
-            class="u-modal__backdrop"
+            class="u-modal__inner"
         >
+            <div
+                class="u-modal__backdrop"
+                v-on:click="closeModal"
+            />
             <div class="u-modal u-modal__filter">
                 <div class="u-modal__header">
                     <h3 class="heading--md u-m0">

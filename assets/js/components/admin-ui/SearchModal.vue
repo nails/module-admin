@@ -2,8 +2,12 @@
     <transition name="fade">
         <div
             v-show="open"
-            class="u-modal__backdrop"
+            class="u-modal__inner"
         >
+            <div
+                class="u-modal__backdrop"
+                v-on:click="closeModal"
+            />
             <div class="u-modal">
                 <div class="u-modal__header u-modal__header--search">
                     <div class="search-field">
@@ -81,7 +85,10 @@
                                 </div>
                                 <div class="u-flex u-flex-center-v w-100">
                                     <div class="create-item__title u-m0">
-                                        {{ item.label }}
+                                        <span v-html="item.label" />
+                                        <div class="create-item__description u-mt1">
+                                            <span v-html="item.description" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -89,6 +96,7 @@
                                 v-for="(btn, index) in item.actions"
                                 v-bind:key="index"
                                 v-bind:href="btn.url"
+                                v-bind:target="btn.new_tab ? '_blank' : ''"
                                 class="btn btn-primary u-ml5 u-md-ml10"
                             >
                                 <i
@@ -123,6 +131,7 @@ import debounce from 'debounce'
 
 import Loader from '../../../svg/spinning-circles.svg';
 
+const COMMAND_KEYS = ['k', 'Escape']
 
 export default {
     props: {
@@ -143,6 +152,7 @@ export default {
             filter: null,
             loading: false,
             searched: false,
+            listener: null
         };
     },
 
@@ -169,13 +179,17 @@ export default {
                 this.$refs.input.focus();
             });
         });
+
         //Keydown listener
         this.listener = (e) => this.keysTrigger(e);
         window.addEventListener('keydown', this.listener);
     },
+
+
     beforeDestroy() {
         window.removeEventListener('keydown', this.listener);
     },
+
     methods: {
         searching: debounce(function() {
             if (!this.query || this.query === '' || this.query.length <= 2) {
@@ -227,14 +241,36 @@ export default {
             this.open = false;
             document.body.style.overflow = '';
         },
+
         keysTrigger(e) {
+
+            // If escape close
             if (e.key === 'Escape') {
                 this.closeModal();
+                return;
             }
-            if (e.metaKey && e.key === 'k') {
-                this.openModal();
+
+            // If event comes with ctrl/cmd modifier...
+            if (e.ctrl || e.metaKey) {
+
+                // Command keys maps the keys we want to overload their meta modifiers
+                // If not in command keys, bail from the function
+                if (!COMMAND_KEYS.includes(e.key) && (e.ctrl || e.metaKey)) {
+                    return;
+                }
+
+                e.preventDefault();
+
+                // Add your overloaded shortcut kere
+                switch (e.key) {
+                    case 'k':
+                        this.openModal();
+                    default:
+                        return;
+                }
             }
-        },
+
+        }
     }
 };
 </script>
