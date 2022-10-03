@@ -42,6 +42,7 @@
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
   margin-left: -0.5rem;
+  padding: 0;
   right: -0.5rem;
 }
 .dashboard-widgets__add__cards > li {

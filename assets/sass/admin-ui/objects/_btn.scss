@@ -38,6 +38,12 @@
         background-color: rgb($brand-color-highlight);
         color: $white;
 
+        &:hover {
+            background-color: $brand-color-secondary !important;
+            border-color: $white !important;
+            color: $white !important;
+        }
+
         &:focus {
             box-shadow: 0 0 0 3px rgb($brand-color-highlight, 0.5);
         }
@@ -46,6 +52,11 @@
     &__secondary {
         background-color: rgb($brand-color-secondary);
         color: $white;
+
+        &:hover {
+            border-color: $white !important;
+            color: $white !important;
+        }
 
         &:focus {
             box-shadow: 0 0 0 3px rgb($brand-color-secondary, 0.5);
