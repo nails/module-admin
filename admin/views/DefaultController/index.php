@@ -243,9 +243,7 @@ $oMustache = Factory::service('Mustache');
                                 $sPerm = $sPerm($oItem);
                             }
 
-                            $sPerm = $sPerm ? 'admin:' . $CONFIG['PERMISSION'] . ':' . $sPerm : '';
-
-                            if (empty($CONFIG['PERMISSION']) || empty($sPerm) || userHasPermission($sPerm)) {
+                            if (empty($sPerm) || userHasPermission($sPerm)) {
 
                                 $sLabel = $oMustache->render($sLabel, $oItem);
                                 $sClass = $oMustache->render($sClass, $oItem);
