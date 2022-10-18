@@ -11,6 +11,10 @@ body {
     &.blank {
         background-color: $light-grey;
     }
+
+    &.no-scroll {
+        overflow: hidden;
+    }
 }
 
 img {
