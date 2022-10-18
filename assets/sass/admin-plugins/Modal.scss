@@ -1,0 +1,82 @@
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+    overflow: auto;
+    justify-content: center;
+    align-items: center;
+    display: none;
+
+    &--open {
+        display: flex !important;
+    }
+
+    &__inner {
+        margin: 1rem;
+        padding: 1rem;
+        background: #ffffff;
+        min-width: 300px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+        position: relative;
+        overflow-y: auto;
+        max-height: 90vh;
+    }
+
+    &__close {
+        border: 1px solid #e2e2e2;
+        border-radius: 100%;
+        width: 20px;
+        height: 20px;
+        text-align: center;
+        line-height: 16px;
+        color: #aaaaaa;
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        cursor: pointer;
+        transition: border-color 0.5s;
+        text-decoration: none;
+
+        &:hover {
+            border: 1px solid #aaaaaa;
+        }
+    }
+
+    &__title {
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        font-weight: bold;
+        border-bottom: 1px solid #ececec;
+        padding-bottom: 0.5rem;
+        padding-right: 2rem;
+    }
+
+    &__body {
+        > *:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__actions {
+        &:empty {
+            display: none;
+        }
+
+        margin-top: 1rem;
+        padding-top: 1em;
+        border-top: 1px solid #ececec;
+
+        button {
+            margin-right: 0.3em;
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}

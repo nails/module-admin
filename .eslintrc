@@ -1,6 +1,7 @@
 {
     "extends": [
-        "eslint:recommended"
+        "eslint:recommended",
+        "plugin:vue/recommended",
     ],
     "env": {
         "browser": true,
@@ -9,33 +10,27 @@
         "node": true
     },
     "rules": {
-        "indent": [
-            "error",
-            4,
-            {
-                "SwitchCase": 1
-            }
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
+        "indent": ["error", 4, {"SwitchCase": 1}],
+        "quotes": ["error", "single"],
+        "semi": ["error", "always"],
         "no-trailing-spaces": "error",
         "valid-jsdoc": "error",
         "brace-style": "error",
         "keyword-spacing": "error",
-        "space-before-function-paren": [
-            "error",
-            "never"
-        ],
-        "no-console": 0
+        "space-before-function-paren": ["error", "never"],
+        "no-console": 0,
+        # Vue specific stylings
+        "vue/html-indent": ["warn", 4],
+        "vue/v-bind-style": ["warn", "longform"],
+        "vue/v-on-style": ["warn", "longform"]
     },
     "parserOptions": {
         "sourceType": "module",
-        "ecmaVersion": 2017
+        "ecmaVersion": 2018
+    },
+    "globals": {
+        "axios": false,
+        "jQuery": false,
+        "_" : false
     }
 }

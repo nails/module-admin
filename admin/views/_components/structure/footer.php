@@ -1,45 +1,65 @@
-                <footer>
-                    <small rel="tooltip-r" title="<?=lang('admin_rendered_in_tip')?>">
-                        <?=lang('admin_rendered_in', '{elapsed_time}')?>
-                    </small>
-                    <?php
+<?php
 
-                    if (NAILS_BRANDING) {
-                        ?>
-                        <small class="right">
-                            <?=lang('admin_powered_by', 'http://nailsapp.co.uk')?>
-                        </small>
-                        <?php
-                    }
+use Nails\Admin\Helper;
+use Nails\Common\Service\Asset;
+use Nails\Factory;
 
-                    ?>
-                </footer>
-            </div><!--  /.content_inner -->
-        </div>
-        <!--    CLEARFIX    -->
-        <div class="clear"></div>
-        <div class="background">
-            <div class="sidebar admin-branding-background-primary"></div>
-        </div>
-        <!--    GLOBAL JS   -->
+if (empty($isModal)) {
+    ?>
+    <hr />
+    <footer class="clearfix">
+        <small class="float-start">
+            Rendered in {elapsed_time} seconds
+        </small>
         <?php
 
-        foreach(\Nails\Admin\Helper::getModals() as $oModal) {
+        if (\Nails\Config::get('NAILS_BRANDING')) {
             ?>
-            <div class="modal<?=$oModal->open ? ' modal--open' : ''?>">
-                <div class="modal__inner">
-                    <div class="modal__close">&times;</div>
-                    <div class="modal__title"><?=$oModal->title?></div>
-                    <div class="modal__body"><?=$oModal->body?></div>
-                </div>
-            </div>
+            <small class="float-end">
+                Powered by <a href="https://nailsapp.co.uk" target="_blank">Nails</a>
+            </small>
             <?php
         }
 
-        $oAsset = \Nails\Factory::service('Asset');
-        $oAsset->output('JS');
-        $oAsset->output('JS-INLINE-FOOTER');
-
         ?>
-    </body>
-</html>
+    </footer>
+    <?php
+
+    //  Elements opened in another view, helps IDE
+    echo '</div><!--  /.content -->';
+    echo '</div><!--  /.main -->';
+}
+
+foreach (Helper::getModals() as $oModal) {
+    ?>
+    <div class="modal<?=$oModal->open ? ' modal--open' : ''?>">
+        <div class="modal__inner">
+            <div class="modal__close">&times;</div>
+            <div class="modal__title"><?=$oModal->title?></div>
+            <div class="modal__body"><?=$oModal->body?></div>
+        </div>
+    </div>
+    <?php
+}
+
+?>
+
+    <div class="admin-vue-app">
+        <!--  Create Modal -->
+        <create-modal header="What would you like to create?"></create-modal>
+        <!--  Search Modal -->
+        <search-modal></search-modal>
+        <!--  Filter Modal -->
+        <filter-modal header="Sort & Filter"></filter-modal>
+    </div>
+
+<?php
+
+/** @var Asset $oAsset */
+$oAsset = Factory::service('Asset');
+$oAsset->output($oAsset::TYPE_JS);
+$oAsset->output($oAsset::TYPE_JS_INLINE_FOOTER);
+
+//  Elements opened in another view, helps IDE
+echo '</body>';
+echo '</html>';

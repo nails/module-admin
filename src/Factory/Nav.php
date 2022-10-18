@@ -12,165 +12,158 @@
 
 namespace Nails\Admin\Factory;
 
+use JetBrains\PhpStorm\Internal\TentativeType;
+use Nails\Admin\Constants;
+use Nails\Admin\Factory\Nav\Action;
+use Nails\Common\Helper\ArrayHelper;
+use Nails\Factory;
+
 /**
  * Class Nav
  *
  * @package Nails\Admin\Factory
  */
-class Nav
+class Nav implements \JsonSerializable
 {
-    /**
-     * The Nav gorup's label
-     *
-     * @var string
-     */
-    protected $label;
+    /** @var string */
+    protected string $sLabel;
 
-    /**
-     * The Nav group's icon
-     *
-     * @var string
-     */
-    protected $icon;
+    /** @var string */
+    protected string $sIcon;
 
-    /**
-     * The Nav group's actions
-     *
-     * @var array
-     */
-    protected $actions;
+    /** @var \Nails\Admin\Factory\Nav\Action[] */
+    protected array $aActions;
 
     /** @var string[] */
-    protected $aSearchTerms = [];
+    protected array $aKeywords;
+
+    /** @var bool */
+    protected bool $bIsOpen;
 
     // --------------------------------------------------------------------------
 
-    /**
-     * Construct Nav
-     *
-     * @param string $label The label to give the navGroup
-     * @param string $icon  The icon to give the navGroup
-     */
-    public function __construct($label = '', $icon = '')
+    public function __construct(string $sLabel = '', string $sIcon = '', array $aActions = [], array $aKeywords = [], bool $bIsOpen = false)
     {
-        $this->setLabel($label);
-        $this->setIcon($icon);
-        $this->actions = [];
+        $this
+            ->setLabel($sLabel)
+            ->setIcon($sIcon)
+            ->setActions($aActions)
+            ->setKeywords($aKeywords)
+            ->setIsOpen($bIsOpen);
     }
 
     // --------------------------------------------------------------------------
 
     /**
-     * Set the navGroup's label
+     * Set the label
      *
-     * @param string $label
+     * @param string $sLabel
      *
      * @return $this
      */
-    public function setLabel($label = '')
+    public function setLabel(string $sLabel = ''): self
     {
-        $this->label = $label;
+        $this->sLabel = $sLabel;
         return $this;
     }
 
     // --------------------------------------------------------------------------
 
     /**
-     * Returns the navGroup's label
+     * Returns the label
      *
      * @return string
      */
-    public function getLabel()
+    public function getLabel(): string
     {
-        return $this->label;
+        return $this->sLabel;
     }
 
     // --------------------------------------------------------------------------
 
     /**
-     * Set the navGroup's aSearchTerms
+     * Set the icon
      *
-     * @param array $aSearchTerms
+     * @param string $sIcon
      *
      * @return $this
      */
-    public function setSearchTerms(array $aSearchTerms)
+    public function setIcon(string $sIcon): self
     {
-        $this->aSearchTerms = $aSearchTerms;
+        $this->sIcon = $sIcon;
         return $this;
     }
 
     // --------------------------------------------------------------------------
 
     /**
-     * Returns the navGroup's aSearchTerms
-     *
-     * @return string[]
-     */
-    public function getSearchTerms(): array
-    {
-        return $this->aSearchTerms;
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Set the navGroup's icon
-     *
-     * @param string $icon
+     * Returns the icon
      *
      * @return string
      */
-    public function setIcon($icon)
+    public function getIcon(): string
     {
-        $this->icon = $icon;
-        return $this;
+        return $this->sIcon;
     }
 
     // --------------------------------------------------------------------------
 
     /**
-     * Returns the navGroup's icon
+     * Set actions
      *
-     * @return string
-     */
-    public function getIcon()
-    {
-        return $this->icon;
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Returns the navGroup's actions
-     *
-     * @return array
-     */
-    public function getActions()
-    {
-        return $this->actions;
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Adds a new action to the navGroup. An action is menu item essentially.
-     *
-     * @param string $label        The label to give the action
-     * @param string $url          The url this action applies to
-     * @param array  $alerts       An array of alerts to have along side this action
-     * @param mixed  $order        An optional order index, used to push menu items up and down the group
-     * @param array  $aSearchTerms Additional search terms for the item
+     * @param Action[] $aActions
      *
      * @return $this
      */
-    public function addAction($label, $url = 'index', $alerts = [], $order = null, array $aSearchTerms = [])
+    public function setActions(array $aActions): self
     {
-        $this->actions[$url]              = new \stdClass();
-        $this->actions[$url]->label       = $label;
-        $this->actions[$url]->searchTerms = array_merge([$this->getLabel()], $this->getSearchTerms(), $aSearchTerms);
-        $this->actions[$url]->alerts      = !is_array($alerts) ? [$alerts] : $alerts;
-        $this->actions[$url]->order       = $order;
+        $this->aActions = $aActions;
+        return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Returns the actions
+     *
+     * @return \Nails\Admin\Factory\Nav\Action[]
+     */
+    public function getActions(bool $bSorted = true): array
+    {
+        if ($bSorted) {
+            usort($this->aActions, function (Action $a, Action $b) {
+                if ($a->getOrder() === $b->getOrder()) {
+                    return $a->getLabel() <=> $b->getLabel();
+                }
+
+                return $a->getOrder() <=> $b->getOrder();
+            });
+        }
+
+        return array_values($this->aActions);
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Adds a new action
+     *
+     * @param string|Action $mLabel    The label to give the action, or an Action object
+     * @param string        $sUrl      The url this action applies to
+     * @param array         $aAlerts   An array of alerts to have alongside this action
+     * @param mixed         $iOrder    An optional order index, used to push menu items up and down the group
+     * @param array         $aKeywords Additional search terms for the item
+     *
+     * @return $this
+     * @throws \Nails\Common\Exception\FactoryException
+     */
+    public function addAction($mLabel, string $sUrl = 'index', array $aAlerts = [], int $iOrder = null, array $aKeywords = []): self
+    {
+        if ($mLabel instanceof Action) {
+            $this->aActions[$mLabel->getUrl()] = $mLabel;
+        } else {
+            $this->aActions[$sUrl] = Factory::factory('NavAction', Constants::MODULE_SLUG, $mLabel, $sUrl, $aAlerts, $iOrder, $aKeywords);
+        }
 
         return $this;
     }
@@ -178,16 +171,82 @@ class Nav
     // --------------------------------------------------------------------------
 
     /**
-     * Removes a action
+     * Removes an action
      *
-     * @param string $url The URL/key of the action to remove
+     * @param string $sUrl The URL/key of the action to remove
      *
      * @return Nav
      */
-    public function removeAction($url)
+    public function removeAction(string $sUrl): self
     {
-        unset($this->actions[$url]);
-
+        unset($this->aActions[$sUrl]);
         return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Set the search terms
+     *
+     * @param array $aKeywords
+     *
+     * @return $this
+     */
+    public function setKeywords(array $aKeywords): self
+    {
+        $this->aKeywords = $aKeywords;
+        return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Returns the open state
+     *
+     * @return bool
+     */
+    public function isOpen(): bool
+    {
+        return $this->bIsOpen;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Set the open state
+     *
+     * @param bool $bIsOpen
+     *
+     * @return $this
+     */
+    public function setIsOpen(bool $bIsOpen): self
+    {
+        $this->bIsOpen = $bIsOpen;
+        return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Returns the search terms
+     *
+     * @return string[]
+     */
+    public function getKeywords(): array
+    {
+        return $this->aKeywords;
+    }
+
+    // --------------------------------------------------------------------------
+
+    public function jsonSerialize()
+    {
+        return (object) [
+            'label'    => $this->getLabel(),
+            'icon'     => $this->getIcon(),
+            'actions'  => $this->getActions(),
+            'keywords' => $this->getKeywords(),
+            'is_open'  => $this->isOpen(),
+        ];
     }
 }

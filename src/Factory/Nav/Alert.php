@@ -12,12 +12,14 @@
 
 namespace Nails\Admin\Factory\Nav;
 
+use JetBrains\PhpStorm\Internal\TentativeType;
+
 /**
  * Class Alert
  *
  * @package Nails\Admin\Factory\Nav
  */
-class Alert
+class Alert implements \JsonSerializable
 {
     /**
      * The Alert's value
@@ -61,7 +63,7 @@ class Alert
     /**
      * Sets the value
      *
-     * @param  string $sValue The value for the indicator
+     * @param string $sValue The value for the indicator
      *
      * @return $this
      */
@@ -88,7 +90,7 @@ class Alert
     /**
      * Sets the severity
      *
-     * @param  string $sSeverity The severity for the indicator [info|danger|success|warning]
+     * @param string $sSeverity The severity for the indicator [info|danger|success|warning]
      *
      * @return $this
      */
@@ -115,7 +117,7 @@ class Alert
     /**
      * Sets the label
      *
-     * @param  string $sLabel The label for the indicator
+     * @param string $sLabel The label for the indicator
      *
      * @return $this
      */
@@ -135,5 +137,16 @@ class Alert
     public function getLabel()
     {
         return $this->sLabel;
+    }
+
+    // --------------------------------------------------------------------------
+
+    public function jsonSerialize()
+    {
+        return (object) [
+            'label'    => $this->getLabel(),
+            'value'    => $this->getValue(),
+            'severity' => $this->getSeverity(),
+        ];
     }
 }

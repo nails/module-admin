@@ -1,0 +1,427 @@
+form {
+    width: 100%;
+}
+
+div.field {
+    padding: 10px;
+    margin: 0;
+    border-bottom: 1px solid #efefef;
+    clear: both;
+    min-height: 30px;
+    background: #ffffff;
+    font-size: 1rem;
+
+    &.checkbox,
+    &.radio {
+        .input {
+            padding-left: 14px;
+        }
+    }
+
+    &.checkbox,
+    &.radio {
+        margin-top: 0; // Fix for bootstraps .checkbox + .checkbox
+        .input {
+            padding-left: 14px;
+        }
+    }
+
+    &.boolean.toggled {
+        .input {
+            padding-left: 0;
+        }
+    }
+
+    label {
+        display: block;
+        width: 100%;
+        padding: 0;
+    }
+
+    //  So tips are always the same colour - badly designed form helper
+    .tip {
+        color: #747a90;
+    }
+
+    span {
+        &.label {
+            display: block;
+            float: left;
+            width: 130px;
+            font-weight: bold;
+            margin-right: 20px;
+            text-align: right;
+            margin-top: 5px;
+            padding-right: 15px;
+            vertical-align: top;
+
+            small {
+                display: block;
+                font-weight: normal;
+            }
+        }
+
+        &.input {
+            border: 1px dashed transparent; //  Don't ask me why this is required, but it is. - Pablo.
+            display: block;
+            margin-left: 149px;
+            position: relative;
+
+            &.is-disabled {
+                color: #cccccc;
+            }
+
+            &.with-tip {
+                padding-right: 25px;
+
+                .tip {
+                    position: absolute;
+                    right: 0;
+                    top: 1px;
+                }
+            }
+
+            &:after {
+                float: none;
+                clear: both;
+                content: ' ';
+                position: relative;
+                display: block;
+            }
+
+            input[type=text],
+            input[type=password],
+            input[type=email],
+            input[type=number],
+            input[type=url],
+            input[type=color],
+            input[type=file],
+            input[type=time],
+            textarea,
+            select {
+                float: none;
+                display: block;
+                box-sizing: border-box;
+                width: 100%;
+                margin: 0;
+
+                & + input[type=text],
+                & + input[type=password],
+                & + input[type=email],
+                & + input[type=number],
+                & + input[type=url],
+                & + input[type=color],
+                & + input[type=file],
+                & + input[type=time],
+                & + textarea,
+                & + select,
+                & + .select2
+                & + .select2-container {
+                    margin-top: 0.5rem;
+                }
+            }
+
+            small {
+                &.info2 {
+                    display: block;
+                    margin-top: 1em;
+                    border-left: 2px solid #a9c5db;
+                    padding: 0.1em 0.5em;
+                    background: #e4edf5;
+                    color: #50606f;
+
+                    strong {
+                        color: inherit;
+                    }
+                }
+
+                &.info {
+                    margin-top: 1em;
+                    position: relative;
+                    display: block;
+                    float: left;
+                    width: 100%;
+                    font-size: 0.85em;
+
+                    strong {
+                        color: inherit;
+                    }
+
+                    .alert {
+                        margin: 0;
+                    }
+                }
+            }
+
+            .alert {
+                display: block;
+                margin: 0;
+                margin-top: 1em;
+                padding: 0.5em 0.8em;
+            }
+        }
+
+        &.text {
+            margin-left: 25px;
+            position: relative;
+            display: block;
+            width: 100%;
+        }
+
+        //  Fixes bug with revealer plugin where the textarea would lose its display: none value on reveal
+        &.textarea {
+            textarea.wysiwyged {
+                display: none !important;
+            }
+        }
+
+        &.file-download {
+            display: block;
+            clear: left;
+            margin-left: 25%;
+            padding: 5px 20px;
+
+            img {
+                border: 1px solid #cccccc;
+                padding: 2px;
+                background: #ffffff;
+                vertical-align: middle;
+                margin-left: 5px;
+            }
+        }
+    }
+
+    input[type=file] {
+        margin-top: 5px;
+    }
+
+    input[type=radio],
+    input[type=checkbox] {
+        position: relative;
+        top: 6px;
+        left: 6px;
+        float: left;
+    }
+
+    table {
+        input[type=radio],
+        input[type=checkbox] {
+            top: 0;
+            left: 0;
+            float: none;
+        }
+    }
+
+    select {
+        position: relative;
+        top: 7px;
+    }
+
+    &:after {
+        position: relative;
+        display: block;
+        content: '';
+        float: none;
+        clear: both;
+    }
+
+    &:hover {
+        background: #f5f5f5;
+
+        span.label {
+            border-color: #cccccc;
+        }
+    }
+
+    &.even {
+        background: #fafafa;
+
+        span.label {
+            border-color: #cccccc;
+        }
+
+        &:hover {
+            background: #f5f5f5;
+        }
+    }
+
+    &:last-of-type {
+        border-bottom: none;
+    }
+
+    &.date-picker {
+        select {
+            width: 116px;
+            box-sizing: border-box;
+        }
+    }
+
+    &.datetime-picker {
+        select {
+            width: 68px;
+            box-sizing: border-box;
+        }
+    }
+
+    &.boolean {
+        .toggle {
+            //  width and height set via JS, so that if plugin isnt loaded
+            //  or otherwise unavailable, it falls back to a normal checkbox
+
+            text-align: center;
+            display: inline-block;
+        }
+
+        span.input {
+            .tip {
+                top: -9px;
+                left: 10px;
+                position: relative;
+            }
+
+            small.info {
+                margin-top: 0;
+            }
+        }
+    }
+
+    &.readonly {
+        input[type=text],
+        input[type=password],
+        input[type=email],
+        input[type=number],
+        input[type=url],
+        input[type=color],
+        input[type=time],
+        textarea {
+            cursor: not-allowed;
+            padding-left: 30px;
+            width: 325px;
+            box-sizing: border-box;
+        }
+
+        .input {
+            &:before {
+                font-family: "Font Awesome 5 Free";
+                content: '\f023';
+                display: block;
+                position: absolute;
+                left: 9px;
+                top: 4px;
+                color: #aaaaaa;
+            }
+        }
+
+        .toggle {
+            opacity: 0.5;
+
+            * {
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    &.radio {
+        label {
+            &:after {
+                clear: left;
+                display: block;
+                content: '';
+            }
+        }
+    }
+
+    &.max-length-exceeded {
+        input,
+        textarea,
+        select,
+        .select2-container {
+            border: 1px solid #b52130;
+        }
+
+        small.char-count {
+            color: #b52130;
+            padding-left: 16px;
+            position: relative;
+
+            &:before {
+                font-family: "Font Awesome 5 Free";
+                content: '\f057';
+                display: block;
+                position: absolute;
+                top: -4px;
+                color: #b52130;
+            }
+        }
+    }
+
+    &.error {
+        span.input {
+            input,
+            textarea,
+            select,
+            .select2-container {
+                border: 1px solid #b52130;
+            }
+
+            .select2-container {
+                input {
+                    border: none;
+                }
+            }
+
+            .alert-danger {
+                padding-left: 30px;
+                position: relative;
+
+                &:before {
+                    font-family: "Font Awesome 5 Free";
+                    content: '\f057';
+                    display: block;
+                    position: absolute;
+                    left: 8px;
+                    top: 8px;
+                    color: #b52130;
+                }
+            }
+        }
+    }
+
+    &.submit {
+        .label {
+            border: none;
+        }
+    }
+}
+
+input[type='text'],
+input[type='password'],
+input[type='email'],
+input[type='url'],
+input[type='number'],
+input[type='color'],
+textarea {
+    border: 1px solid #cccccc;
+    padding: 6px 4px;
+    outline: none;
+    border-radius: 2px;
+    //font: 13px Helvetica, Arial, sans-serif;
+    color: #444444;
+    margin: 0;
+    width: 210px;
+    max-width: 100%;
+    display: block;
+    margin-bottom: 20px;
+    background: #ffffff;
+
+    &:focus {
+        border: 1px solid #aaaaaa;
+        color: #444444;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+    }
+
+    &.select2-input {
+        width: 100%;
+        margin: 0;
+    }
+}

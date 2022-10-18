@@ -15,9 +15,12 @@ class Instance {
             close: 'modal__close',
             title: 'modal__title',
             body: 'modal__body',
+            actions: 'modal__actions',
             show: 'modal--open',
             processed: 'modal--processed',
         };
+
+        this.clearActions();
 
         if (options.el) {
 
@@ -26,6 +29,7 @@ class Instance {
             this.close = options.el.querySelector('.modal__close');
             this.title = options.el.querySelector('.modal__title');
             this.body = options.el.querySelector('.modal__body');
+            this.actions = options.el.querySelector('.modal__actions');
 
         } else {
 
@@ -39,6 +43,7 @@ class Instance {
             this.close = this.newDiv('close', '&times;');
             this.title = this.newDiv('title');
             this.body = this.newDiv('body');
+            this.actions = this.newDiv('actions');
 
             this.addClass(this.container, 'processed')
 
@@ -65,14 +70,22 @@ class Instance {
                 if (e.key === 'Escape' && this.isShown()) {
                     this.hide();
                     e.preventDefault();
+                    e.stopPropagation();
                 }
             });
+
+        this.onShowCallback = options.onShow || function() {
+        };
+
+        this.onHideCallback = options.onHide || function() {
+        };
 
         if (!options.el) {
             //  Compile
             this.inner.appendChild(this.close);
             this.inner.appendChild(this.title);
             this.inner.appendChild(this.body);
+            this.inner.appendChild(this.actions);
             this.container.appendChild(this.inner)
 
             //  Add to DOM
@@ -147,13 +160,26 @@ class Instance {
     show() {
         this.container.classList.add(this.classes.show);
         document.body.classList.add('noscroll');
+
+        if (this.actionButtons.length) {
+            this.actionButtons[0].focus();
+        }
+
+        this.onShowCallback();
+
         return this;
     }
 
     // --------------------------------------------------------------------------
 
+    onShow(callback) {
+        this.onShowCallback = callback;
+    }
+
+    // --------------------------------------------------------------------------
+
     /**
-     * Whetehr modal is currently being shown
+     * Whether modal is currently being shown
      * @returns {boolean}
      */
     isShown() {
@@ -169,7 +195,16 @@ class Instance {
     hide() {
         this.container.classList.remove(this.classes.show);
         document.body.classList.remove('noscroll');
+
+        this.onHideCallback();
+
         return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    onHide(callback) {
+        this.onHideCallback = callback;
     }
 
     // --------------------------------------------------------------------------
@@ -209,6 +244,58 @@ class Instance {
         this.adminController.refreshUi(this.body);
 
         return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    clearActions() {
+        this.actionButtons = [];
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    addAction(label, classes, callback) {
+
+        classes = classes || ['btn-default'];
+        callback = callback || function() {
+        };
+
+        let compiledCallback = (event) => {
+            event.stopPropagation();
+            event.preventDefault();
+            callback(event, this);
+        }
+
+        let btn = document.createElement('button');
+
+        btn.innerHTML = label;
+        btn.classList.add('btn', ...classes)
+        btn.addEventListener('click', (event) => {
+            compiledCallback(event);
+        });
+        btn.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                compiledCallback(event)
+            }
+        });
+
+        this.actionButtons.push(btn);
+
+        this.renderActions();
+
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    renderActions() {
+
+        this.actions.innerHTML = '';
+
+        for (let i = 0; i < this.actionButtons.length; i++) {
+            this.actions.append(this.actionButtons[i]);
+        }
     }
 }
 

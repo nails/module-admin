@@ -1,0 +1,31 @@
+.main {
+    display: flex;
+    padding-top: 63px;
+    min-height: 100vh;
+}
+
+.content {
+    background-color: $light-grey;
+    border-radius: 20px 0 0;
+    padding: 16px 16px 16px 27px;
+    width: 100%;
+
+    @include media('<=tablet') {
+        border-radius: 0;
+    }
+}
+
+.breadcrumbs {
+
+    span {
+        padding: 0 0.5rem;
+
+        &:first-child {
+            font-weight: bold;
+        }
+    }
+
+    i {
+        @include font-size(10px);
+    }
+}

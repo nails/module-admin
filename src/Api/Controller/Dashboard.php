@@ -61,20 +61,24 @@ class Dashboard extends BaseApi
         $oApiResponse = Factory::factory('ApiResponse', Api\Constants::MODULE_SLUG);
         $oApiResponse
             ->setData([
-                'widgets' => array_map(function (string $sClass) {
+                'widgets' => array_values(
+                    array_filter(
+                        array_map(function (string $sClass) {
 
-                    /** @var \Nails\Admin\Interfaces\Dashboard\Widget $oWidget */
-                    $oWidget = new $sClass();
-                    return (object) [
-                        'slug'         => $sClass,
-                        'title'        => $oWidget->getTitle(),
-                        'description'  => $oWidget->getDescription(),
-                        'image'        => $oWidget->getImage(),
-                        'padded'       => $oWidget->isPadded(),
-                        'configurable' => $oWidget->isConfigurable(),
-                    ];
+                            /** @var \Nails\Admin\Interfaces\Dashboard\Widget $oWidget */
+                            $oWidget = new $sClass();
+                            return $oWidget->isEnabled() ? (object) [
+                                'slug'         => $sClass,
+                                'title'        => $oWidget->getTitle(),
+                                'description'  => $oWidget->getDescription(),
+                                'image'        => $oWidget->getImage(),
+                                'padded'       => $oWidget->isPadded(),
+                                'configurable' => $oWidget->isConfigurable(),
+                            ] : null;
 
-                }, $this->oWidgetService->getAll()),
+                        }, $this->oWidgetService->getAll())
+                    )
+                ),
             ]);
 
         return $oApiResponse;

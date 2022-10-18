@@ -1,0 +1,20 @@
+.alert {
+    position: relative;
+
+    &__close {
+        position: absolute;
+        right: 0.5rem;
+        top: 0.2rem;
+        cursor: pointer;
+    }
+
+    a {
+        :not(.btn) {
+            text-decoration: underline;
+        }
+    }
+
+    > *:last-child {
+        margin-bottom: 0;
+    }
+}

@@ -1,0 +1,97 @@
+/* --------------------------------------------------------------
+   Tables
+   These classes extend the standard bootstrap table styles
+-------------------------------------------------------------- */
+
+.table {
+    small {
+        display: block;
+        line-height: 1.75em;
+    }
+
+    thead,
+    tfoot {
+        tr {
+            th {
+                &.user,
+                &.date,
+                &.datetime,
+                &.actions,
+                &.boolean {
+                    text-align: center;
+                }
+
+                &.user {
+                    width: 200px;
+                }
+
+                &.date,
+                &.datetime {
+                    width: 150px;
+                }
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            td {
+                &.action,
+                &.actions {
+                    text-align: center;
+
+                    &:empty:before,
+                    &:empty:before {
+                        content: 'No Actions';
+                        @extend .text-muted;
+                    }
+
+                    .btn:not(.btn-block) + .btn {
+                        margin-left: 0.25rem;
+                    }
+                }
+
+                &.no-data {
+                    height: 75px;
+                    text-align: center;
+                    text-transform: uppercase;
+                    @extend .text-muted;
+                }
+
+                &.user-cell {
+                    position: relative;
+                    min-width: 200px;
+                    min-height: 35px;
+
+                    img {
+                        position: absolute;
+                        left: 0.5rem;
+                        padding: 3px;
+                        border: 1px solid #eeeeee;
+                        border-radius: 50%;
+                        background: #ffffff url(../img/loader/10px-FFFFFF.gif) center no-repeat;
+                        width: 35px;
+                        height: 35px;
+                        margin-top: 5px;
+                    }
+
+                    span {
+                        &.user-data {
+                            margin-left: 3.25rem;
+                            display: block;
+                        }
+                    }
+                }
+
+                &.datetime {
+                    min-width: 150px;
+                }
+
+                &.boolean {
+                    text-align: center;
+                    min-width: 70px;
+                }
+            }
+        }
+    }
+}

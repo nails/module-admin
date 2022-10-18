@@ -1,0 +1,109 @@
+.btn {
+    display: inline-flex;
+    flex-shrink: 0;
+    white-space: nowrap;
+    border-radius: 100rem;
+    padding: 9px 15px;
+    line-height: 1;
+    height: 34px;
+    align-items: center;
+    font-family: $font-heading-regular;
+    color: $white;
+    min-width: 34px;
+    text-align: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+
+    @include media('<=tablet') {
+        padding: 9px;
+    }
+
+    i {
+        margin-right: 6px;
+
+        @include media('<=tablet') {
+            margin-right: 1px;
+        }
+    }
+
+    &__label {
+        display: inline-flex;
+
+        @include media('<=tablet') {
+            display: none;
+        }
+    }
+
+    &__primary {
+        background-color: rgb($brand-color-highlight);
+        color: $white;
+
+        &:hover {
+            background-color: $brand-color-secondary !important;
+            border-color: $white !important;
+            color: $white !important;
+        }
+
+        &:focus {
+            box-shadow: 0 0 0 3px rgb($brand-color-highlight, 0.5);
+        }
+    }
+
+    &__secondary {
+        background-color: rgb($brand-color-secondary);
+        color: $white;
+
+        &:hover {
+            border-color: $white !important;
+            color: $white !important;
+        }
+
+        &:focus {
+            box-shadow: 0 0 0 3px rgb($brand-color-secondary, 0.5);
+        }
+    }
+
+    &__default {
+        background-color: $mud-blue;
+        color: $white;
+
+        &:focus {
+            box-shadow: 0 0 0 3px rgb($mud-blue, 0.5);
+        }
+    }
+
+    &__accent {
+        background-color: $orange;
+        color: $white;
+
+        &:focus {
+            box-shadow: 0 0 0 3px rgb($orange, 0.5);
+        }
+    }
+
+    &__span {
+        font-size: 11px;
+        font-family: inherit;
+        background-color: rgba($white, 0.2);
+        border-radius: 16px;
+        padding: 4px 8px;
+        margin-left: 8px;
+        position: relative;
+        top: -1px;
+        right: -7px;
+    }
+
+    &:hover {
+        background-image: linear-gradient(rgba($black, 0.1), rgba($black, 0.1));
+        color: $white;
+        text-decoration: none;
+    }
+
+    &__disabled,
+    &--disabled,
+    &-disabled
+    &:disabled {
+        opacity: 0.25;
+        cursor: not-allowed;
+    }
+}

@@ -1,0 +1,49 @@
+.js-admin-session {
+    &--also-here {
+        &:empty {
+            display: none;
+        }
+
+        @extend .alert;
+
+        position: sticky;
+        top: 5px;
+        z-index: 1;
+        background-color: rgb(241, 112, 0);
+        border-color: rgb(200, 93, 0);
+        color: #ffffff;
+
+        ul {
+            li {
+                display: inline-block;
+                margin: 0;
+                margin-right: 0.25rem;
+
+                &:after {
+                    content: ',';
+                    display: inline-block;
+                }
+
+                &:first-child {
+                    &:after {
+                        content: '';
+                        display: none;
+                    }
+                }
+
+                &:last-child {
+                    margin-right: 0;
+
+                    &:after {
+                        content: '';
+                        display: none;
+                    }
+                }
+            }
+        }
+
+        .name {
+            font-weight: bold;
+        }
+    }
+}

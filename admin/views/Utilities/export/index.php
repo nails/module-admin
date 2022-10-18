@@ -89,8 +89,8 @@
         <?php
     }
     ?>
-    <table>
-        <thead>
+    <table class="table table-striped table-hover table-bordered table-responsive">
+        <thead class="table-dark">
             <tr>
                 <th>Export</th>
                 <th>Options</th>
@@ -115,8 +115,8 @@
                             <?=$oItem->status?>
                             <?=$oItem->status === 'FAILED' ? '<small>' . $oItem->error . '</small>' : ''?>
                         </td>
-                        <?=adminHelper('loadDateCell', $oItem->created)?>
-                        <?=adminHelper('loadDateCell', $oItem->status === 'COMPLETE' ? $oItem->modified : '', '&mdash;')?>
+                        <?=Nails\Admin\Helper::loadDateCell($oItem->created)?>
+                        <?=Nails\Admin\Helper::loadDateCell($oItem->status === 'COMPLETE' ? $oItem->modified : '', '&mdash;')?>
                         <td class="actions">
                             <?php
 

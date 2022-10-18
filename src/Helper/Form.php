@@ -86,13 +86,13 @@ class Form
         $sBodyCells = str_replace('</script>', '<\/script>', $sBodyCells);
 
         return <<<EOT
-            <table class="js-admin-dynamic-table" data-data="$sData">
-                <thead>
+            <table class="js-admin-dynamic-table table table-striped table-hover table-bordered table-responsive" data-data="$sData">
+                <thead class="table-dark">
                     <tr>
                         $sHeaderCells
                     </tr>
                 </thead>
-                <tbody class="js-admin-dynamic-table__body $sSortableClass" data-handle=".handle"></tbody>
+                <tbody class="js-admin-dynamic-table__body align-middle $sSortableClass" data-handle=".handle"></tbody>
                 <script type="text/x-template" class="js-admin-dynamic-table__template">
                 <tr>$sBodyCells</tr>
                 </script>

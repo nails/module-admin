@@ -121,7 +121,7 @@
     if (!empty($sortColumns)) {
 
         //  Sort Column
-        echo 'Sort results by';
+        echo 'Sort records by';
         echo form_dropdown('sortOn', $sortColumns, $sortOn, 'class="select2 filter--sort"');
 
     } else {
@@ -155,7 +155,7 @@
 
         echo 'Show';
         echo form_dropdown('perPage', $options, $perPage, 'class="select2 filter--per-page"');
-        echo 'results per page.';
+        echo 'records per page.';
 
         echo '</span>';
     }

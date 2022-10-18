@@ -28,7 +28,7 @@ $sLastModifiedOverWriteKey = $aFloatingConfig['last_modified']['overwrite']['key
 
 $bNotesEnabled  = $aFloatingConfig['notes']['enabled'] ?? false;
 $sNotesBtnText  = $aFloatingConfig['notes']['button']['text'] ?? 'Notes';
-$sNotesBtnClass = $aFloatingConfig['notes']['button']['class'] ?? 'btn btn-default pull-right';
+$sNotesBtnClass = $aFloatingConfig['notes']['button']['class'] ?? 'btn btn-default float-end';
 $sNotesModel    = $aFloatingConfig['notes']['model'] ?? null;
 $sNotesProvider = $aFloatingConfig['notes']['provider'] ?? null;
 

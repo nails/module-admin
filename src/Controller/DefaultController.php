@@ -27,7 +27,6 @@ use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ValidationException;
 use Nails\Common\Factory\Model\Field;
 use Nails\Common\Helper\Form;
-use Nails\Common\Helper\Inflector;
 use Nails\Common\Resource;
 use Nails\Common\Service\Database;
 use Nails\Common\Service\FormValidation;
@@ -55,11 +54,6 @@ abstract class DefaultController extends Base
      */
     const CONFIG_MODEL_NAME     = '';
     const CONFIG_MODEL_PROVIDER = 'app';
-
-    /**
-     * The permission string to use when checking permissions; if not provided then no permissions required
-     */
-    const CONFIG_PERMISSION = '';
 
     /**
      * The singular and plural name of the item being managed; defaults to the model name
@@ -138,9 +132,29 @@ abstract class DefaultController extends Base
     const CONFIG_CAN_CREATE = true;
 
     /**
+     * The permission required to create
+     */
+    const CONFIG_PERMISSION_CREATE = null;
+
+    /**
      * Specify whether the controller supports item editing
      */
     const CONFIG_CAN_EDIT = true;
+
+    /**
+     * The permission required to edit
+     */
+    const CONFIG_PERMISSION_EDIT = null;
+
+    /**
+     * Specify whether the controller supports browsing items
+     */
+    const CONFIG_CAN_BROWSE = true;
+
+    /**
+     * The permission required to browse
+     */
+    const CONFIG_PERMISSION_BROWSE = null;
 
     /**
      * Specify whether the controller supports linking to the item
@@ -148,9 +162,19 @@ abstract class DefaultController extends Base
     const CONFIG_CAN_VIEW = true;
 
     /**
+     * The permission required to view
+     */
+    const CONFIG_PERMISSION_VIEW = null;
+
+    /**
      * Specify whether the controller supports item deletion
      */
     const CONFIG_CAN_DELETE = true;
+
+    /**
+     * The permission required to delete
+     */
+    const CONFIG_PERMISSION_DELETE = null;
 
     /**
      * Specify whether the controller supports item restoration
@@ -158,14 +182,29 @@ abstract class DefaultController extends Base
     const CONFIG_CAN_RESTORE = true;
 
     /**
+     * The permission required to restore
+     */
+    const CONFIG_PERMISSION_RESTORE = null;
+
+    /**
      * Specify whether the controller supports item copying
      */
     const CONFIG_CAN_COPY = true;
 
     /**
+     * The permission required to copy
+     */
+    const CONFIG_PERMISSION_COPY = null;
+
+    /**
      * Specify whether the controller supports item sorting
      */
     const CONFIG_CAN_SORT = true;
+
+    /**
+     * The permission required to sort
+     */
+    const CONFIG_PERMISSION_SORT = null;
 
     /**
      * Additional data to pass into the getAll call on the index view
@@ -404,11 +443,6 @@ abstract class DefaultController extends Base
     const CHANGELOG_ENABLED = true;
 
     /**
-     * The name to use when creating changelog items, defaults to the resource class name
-     */
-    const CHANGELOG_ENTITY_NAME = null;
-
-    /**
      * An array of fields to ignore when processing change log updates
      */
     const CHANGELOG_FIELDS_IGNORE = [
@@ -418,13 +452,6 @@ abstract class DefaultController extends Base
         'created_by',
         'modified',
         'modified_by',
-    ];
-
-    /**
-     * An array of fields to redact/mask when processing changelog updates
-     */
-    const CHANGELOG_FIELDS_REDACT = [
-        'password',
     ];
 
     /**
@@ -457,9 +484,8 @@ abstract class DefaultController extends Base
      *       // Additional attributes to add to the button
      *       'attr'       => '',
      *
-     *       // If required, a permission string to check in order to render the button;
-     *       // will be appended to `admin:$CONFIG['PERMISSION']:`
-     *       'permission' => 'edit',
+     *       // If required, a permission class to check in order to render the button;
+     *       'permission' => \Nails\Admin\Admin\Permission\SuperUser,
      *
      *       // An expression to determine if the button can be rendered
      *       'enabled'   => function($oItem) { return true; },
@@ -502,10 +528,8 @@ abstract class DefaultController extends Base
     // --------------------------------------------------------------------------
 
     /**
-     * Announces this controller's navGroups
-     *
-     * @return array|Nav
-     * @throws NailsException
+     * @return \Nails\Admin\Factory\Nav
+     * @throws FactoryException
      */
     public static function announce()
     {
@@ -514,13 +538,12 @@ abstract class DefaultController extends Base
         $oNavGroup
             ->setLabel(static::getSidebarGroup())
             ->setIcon(static::CONFIG_SIDEBAR_ICON)
-            ->setSearchTerms(static::CONFIG_SIDEBAR_SEARCH_TERMS);
+            ->setKeywords(static::CONFIG_SIDEBAR_SEARCH_TERMS);
 
-        if (static::userCan(static::EDIT_MODE_BROWSE)) {
+        if (static::userCan(static::CONFIG_PERMISSION_BROWSE)) {
             $oNavGroup
                 ->addAction(
-                    sprintf(static::CONFIG_SIDEBAR_FORMAT, static::getTitlePlural()),
-                    'index'
+                    sprintf(static::CONFIG_SIDEBAR_FORMAT, static::getTitlePlural())
                 );
         }
 
@@ -530,44 +553,16 @@ abstract class DefaultController extends Base
     // --------------------------------------------------------------------------
 
     /**
-     * Returns an array of extra permissions for this controller
-     *
-     * @return array
-     */
-    public static function permissions(): array
-    {
-        $aPermissions = parent::permissions();
-
-        if (!empty(static::CONFIG_PERMISSION)) {
-
-            $aPermissions[static::EDIT_MODE_BROWSE]  = 'Can browse items';
-            $aPermissions[static::EDIT_MODE_CREATE]  = 'Can create items';
-            $aPermissions[static::EDIT_MODE_EDIT]    = 'Can edit items';
-            $aPermissions[static::EDIT_MODE_DELETE]  = 'Can delete items';
-            $aPermissions[static::EDIT_MODE_RESTORE] = 'Can restore items';
-
-            if (static::isCopyButtonEnabled()) {
-                $aPermissions[static::EDIT_MODE_COPY] = 'Can copy items';
-            }
-
-            if (static::isSortButtonEnabled()) {
-                $aPermissions[static::EDIT_MODE_SORT] = 'Can sort items';
-            }
-        }
-
-        return $aPermissions;
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
      * Browse all items
      *
      * @return void
+     * @throws FactoryException
+     * @throws ModelException
+     * @throws NailsException
      */
     public function index(): void
     {
-        if (!static::userCan(static::EDIT_MODE_BROWSE)) {
+        if (!static::userCan(static::CONFIG_PERMISSION_BROWSE)) {
             unauthorised();
         }
 
@@ -576,7 +571,6 @@ abstract class DefaultController extends Base
         $oModel  = $this->getModel();
         $aConfig = $this->getConfig();
 
-        $sAlias      = $oModel->getTableAlias();
         $aSortConfig = $aConfig['SORT_OPTIONS'];
 
         if (classUses($oModel, Nestable::class)) {
@@ -631,19 +625,20 @@ abstract class DefaultController extends Base
 
         // --------------------------------------------------------------------------
 
-        $iTotalRows               = $oModel->countAll($aData);
-        $this->data['items']      = $oModel->getAll($iPage, $iPerPage, $aData);
-        $this->data['pagination'] = Helper::paginationObject($iPage, $iPerPage, $iTotalRows);
-        $this->data['search']     = Helper::searchObject(
-            classUses($oModel, Searchable::class),
-            array_keys($aSortConfig),
-            $sSortOn,
-            $sSortOrder,
-            $iPerPage,
-            $sKeywords,
-            $aCbFilters,
-            $aDdFilters
-        );
+        $iTotalRows = $oModel->countAll($aData);
+        $this
+            ->setData('items', $oModel->getAll($iPage, $iPerPage, $aData))
+            ->setData('pagination', Helper::paginationObject($iPage, $iPerPage, $iTotalRows))
+            ->setData('search', Helper::searchObject(
+                classUses($oModel, Searchable::class),
+                array_keys($aSortConfig),
+                $sSortOn,
+                $sSortOrder,
+                $iPerPage,
+                $sKeywords,
+                $aCbFilters,
+                $aDdFilters
+            ));
 
         // --------------------------------------------------------------------------
 
@@ -651,8 +646,9 @@ abstract class DefaultController extends Base
 
         // --------------------------------------------------------------------------
 
-        $this->data['page']->title = $aConfig['TITLE_PLURAL'] . ' &rsaquo; Manage';
-        Helper::loadView('index');
+        $this
+            ->setTitles([$aConfig['TITLE_PLURAL'], 'Manage'])
+            ->loadView('index');
     }
 
     // --------------------------------------------------------------------------
@@ -661,13 +657,14 @@ abstract class DefaultController extends Base
      * Create a new item
      *
      * @return void
+     * @throws FactoryException
+     * @throws ModelException
+     * @throws NailsException
      */
     public function create(): void
     {
         if (!static::isCreateButtonEnabled()) {
             show404();
-        } elseif (!static::userCan(static::EDIT_MODE_CREATE)) {
-            unauthorised();
         }
 
         /** @var Database $oDb */
@@ -818,8 +815,9 @@ abstract class DefaultController extends Base
 
         // --------------------------------------------------------------------------
 
-        $this->data['page']->title = $aConfig['TITLE_SINGLE'] . ' &rsaquo; Create';
-        Helper::loadView('edit');
+        $this
+            ->setTitles([$aConfig['TITLE_SINGLE'], 'Create'])
+            ->loadView('edit');
     }
 
     // --------------------------------------------------------------------------
@@ -828,11 +826,14 @@ abstract class DefaultController extends Base
      * Edit an existing item
      *
      * @return void
+     * @throws FactoryException
+     * @throws ModelException
+     * @throws NailsException
      */
     public function edit(): void
     {
-        if (!static::userCan(static::EDIT_MODE_EDIT)) {
-            unauthorised();
+        if (!static::isEditButtonEnabled()) {
+            show404();
         }
 
         /** @var Database $oDb */
@@ -974,8 +975,9 @@ abstract class DefaultController extends Base
 
         // --------------------------------------------------------------------------
 
-        $this->data['page']->title = $aConfig['TITLE_SINGLE'] . ' &rsaquo; Edit';
-        Helper::loadView('edit');
+        $this
+            ->setTitles([$aConfig['TITLE_SINGLE'], 'Edit'])
+            ->loadView('edit');
     }
 
     // --------------------------------------------------------------------------
@@ -984,11 +986,13 @@ abstract class DefaultController extends Base
      * Delete an item
      *
      * @return void
+     * @throws FactoryException
+     * @throws NailsException
      */
     public function delete(): void
     {
-        if (!static::userCan(static::EDIT_MODE_DELETE)) {
-            unauthorised();
+        if (!static::isDeleteButtonEnabled()) {
+            show404();
         }
 
         /** @var Database $oDb */
@@ -1049,11 +1053,13 @@ abstract class DefaultController extends Base
      * Restore an item
      *
      * @return void
+     * @throws FactoryException
+     * @throws NailsException
      */
     public function restore(): void
     {
-        if (!static::userCan(static::EDIT_MODE_RESTORE)) {
-            unauthorised();
+        if (!static::isRestoreButtonEnabled()) {
+            show404();
         }
 
         /** @var Uri $oUri */
@@ -1100,13 +1106,13 @@ abstract class DefaultController extends Base
      * Sort items into order
      *
      * @return void
+     * @throws FactoryException
+     * @throws NailsException
      */
     public function sort(): void
     {
         if (!static::isSortButtonEnabled()) {
             show404();
-        } elseif (!static::userCan(static::EDIT_MODE_SORT)) {
-            unauthorised();
         }
 
         /** @var Input $oInput */
@@ -1164,9 +1170,10 @@ abstract class DefaultController extends Base
         $aItems    = $this->getItemsToSort();
         $aSections = $this->sortItemsIntoSections($aItems);
 
-        $this->data['aSections']   = $aSections;
-        $this->data['page']->title = $aConfig['TITLE_PLURAL'] . ' &rsaquo; Sort';
-        Helper::loadView('order');
+        $this
+            ->setTitles([$aConfig['TITLE_PLURAL'], 'Sort'])
+            ->setData('aSections', $aSections)
+            ->loadView('order');
     }
 
     // --------------------------------------------------------------------------
@@ -1175,6 +1182,9 @@ abstract class DefaultController extends Base
      * Returns the items for the sort view
      *
      * @return array
+     * @throws FactoryException
+     * @throws ModelException
+     * @throws NailsException
      */
     protected function getItemsToSort(): array
     {
@@ -1222,11 +1232,12 @@ abstract class DefaultController extends Base
      * Duplicate an item
      *
      * @throws FactoryException
+     * @throws NailsException
      */
     public function copy()
     {
-        if (!static::userCan(static::EDIT_MODE_COPY)) {
-            unauthorised();
+        if (!static::isCopyButtonEnabled()) {
+            show404();
         }
 
         /** @var Database $oDb */
@@ -1310,7 +1321,6 @@ abstract class DefaultController extends Base
             'CAN_RESTORE'            => static::CONFIG_CAN_RESTORE,
             'CAN_COPY'               => static::CONFIG_CAN_COPY,
             'CAN_SORT'               => static::CONFIG_CAN_SORT,
-            'PERMISSION'             => static::CONFIG_PERMISSION,
             'TITLE_SINGLE'           => static::getTitleSingle(),
             'TITLE_PLURAL'           => static::getTitlePlural(),
             'SIDEBAR_GROUP'          => static::getSidebarGroup(),
@@ -1360,9 +1370,6 @@ abstract class DefaultController extends Base
                 ],
             ],
         ];
-
-        $this->aConfig        =& $aConfig;
-        $this->data['CONFIG'] =& $this->aConfig;
 
         if (classUses($oModel, Sortable::class)) {
             $aConfig['SORT_OPTIONS']           = array_merge(['Defined Order' => 'order'], $aConfig['SORT_OPTIONS']);
@@ -1597,6 +1604,13 @@ abstract class DefaultController extends Base
             ])
         );
 
+        // --------------------------------------------------------------------------
+
+        $this->aConfig        =& $aConfig;
+        $this->data['CONFIG'] =& $this->aConfig;
+
+        // --------------------------------------------------------------------------
+
         return $this->aConfig;
     }
 
@@ -1609,10 +1623,10 @@ abstract class DefaultController extends Base
      *
      * @return bool
      */
-    protected static function localisedItemCanBeCreated(Resource $oItem)
+    protected static function localisedItemCanBeCreated(Resource $oItem): bool
     {
         //  New versions can only be created if the user has permissions and there is a remaining supported locale
-        if (static::CONFIG_CAN_CREATE && static::userCan(static::EDIT_MODE_CREATE)) {
+        if (static::CONFIG_CAN_CREATE && static::userCan(static::CONFIG_PERMISSION_CREATE)) {
             return !empty($oItem->missing_locales);
         }
         return false;
@@ -1621,14 +1635,14 @@ abstract class DefaultController extends Base
     // --------------------------------------------------------------------------
 
     /**
-     * Determines whether a localised item can be delted
+     * Determines whether a localised item can be deleted
      *
      * @param Resource $oItem The item to test
      *
      * @return bool
      * @throws FactoryException
      */
-    protected static function localisedItemCanBeDeleted(Resource $oItem)
+    protected static function localisedItemCanBeDeleted(Resource $oItem): bool
     {
         /** @var Locale $oLocale */
         $oLocale        = Factory::service('Locale');
@@ -1636,8 +1650,10 @@ abstract class DefaultController extends Base
         $sItemLocale    = (string) $oItem->locale;
         if ($sDefaultLocale !== $sItemLocale) {
             return true;
+
         } elseif ($sDefaultLocale === $sItemLocale && count($oItem->available_locales) === 1) {
             return true;
+
         } else {
             return false;
         }
@@ -1696,6 +1712,7 @@ abstract class DefaultController extends Base
      * Returns the base URL
      *
      * @return string
+     * @throws FactoryException
      */
     protected static function getBaseUrl(): string
     {
@@ -1703,10 +1720,7 @@ abstract class DefaultController extends Base
             return static::CONFIG_BASE_URL;
         }
 
-        $aBits   = explode('\\', get_called_class());
-        $sModule = strtolower($aBits[count($aBits) - 2]);
-        $sClass  = lcfirst($aBits[count($aBits) - 1]);
-        return 'admin/' . $sModule . '/' . $sClass;
+        return self::url();
     }
 
     // --------------------------------------------------------------------------
@@ -1714,13 +1728,13 @@ abstract class DefaultController extends Base
     /**
      * Determines whether a user has permission to perform an action
      *
-     * @param string $sPermission The permission to check
+     * @param \Nails\Admin\Interfaces\Permission|string $mPermission The permission to check
      *
      * @return bool
      */
-    protected static function userCan(string $sPermission): bool
+    protected static function userCan($mPermission): bool
     {
-        return empty(static::CONFIG_PERMISSION) || userHasPermission('admin:' . static::CONFIG_PERMISSION . ':' . $sPermission);
+        return empty($mPermission) || userHasPermission($mPermission);
     }
 
     // --------------------------------------------------------------------------
@@ -1757,6 +1771,7 @@ abstract class DefaultController extends Base
      * Any dropdown style filters to include on the index page
      *
      * @return IndexFilter[]
+     * @throws FactoryException
      */
     protected function indexDropdownFilters(): array
     {
@@ -1777,7 +1792,7 @@ abstract class DefaultController extends Base
     protected function getLocalisedDropdownFilters(): array
     {
         $oModel = static::getModel();
-        /** @var IndexFilter $aFilters */
+        /** @var IndexFilter[] $aFilters */
         $aFilters = [];
 
         if (classUses($oModel, Localised::class)) {
@@ -1791,8 +1806,8 @@ abstract class DefaultController extends Base
             /** @var Locale $oLocale */
             $oLocale = Factory::service('Locale');
 
-            /** @var Option $aOption */
-            $aOption = Factory::factory('IndexFilterOption', Constants::MODULE_SLUG);
+            /** @var Option $oOption */
+            $oOption = Factory::factory('IndexFilterOption', Constants::MODULE_SLUG);
             $oOption->setLabel('All Locales');
 
             $oFilter->addOption($oOption);
@@ -1824,7 +1839,7 @@ abstract class DefaultController extends Base
     protected function getPublishableDropdownFilters(): array
     {
         $oModel = static::getModel();
-        /** @var IndexFilter $aFilters */
+        /** @var IndexFilter[] $aFilters */
         $aFilters = [];
 
         if (classUses($oModel, Publishable::class)) {
@@ -1932,8 +1947,8 @@ abstract class DefaultController extends Base
     /**
      * Executed before an item is edited
      *
-     * @param string   $sMode Whether the action was CREATE or EDIT
-     * @param Resource $oItem The old item, before it was edited
+     * @param string        $sMode Whether the action was CREATE or EDIT
+     * @param Resource|null $oItem The old item, before it was edited
      *
      * @return void
      */
@@ -1946,9 +1961,11 @@ abstract class DefaultController extends Base
     /**
      * Executed before an item is edited
      *
-     * @param Resource $oItem The old item, before it was edited
+     * @param Resource|null $oItem The old item, before it was edited
      *
      * @return void
+     * @throws \Nails\Admin\Exception\DefaultController\ItemModifiedException
+     * @throws FactoryException
      */
     protected function beforeEdit(Resource $oItem = null): void
     {
@@ -2016,9 +2033,9 @@ abstract class DefaultController extends Base
     /**
      * Executed after an item is edited
      *
-     * @param string   $sMode    Whether the action was CREATE or EDIT
-     * @param Resource $oNewItem The new item, after it was edited
-     * @param Resource $oOldItem The old item, before it was edited
+     * @param string        $sMode    Whether the action was CREATE or EDIT
+     * @param Resource      $oNewItem The new item, after it was edited
+     * @param Resource|null $oOldItem The old item, before it was edited
      *
      * @return void
      */
@@ -2031,8 +2048,8 @@ abstract class DefaultController extends Base
     /**
      * Executed after an item is edited
      *
-     * @param Resource $oNewItem The new item, after it was edited
-     * @param Resource $oOldItem The old item, before it was edited
+     * @param Resource      $oNewItem The new item, after it was edited
+     * @param Resource|null $oOldItem The old item, before it was edited
      *
      * @return void
      */
@@ -2088,7 +2105,8 @@ abstract class DefaultController extends Base
      * @param string $sMode      The mode in which the validation is being run
      * @param array  $aOverrides Any overrides for the fields; best to do this in the model's describeFields() method
      *
-     * @return void
+     * @throws FactoryException
+     * @throws NailsException
      * @throws ValidationException
      */
     protected function runFormValidation(string $sMode, array $aOverrides = []): void
@@ -2139,7 +2157,7 @@ abstract class DefaultController extends Base
     /**
      * Load data for the edit/create view
      *
-     * @param Resource $oItem The main item object
+     * @param Resource|null $oItem The main item object
      *
      * @throws FactoryException
      * @throws NailsException
@@ -2154,11 +2172,11 @@ abstract class DefaultController extends Base
             $this->loadEditViewDataSetReadOnly($oField, $oItem);
         }
 
-        $this->data['aFieldSets'] = $this->loadEditViewDataSetFieldsets($aFields);
-        $this->data['oItem']      = $oItem;
-
-        //  @deprecated (Pablo 15/02/2021) - kept for backwards compatability
-        $this->data['item'] = $oItem;
+        $this
+            ->setData('aFieldSets', $this->loadEditViewDataSetFieldsets($aFields, $oItem))
+            ->setData('oItem', $oItem)
+            //  @deprecated (Pablo 15/02/2021) - kept for backwards compatability
+            ->setData('item', $oItem);
     }
 
     // --------------------------------------------------------------------------
@@ -2171,16 +2189,15 @@ abstract class DefaultController extends Base
      */
     protected function loadEditViewDataSetDefaultValue(Field &$oField, Resource $oItem = null)
     {
-        $sKey = preg_replace('/\[\]$/', '', $oField->getKey());
+        $sKey = preg_replace('/\[]$/', '', $oField->getKey());
 
         if ($oField->getDefault() instanceof \Closure) {
-
             $oField->setDefault(call_user_func($oField->getDefault(), $oItem));
 
         } elseif (!is_null($oItem) && property_exists($oItem, $sKey)) {
-
             if ($oItem->{$sKey} instanceof Resource\ExpandableField) {
                 $oField->setDefault($oItem->{$sKey}->data);
+
             } else {
                 $oField->setDefault($oItem->{$sKey});
             }
@@ -2227,13 +2244,14 @@ abstract class DefaultController extends Base
     /**
      * Organises fields into their fieldsets
      *
-     * @param Field[] $aFields The fields being organised
+     * @param Field[]       $aFields The fields being organised
+     * @param Resource|null $oItem   The main item object
      *
      * @return Field[]
      * @throws FactoryException
      * @throws NailsException
      */
-    protected function loadEditViewDataSetFieldsets(array $aFields): array
+    protected function loadEditViewDataSetFieldsets(array $aFields, Resource $oItem = null): array
     {
         //  Extract the fields into fieldsets
         $aConfig    = $this->getConfig();
@@ -2246,18 +2264,14 @@ abstract class DefaultController extends Base
             )
         );
 
-        //  Organsie fields into the fieldsets
-        /** @var Field $oField */
+        //  Organise fields into the fieldsets
         foreach ($aFields as $oField) {
 
-            if (empty($oItem)) {
-                if (in_array($oField->getKey(), $aConfig['CREATE_IGNORE_FIELDS'])) {
-                    continue;
-                }
-            } else {
-                if (in_array($oField->getKey(), $aConfig['EDIT_IGNORE_FIELDS'])) {
-                    continue;
-                }
+            if (empty($oItem) && in_array($oField->getKey(), $aConfig['CREATE_IGNORE_FIELDS'])) {
+                continue;
+
+            } elseif (in_array($oField->getKey(), $aConfig['EDIT_IGNORE_FIELDS'])) {
+                continue;
             }
 
             $sFieldSet = $oField->getFieldset();
@@ -2278,6 +2292,8 @@ abstract class DefaultController extends Base
      * Extract data from post variable
      *
      * @return array
+     * @throws FactoryException
+     * @throws NailsException
      */
     protected function getPostObject(): array
     {
@@ -2329,8 +2345,8 @@ abstract class DefaultController extends Base
 
         if (classUses($oModel, Localised::class)) {
             $iExistingId = $oUri->segment(5);
-            if ($oUri->segment(5)) {
-                $aOut['id'] = $oUri->segment(5);
+            if ($iExistingId) {
+                $aOut['id'] = $iExistingId;
             }
         }
 
@@ -2340,13 +2356,16 @@ abstract class DefaultController extends Base
     // --------------------------------------------------------------------------
 
     /**
-     * Returns the item being requested, thorwing a 404 if it's not found
+     * Returns the item being requested, throwing a 404 if it's not found
      *
-     * @param array   $aData    Data to pass to the getById method
-     * @param integer $iSegment The URL segment contianing the ID
+     * @param array    $aData    Data to pass to the getById method
+     * @param int|null $iSegment The URL segment containing the ID
+     * @param bool     $bIncludeDeleted
+     * @param bool     $b404
      *
-     * @return mixed
+     * @return false|\Nails\Common\Resource
      * @throws FactoryException
+     * @throws ModelException
      */
     protected function getItem(array $aData = [], int $iSegment = null, bool $bIncludeDeleted = false, bool $b404 = true)
     {
@@ -2395,7 +2414,7 @@ abstract class DefaultController extends Base
     protected static function isCreateButtonEnabled(): bool
     {
         return static::CONFIG_CAN_CREATE
-            && static::userCan(static::EDIT_MODE_CREATE);
+            && static::userCan(static::CONFIG_PERMISSION_CREATE);
     }
 
     // --------------------------------------------------------------------------
@@ -2407,7 +2426,7 @@ abstract class DefaultController extends Base
      *
      * @return bool
      */
-    protected static function isViewButtonEnabled($oItem): bool
+    protected static function isViewButtonEnabled(Resource $oItem): bool
     {
         return static::CONFIG_CAN_VIEW
             && (!empty($oItem->url) || (method_exists($oItem, 'getUrl') && !empty($oItem->getUrl())));
@@ -2422,10 +2441,10 @@ abstract class DefaultController extends Base
      *
      * @return bool
      */
-    protected static function isEditButtonEnabled($oItem = null): bool
+    protected static function isEditButtonEnabled(Resource $oItem = null): bool
     {
         return static::CONFIG_CAN_EDIT
-            && static::userCan(static::EDIT_MODE_EDIT);
+            && static::userCan(static::CONFIG_PERMISSION_EDIT);
     }
 
     // --------------------------------------------------------------------------
@@ -2437,10 +2456,10 @@ abstract class DefaultController extends Base
      *
      * @return bool
      */
-    protected static function isDeleteButtonEnabled($oItem = null): bool
+    protected static function isDeleteButtonEnabled(Resource $oItem = null): bool
     {
         return static::CONFIG_CAN_DELETE
-            && static::userCan(static::EDIT_MODE_DELETE);
+            && static::userCan(static::CONFIG_PERMISSION_DELETE);
     }
 
     // --------------------------------------------------------------------------
@@ -2451,11 +2470,12 @@ abstract class DefaultController extends Base
      * @param Resource|null $oItem The row item
      *
      * @return bool
+     * @throws FactoryException
      */
-    protected static function isRestoreButtonEnabled($oItem = null): bool
+    protected static function isRestoreButtonEnabled(Resource $oItem = null): bool
     {
         return static::CONFIG_CAN_RESTORE
-            && static::userCan(static::EDIT_MODE_RESTORE)
+            && static::userCan(static::CONFIG_PERMISSION_RESTORE)
             && !static::getModel()->isDestructiveDelete();
     }
 
@@ -2467,11 +2487,12 @@ abstract class DefaultController extends Base
      * @param Resource|null $oItem The row item
      *
      * @return bool
+     * @throws FactoryException
      */
-    protected static function isCopyButtonEnabled($oItem = null): bool
+    protected static function isCopyButtonEnabled(Resource $oItem = null): bool
     {
         return static::CONFIG_CAN_COPY
-            && static::userCan(static::EDIT_MODE_COPY)
+            && static::userCan(static::CONFIG_PERMISSION_COPY)
             && classUses(static::getModel(), Copyable::class)
             && static::isEditButtonEnabled($oItem)
             && static::isCreateButtonEnabled();
@@ -2482,14 +2503,13 @@ abstract class DefaultController extends Base
     /**
      * Determines whether the "Sort" button is enabled
      *
-     * @param Resource|null $oItem The row item
-     *
      * @return bool
+     * @throws FactoryException
      */
     protected static function isSortButtonEnabled(): bool
     {
         return static::CONFIG_CAN_SORT
-            && static::userCan(static::EDIT_MODE_SORT)
+            && static::userCan(static::CONFIG_PERMISSION_SORT)
             && classUses(static::getModel(), Sortable::class)
             && static::isEditButtonEnabled();
     }
@@ -2497,10 +2517,12 @@ abstract class DefaultController extends Base
     // --------------------------------------------------------------------------
 
     /**
-     * Returns the user to the index pagel if a referrer is available then go there instead
+     * Returns the user to the index page if a referrer is available then go there instead
      * This is useful for returning the user to a filtered view
      *
+     * @return void
      * @throws FactoryException
+     * @throws NailsException
      */
     protected function returnToIndex(): void
     {
@@ -2669,7 +2691,7 @@ abstract class DefaultController extends Base
             ->add(
                 'created',
                 'a',
-                static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
+                get_class($oItem),
                 $oItem->id,
                 $oItem->label ?? 'Item #' . $oItem->id,
                 $this->aConfig['BASE_URL'] . '/edit/' . $oItem->id
@@ -2683,11 +2705,16 @@ abstract class DefaultController extends Base
      *
      * @param Resource\Entity      $oItem    The new item
      * @param Resource\Entity|null $oOldItem The old item
+     *
+     * @return void
+     * @throws FactoryException
+     * @throws ModelException
      */
     protected function addToChangeLogEdit(Resource\Entity $oItem, Resource\Entity $oOldItem = null): void
     {
-        $aNew = $this->changeLogFlattenObject($oItem);
-        $aOld = $this->changeLogFlattenObject($oOldItem);
+        $oModel = static::getModel();
+        $aNew   = $this->changeLogFlattenObject($oItem);
+        $aOld   = $this->changeLogFlattenObject($oOldItem);
 
         $aSameKeys    = array_keys(array_intersect_key($aNew, $aOld));
         $aAddedKeys   = array_keys(array_diff_key($aNew, $aOld));
@@ -2717,7 +2744,7 @@ abstract class DefaultController extends Base
 
             [$sOldValue, $sNewValue] = $aValues;
             $bForce = false;
-            if (in_array($sKey, static::CHANGELOG_FIELDS_REDACT)) {
+            if (in_array($sKey, $oModel::SENSITIVE_FIELDS)) {
                 $bForce    = $sOldValue !== $sNewValue;
                 $sOldValue = '[REDACTED]';
                 $sNewValue = '[REDACTED]';
@@ -2728,7 +2755,7 @@ abstract class DefaultController extends Base
                 ->add(
                     'updated',
                     'a',
-                    static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
+                    get_class($oItem),
                     $oItem->id,
                     $oItem->label ?? 'Item #' . $oItem->id,
                     $this->aConfig['BASE_URL'] . '/edit/' . $oItem->id,
@@ -2747,6 +2774,10 @@ abstract class DefaultController extends Base
      * Adds a "Delete" item to the ChangeLog
      *
      * @param Resource\Entity $oItem The deleted item
+     *
+     * @return void
+     * @throws FactoryException
+     * @throws ModelException
      */
     protected function addToChangeLogDelete(Resource\Entity $oItem): void
     {
@@ -2755,7 +2786,7 @@ abstract class DefaultController extends Base
             ->add(
                 'deleted',
                 'a',
-                static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
+                get_class($oItem),
                 $oItem->id,
                 $oItem->label ?? 'Item #' . $oItem->id
             );
@@ -2767,6 +2798,10 @@ abstract class DefaultController extends Base
      * Adds a "Restore" item to the ChangeLog
      *
      * @param Resource\Entity $oItem The restored item
+     *
+     * @return void
+     * @throws FactoryException
+     * @throws ModelException
      */
     protected function addToChangeLogRestore(Resource\Entity $oItem): void
     {
@@ -2775,7 +2810,7 @@ abstract class DefaultController extends Base
             ->add(
                 'restored',
                 'a',
-                static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
+                get_class($oItem),
                 $oItem->id,
                 $oItem->label ?? 'Item #' . $oItem->id,
                 $this->aConfig['BASE_URL'] . '/edit/' . $oItem->id
@@ -2787,13 +2822,13 @@ abstract class DefaultController extends Base
     /**
      * Flattens the object suitable for the change log
      *
-     * @param mixed        $mItem   The item to flattem
-     * @param string       $sPrefix The prefix to give the key
-     * @param null|integer $iDepth  The depth of the array
+     * @param mixed    $mItem   The item to flatten
+     * @param string   $sPrefix The prefix to give the key
+     * @param int|null $iDepth  The depth of the array
      *
      * @return array
      */
-    protected function changeLogFlattenObject($mItem, string $sPrefix = '', $iDepth = null): array
+    protected function changeLogFlattenObject($mItem, string $sPrefix = '', int $iDepth = null): array
     {
         $sPrefix = $sPrefix ? $sPrefix . '.' : '';
         $aOut    = [];
@@ -2805,7 +2840,6 @@ abstract class DefaultController extends Base
             }
 
             if ($mValue instanceof Resource\ExpandableField) {
-
                 foreach ($mValue->data as $iIndex => $mArrayValue) {
                     $aOut = array_merge(
                         $aOut,
@@ -2814,11 +2848,9 @@ abstract class DefaultController extends Base
                 }
 
             } elseif (is_object($mValue)) {
-
                 $aOut = array_merge($aOut, $this->changeLogFlattenObject($mValue, $sPrefix . $sKey));
 
             } elseif (is_array($mValue)) {
-
                 foreach ($mValue as $iIndex => $mArrayValue) {
                     $aOut = array_merge(
                         $aOut,
@@ -2841,7 +2873,7 @@ abstract class DefaultController extends Base
      *
      * @param \Closure|string|null   $mUrl        The button's URL
      * @param \Closure|string|null   $mLabel      The button's label
-     * @param \Closure|string|null   $mClass      The buttons classes
+     * @param \Closure|string|null   $mClass      The button's classes
      * @param \Closure|string[]|null $mAttr       Any additional attributed for the button
      * @param \Closure|string|null   $mPermission The permission required to render the button
      * @param \Closure|bool|null     $mEnabled    Whether the button is enabled or not

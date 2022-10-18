@@ -4,9 +4,17 @@ use Nails\Admin\Factory;
 use Nails\Admin\Model;
 use Nails\Admin\Resource;
 use Nails\Admin\Service;
+use Nails\Common\Factory\Component;
 
 return [
     'services'  => [
+        'Controller'      => function (): Service\Controller {
+            if (class_exists('\App\Admin\Service\Controller')) {
+                return new \App\Admin\Service\Controller();
+            } else {
+                return new Service\Controller();
+            }
+        },
         'DataExport'      => function (): Service\DataExport {
             if (class_exists('\App\Admin\Service\DataExport')) {
                 return new \App\Admin\Service\DataExport();
@@ -19,6 +27,20 @@ return [
                 return new \App\Admin\Service\Dashboard\Widget();
             } else {
                 return new Service\Dashboard\Widget();
+            }
+        },
+        'Permission'      => function (): Service\Permission {
+            if (class_exists('\App\Admin\Service\Permission')) {
+                return new \App\Admin\Service\Permission();
+            } else {
+                return new Service\Permission();
+            }
+        },
+        'Ui'              => function (): Service\Ui {
+            if (class_exists('\App\Admin\Service\Ui')) {
+                return new \App\Admin\Service\Ui();
+            } else {
+                return new Service\Ui();
             }
         },
     ],
@@ -72,13 +94,6 @@ return [
                 return new Model\Session();
             }
         },
-        'SiteLog'         => function (): Model\SiteLog {
-            if (class_exists('\App\Admin\Model\SiteLog')) {
-                return new \App\Admin\Model\SiteLog();
-            } else {
-                return new Model\SiteLog();
-            }
-        },
     ],
     'resources' => [
         'ChangeLog'        => function ($mObj): Resource\ChangeLog {
@@ -125,88 +140,121 @@ return [
         },
     ],
     'factories' => [
-        'DefaultControllerSortSection' => function (string $sLabel = '', array $aItems = []): Factory\DefaultController\Sort\Section {
+        'DefaultControllerSortSection'     => function (string $sLabel = '', array $aItems = []): Factory\DefaultController\Sort\Section {
             if (class_exists('\App\Admin\Factory\Nav')) {
                 return new \App\Admin\Factory\DefaultController\Sort\Section($sLabel, $aItems);
             } else {
                 return new Factory\DefaultController\Sort\Section($sLabel, $aItems);
             }
         },
-        'EmailDataExportSuccess'       => function (): Factory\Email\DataExport\Success {
+        'EmailDataExportSuccess'           => function (): Factory\Email\DataExport\Success {
             if (class_exists('\App\Admin\Factory\Email\DataExport\Success')) {
                 return new \App\Admin\Factory\Email\DataExport\Success();
             } else {
                 return new Factory\Email\DataExport\Success();
             }
         },
-        'EmailDataExportFail'          => function (): Factory\Email\DataExport\Fail {
+        'EmailDataExportFail'              => function (): Factory\Email\DataExport\Fail {
             if (class_exists('\App\Admin\Factory\Email\DataExport\Fail')) {
                 return new \App\Admin\Factory\Email\DataExport\Fail();
             } else {
                 return new Factory\Email\DataExport\Fail();
             }
         },
-        'HelperDynamicTable'           => function (): Factory\Helper\DynamicTable {
+        'HelperDynamicTable'               => function (): Factory\Helper\DynamicTable {
             if (class_exists('\App\Admin\Helper\DynamicTable')) {
                 return new \App\Admin\Helper\DynamicTable();
             } else {
                 return new Factory\Helper\DynamicTable();
             }
         },
-        'Nav'                          => function (): Factory\Nav {
+        'Nav'                              => function (
+            string $sLabel = '',
+            string $sIcon = '',
+            array $aActions = [],
+            array $aKeywords = [],
+            bool $bIsOpen = false
+        ): Factory\Nav {
             if (class_exists('\App\Admin\Factory\Nav')) {
-                return new \App\Admin\Factory\Nav();
+                return new \App\Admin\Factory\Nav($sLabel, $sIcon, $aActions, $aKeywords, $bIsOpen);
             } else {
-                return new Factory\Nav();
+                return new Factory\Nav($sLabel, $sIcon, $aActions, $aKeywords, $bIsOpen);
             }
         },
-        'NavAlert'                     => function (): Factory\Nav\Alert {
+        'NavAction'                        => function (
+            string $sLabel,
+            string $sUrl,
+            array $aAlerts = [],
+            int $iOrder = null,
+            array $aKeywords = []
+        ): Factory\Nav\Action {
+            if (class_exists('\App\Admin\Factory\Nav\Action')) {
+                return new \App\Admin\Factory\Nav\Action($sLabel, $sUrl, $aAlerts, $iOrder, $aKeywords);
+            } else {
+                return new Factory\Nav\Action($sLabel, $sUrl, $aAlerts, $iOrder, $aKeywords);
+            }
+        },
+        'NavAlert'                         => function (): Factory\Nav\Alert {
             if (class_exists('\App\Admin\Factory\Nav\Alert')) {
                 return new \App\Admin\Factory\Nav\Alert();
             } else {
                 return new Factory\Nav\Alert();
             }
         },
-        'QuickActionAction'            => function (string $sLabel, string $sSubLabel, string $sUrl): Factory\QuickAction\Action {
-            if (class_exists('\App\Admin\Factory\QuickAction\Action')) {
-                return new \App\Admin\Factory\QuickAction\Action($sLabel, $sSubLabel, $sUrl);
+        'PermissionGroup'                  => function (Component $oComponent, array $aPermissions = []): Factory\Permission\Group {
+            if (class_exists('\App\Admin\Factory\Permission\Group')) {
+                return new \App\Admin\Factory\Permission\Group($oComponent, $aPermissions);
             } else {
-                return new Factory\QuickAction\Action($sLabel, $sSubLabel, $sUrl);
+                return new Factory\Permission\Group($oComponent, $aPermissions);
             }
         },
-        'DataExportSourceResponse'     => function () {
+        'DataExportSourceResponse'         => function () {
             if (class_exists('\App\Admin\DataExport\SourceResponse')) {
                 return new \App\Admin\DataExport\SourceResponse();
             } else {
                 return new \Nails\Admin\DataExport\SourceResponse();
             }
         },
-        'IndexFilter'                  => function (): Factory\IndexFilter {
+        'IndexFilter'                      => function (): Factory\IndexFilter {
             if (class_exists('\App\Admin\Factory\IndexFilter')) {
                 return new \App\Admin\Factory\IndexFilter();
             } else {
                 return new Factory\IndexFilter();
             }
         },
-        'IndexFilterOption'            => function (): Factory\IndexFilter\Option {
+        'IndexFilterOption'                => function (): Factory\IndexFilter\Option {
             if (class_exists('\App\Admin\Factory\IndexFilter\Option')) {
                 return new \App\Admin\Factory\IndexFilter\Option();
             } else {
                 return new Factory\IndexFilter\Option();
             }
         },
-        'ModelFieldDynamicTable'       => function (): Factory\Model\Field\DynamicTable {
+        'ModelFieldDynamicTable'           => function (): Factory\Model\Field\DynamicTable {
             if (class_exists('\App\Admin\Factory\Model\Field\DynamicTable')) {
                 return new \App\Admin\Factory\Model\Field\DynamicTable();
             } else {
                 return new Factory\Model\Field\DynamicTable();
             }
         },
-        'Setting'                      => function (): Factory\Setting {
+        'Setting'                          => function (): Factory\Setting {
             if (class_exists('\App\Admin\Factory\Setting')) {
                 return new \App\Admin\Factory\Setting();
             } else {
                 return new Factory\Setting();
+            }
+        },
+        'UiHeaderButtonSearchResult'       => function (): Factory\Ui\Header\Button\Search\Result {
+            if (class_exists('\App\Admin\Factory\Ui\Header\Button\Search\Result')) {
+                return new \App\Admin\Factory\Ui\Header\Button\Search\Result();
+            } else {
+                return new Factory\Ui\Header\Button\Search\Result();
+            }
+        },
+        'UiHeaderButtonSearchResultAction' => function (): Factory\Ui\Header\Button\Search\Result\Action {
+            if (class_exists('\App\Admin\Factory\Ui\Header\Button\Search\Result\Action')) {
+                return new \App\Admin\Factory\Ui\Header\Button\Search\Result\Action();
+            } else {
+                return new Factory\Ui\Header\Button\Search\Result\Action();
             }
         },
     ],

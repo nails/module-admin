@@ -1,0 +1,50 @@
+.swal2 {
+
+    &-title {
+        text-align: left;
+        font-size: 20px;
+        padding: 1em 1.2em 0;
+    }
+
+    &-html-container {
+        text-align: left;
+        margin: 1em 1.75em 0.3em;
+        font-size: 14px;
+    }
+
+    &-actions {
+        justify-content: flex-start;
+        margin: 1.25em 20px 0;
+    }
+
+    &-close {
+
+        &:hover {
+            color: rgb($brand-color-highlight);
+        }
+    }
+
+    &-styled {
+
+        &.swal2 {
+
+            &-confirm {
+                background-color: rgb($brand-color-highlight);
+                border-radius: 100rem;
+
+                &:focus {
+                    box-shadow: 0 0 0 3px rgb($brand-color-highlight, 0.5);
+                }
+            }
+
+            &-cancel {
+                background-color: rgb($brand-color-secondary);
+                border-radius: 100rem;
+
+                &:focus {
+                    box-shadow: 0 0 0 3px rgb($brand-color-secondary, 0.5);
+                }
+            }
+        }
+    }
+}

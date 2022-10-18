@@ -11,7 +11,7 @@
 
     if ($value) {
 
-        echo '<td class="boolean success">';
+        echo '<td class="boolean table-success align-middle">';
             echo '<b class="fa fa-check-circle fa-lg"></b>';
             if (!is_null($dateTime)) {
 
@@ -23,7 +23,7 @@
 
     } else {
 
-        echo '<td class="boolean danger">';
+        echo '<td class="boolean table-danger">';
             echo '<b class="fa fa-times-circle fa-lg"></b>';
         echo '</td>';
     }
