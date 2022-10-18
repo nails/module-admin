@@ -156,6 +156,7 @@ class Helper
             $oView = Factory::service('View');
             if (is_array($mData)) {
                 $oView->load('admin/_components/csv/array', ['data' => $mData, 'header' => $bHeaderRow]);
+
             } elseif (get_class($mData) == 'CI_DB_mysqli_result') {
                 $oView->load('admin/_components/csv/dbResult', ['data' => $mData, 'header' => $bHeaderRow]);
             }

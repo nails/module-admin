@@ -5,7 +5,6 @@ $bHeader = !empty($header);
 
 //  Determine the field titles if we can
 if (!empty($bHeader)) {
-
     $aFirstRow   = (array) reset($aData);
     $aColumns    = array_keys($aFirstRow);
     $aColumnsOut = [];
