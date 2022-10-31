@@ -144,6 +144,10 @@ class Permission
 
     public function groupHasPermission($mPermission, Group $oGroup = null, bool $bIgnoreSuperUser = false): bool
     {
+        if (empty($mPermission)) {
+            return true;
+        }
+
         $oGroup = $oGroup ?? (activeUser() ? activeUser()->group() : null);
 
         if (empty($oGroup)) {
