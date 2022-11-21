@@ -12,8 +12,10 @@
 
 namespace Nails\Admin;
 
+use Nails\Admin\Service\Controller;
 use Nails\Common\Interfaces\RouteGenerator;
 use Nails\Config;
+use Nails\Factory;
 
 class Routes implements RouteGenerator
 {
@@ -24,8 +26,11 @@ class Routes implements RouteGenerator
      */
     public static function generate(): array
     {
+        /** @var Controller $oController */
+        $oController = Factory::service('Controller', Constants::MODULE_SLUG);
+
         return [
-            Config::get('ADMIN_URL', Constants::MODULE_URL) . '(/(.+))?' => 'admin/adminRouter/index$1',
+            $oController->getUrlPrefix() . '(/(.+))?' => 'admin/adminRouter/index$1',
         ];
     }
 }
