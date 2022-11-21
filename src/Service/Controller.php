@@ -12,6 +12,7 @@ use Nails\Admin\Model\Admin;
 use Nails\Common\Factory\Component;
 use Nails\Common\Helper\ArrayHelper;
 use Nails\Components;
+use Nails\Config;
 use Nails\Factory;
 
 class Controller
@@ -263,7 +264,8 @@ class Controller
         $oComponent = Components::detectClassComponent($sClass);
 
         return sprintf(
-            'admin/%s/dashboard',
+            '%s/%s/dashboard',
+            $this->getUrlPrefix(),
             $oComponent->slugUrl
         );
     }
@@ -380,7 +382,12 @@ class Controller
             foreach (array_filter($aNavGroups) as $oNavGroup) {
 
                 //  Set the base URL for the group
-                $sGroupUrl = 'admin/' . $oComponent->slugUrl . '/' . $sSlug;
+                $sGroupUrl = sprintf(
+                    '%s/%s/%s',
+                    $this->getUrlPrefix(),
+                    $oComponent->slugUrl,
+                    $sSlug
+                );
 
                 //  Track icon (so we can calculate which one to use)
                 if (!array_key_exists($oNavGroup->getLabel(), $aIconsOut)) {
@@ -546,6 +553,13 @@ class Controller
 
     // --------------------------------------------------------------------------
 
+    public function getUrlPrefix(): string
+    {
+        return Config::get('ADMIN_URL', Constants::MODULE_URL);
+    }
+
+    // --------------------------------------------------------------------------
+
     public function determineBaseUrl(string $sClass): string
     {
         $oComponent = Components::detectClassComponent($sClass);
@@ -575,7 +589,8 @@ class Controller
         }
 
         return sprintf(
-            'admin/%s/%s',
+            '%s/%s/%s',
+            $this->getUrlPrefix(),
             $sModule,
             $sController
         );

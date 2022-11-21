@@ -3,6 +3,7 @@
 namespace Nails\Admin\Console\Command\DataExport;
 
 use DateTime;
+use Nails\Admin\Admin\Controller\Utilities;
 use Nails\Admin\Constants;
 use Nails\Admin\Factory\Email\DataExport\Fail;
 use Nails\Admin\Factory\Email\DataExport\Success;
@@ -117,6 +118,7 @@ class Process extends Base
 
             /** @var Success $oSuccessEmail */
             $oSuccessEmail = Factory::factory('EmailDataExportSuccess', Constants::MODULE_SLUG);
+            $oSuccessEmail->data(['login_url' => Utilities::url('export')]);
             /** @var Fail $oFailEmail */
             $oFailEmail = Factory::factory('EmailDataExportFail', Constants::MODULE_SLUG);
 
@@ -140,7 +142,9 @@ class Process extends Base
 
                         foreach ($oRequest->recipients as $iRecipient) {
                             $this->oOutput->writeln('Sending email to user #<info>' . $iRecipient . '</info>');
-                            $oSuccessEmail->to($iRecipient)->send();
+                            $oSuccessEmail
+                                ->to($iRecipient)
+                                ->send();
                         }
 
                     } catch (\Exception $e) {

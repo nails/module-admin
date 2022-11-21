@@ -13,17 +13,19 @@
 namespace Nails\Admin;
 
 use Nails\Common\Interfaces\RouteGenerator;
+use Nails\Config;
 
 class Routes implements RouteGenerator
 {
     /**
      * Returns an array of routes for this module
+     *
      * @return array
      */
     public static function generate(): array
     {
         return [
-            'admin(/(.+))?' => 'admin/adminRouter/index$1',
+            Config::get('ADMIN_URL', Constants::MODULE_URL) . '(/(.+))?' => 'admin/adminRouter/index$1',
         ];
     }
 }

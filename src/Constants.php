@@ -15,4 +15,9 @@ class Constants
      * @var string
      */
     const MODULE_SLUG = 'nails/module-admin';
+
+    /**
+     * The URL prefix for the UI
+     */
+    const MODULE_URL = 'admin';
 }
