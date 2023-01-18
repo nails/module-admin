@@ -1309,7 +1309,12 @@ abstract class DefaultController extends Base
         }
 
         //  Build the config array
-        $oModel  = static::getModel();
+        $oModel = static::getModel();
+
+        $aConfig              = [];
+        $this->aConfig        =& $aConfig;
+        $this->data['CONFIG'] =& $aConfig;;
+
         $aConfig = [
             'MODEL_NAME'             => static::CONFIG_MODEL_NAME,
             'MODEL_PROVIDER'         => static::CONFIG_MODEL_PROVIDER,
@@ -1606,12 +1611,7 @@ abstract class DefaultController extends Base
 
         // --------------------------------------------------------------------------
 
-        $this->aConfig        =& $aConfig;
-        $this->data['CONFIG'] =& $this->aConfig;
-
-        // --------------------------------------------------------------------------
-
-        return $this->aConfig;
+        return $aConfig;
     }
 
     // --------------------------------------------------------------------------
