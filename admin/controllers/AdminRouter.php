@@ -605,10 +605,10 @@ class AdminRouter extends BaseMiddle
             $sControllerName              = $aRequestController['className'];
             $oController                  = new $sControllerName();
 
-            if (method_exists($sControllerName, '_remap')) {
+            if (method_exists($oController, '_remap')) {
                 $oController->_remap();
 
-            } elseif (is_callable([$sControllerName, $sMethod])) {
+            } elseif (is_callable([$oController, $sMethod])) {
                 $oController->$sMethod();
 
             } else {
