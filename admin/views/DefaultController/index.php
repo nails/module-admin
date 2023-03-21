@@ -1,10 +1,11 @@
 <?php
 
-use Nails\Factory;
 use Nails\Admin\Helper;
 use Nails\Common\Helper\ArrayHelper;
+use Nails\Common\Service\Mustache;
+use Nails\Factory;
 
-/** @var \Mustache_Engine $oMustache */
+/** @var Mustache $oMustache */
 $oMustache = Factory::service('Mustache');
 
 ?>
