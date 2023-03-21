@@ -2,8 +2,11 @@
 
 use Nails\Admin\Helper;
 use Nails\Common\Helper\ArrayHelper;
+use Nails\Common\Service\Mustache;
+use Nails\Factory;
 
-$oMustache = \Nails\Factory::service('Mustache');
+/** @var Mustache $oMustache */
+$oMustache = Factory::service('Mustache');
 
 ?>
 <div class="group-defaultcontroller browse" <?=$CONFIG['INDEX_PAGE_ID'] ? 'id="' . $CONFIG['INDEX_PAGE_ID'] . '"' : ''?>>
