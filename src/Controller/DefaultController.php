@@ -1704,7 +1704,7 @@ abstract class DefaultController extends Base
         }
 
         $aBits   = explode('\\', get_called_class());
-        $sModule = strtolower($aBits[count($aBits) - 2]);
+        $sModule = lcfirst($aBits[count($aBits) - 2]);
         $sClass  = lcfirst($aBits[count($aBits) - 1]);
         return 'admin/' . $sModule . '/' . $sClass;
     }
