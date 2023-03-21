@@ -424,10 +424,10 @@ class Helper
         } elseif (is_bool($mValue)) {
             return Helper::loadBoolCell($mValue);
 
-        } elseif (preg_match('/^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$/', $mValue)) {
+        } elseif (preg_match('/^\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d$/', (string) $mValue)) {
             return Helper::loadDateTimeCell($mValue);
 
-        } elseif (preg_match('/^\d\d\d\d-\d\d-\d\d$/', $mValue)) {
+        } elseif (preg_match('/^\d\d\d\d-\d\d-\d\d$/', (string) $mValue)) {
             return Helper::loadDateCell($mValue);
 
         } else {
