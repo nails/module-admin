@@ -1,6 +1,6 @@
 <?php
 
-namespace Nails\Admin\Admin\Permission\DataExport;
+namespace Nails\Admin\Admin\Permission\Utilities\DataExport;
 
 use Nails\Admin\Interfaces\Permission;
 

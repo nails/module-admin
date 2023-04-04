@@ -46,7 +46,7 @@ class Utilities extends Base
             $oNavGroup->addAction('Rewrite Routes', 'rewrite_routes');
         }
 
-        if (userHasPermission(Permission\DataExport\Generate::class)) {
+        if (userHasPermission(Permission\Utilities\DataExport\Generate::class)) {
             $oNavGroup->addAction('Export Data', 'export');
         }
 
@@ -101,7 +101,7 @@ class Utilities extends Base
      */
     public function export()
     {
-        if (!userHasPermission(Permission\DataExport\Generate::class)) {
+        if (!userHasPermission(Permission\Utilities\DataExport\Generate::class)) {
             unauthorised();
         }
 
