@@ -14,8 +14,8 @@ $sBodyClass = implode(' ', array_filter([
 ]))
 
 ?>
-<table class="js-admin-dynamic-table" data-data="<?=$aData?>">
-    <thead>
+<table class="js-admin-dynamic-table table table-striped table-hover table-bordered table-responsive" data-data="<?=$aData?>">
+    <thead class="table-dark">
         <tr>
             <?php
             if ($bIsSortable) {
