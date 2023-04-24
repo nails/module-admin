@@ -184,7 +184,7 @@ class Action implements \JsonSerializable
 
     // --------------------------------------------------------------------------
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return (object) [
             'label'    => $this->getLabel(),
