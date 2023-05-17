@@ -27,7 +27,7 @@ while ($oRow = $oData->unbuffered_row()) {
             $mValue = json_encode($mValue, JSON_PRETTY_PRINT);
         }
 
-        $mValue = str_replace('"', '""', $mValue);
+        $mValue = str_replace('"', '""', (string) $mValue);
         $mValue = trim(preg_replace("/\r\n|\r|\n/", ' ', $mValue));
 
         $sCsvRow .= '"' . $mValue . '",';
