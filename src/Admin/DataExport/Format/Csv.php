@@ -74,7 +74,7 @@ class Csv implements Format
     {
         $aItems = array_map(
             function ($sItem) {
-                return str_replace('"', '""', trim($sItem));
+                return str_replace('"', '""', trim((string) $sItem));
             },
             (array) $oRow
         );
