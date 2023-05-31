@@ -142,7 +142,7 @@ class Admin extends Base
                 foreach ($oRow as $sKey => &$mValue) {
                     //  Hat-tip: http://stackoverflow.com/a/6041773
                     if (in_array($sKey, $this->aJsonFields)) {
-                        $mValue = json_decode($mValue);
+                        $mValue = json_decode((string) $mValue);
                     }
                 }
                 $data = (array) $oRow;
