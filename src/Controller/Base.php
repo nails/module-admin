@@ -291,8 +291,8 @@ abstract class Base extends BaseMiddle implements Controller
             ->load('https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js')
 
             //  Fontawesome
-            ->load('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css')
-            ->load('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css')
+            ->load('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css')
+            ->load('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/solid.min.css')
 
             //  Bundled libraries
             ->jqueryui()
