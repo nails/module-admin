@@ -119,7 +119,7 @@ class Nav
      *
      * @param string $icon
      *
-     * @return string
+     * @return $this
      */
     public function setIcon($icon)
     {
