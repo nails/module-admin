@@ -29,7 +29,7 @@
                             v-bind:key="index"
                             class="create-item"
                         >
-                            <div class="u-flex w-100">
+                            <div class="u-flex w-100 u-mr20">
                                 <div class="create-item__badge u-mr10">
                                     <i
                                         class="fa fa-map"
