@@ -143,7 +143,7 @@ $oMustache = Factory::service('Mustache');
                                 $aClasses        = [];
                                 $sCellAdditional = '';
                                 if (classUses($CONFIG['MODEL_INSTANCE'], '\Nails\Common\Traits\Model\Nestable')) {
-                                    $aBreadcrumbs = json_decode($oItem->breadcrumbs);
+                                    $aBreadcrumbs = json_decode($oItem->breadcrumbs ?? '[]') ?? [];
                                     if (!empty($aBreadcrumbs) && $sProperty === $CONFIG['MODEL_INSTANCE']->getColumn('label')) {
                                         $mValue = '<span class="text-muted">╚</span>' . implode(
                                                 ' ',
