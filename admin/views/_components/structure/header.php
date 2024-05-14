@@ -8,7 +8,7 @@
         echo lang('admin_word_short') . ' - ';
         echo !empty($page->module->name) ? $page->module->name . ' - ' : null;
         echo !empty($page->title) ? $page->title . ' - ' : null;
-        echo \Nails\Config::get('APP_NAME');
+        echo \Nails\Factory::service('MetaData')->getAppName();
 
         ?>
     </title>
@@ -92,7 +92,7 @@
         <b class="fa fa-bars " id="mobileMenuBurger"></b>
         <a href="<?=siteUrl('admin')?>">
                 <span class="app-name admin-branding-text-primary">
-                    <?=\Nails\Config::get('APP_NAME')?>
+                    <?=\Nails\Factory::service('MetaData')->getAppName()?>
                 </span>
         </a>
     </div>

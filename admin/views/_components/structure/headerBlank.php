@@ -8,7 +8,7 @@
         echo lang('admin_word_short') . ' - ';
         echo isset($page->module->name) ? $page->module->name . ' - ' : null;
         echo isset($page->title) ? $page->title . ' - ' : null;
-        echo \Nails\Config::get('APP_NAME');
+        echo \Nails\Factory::service('MetaData')->getAppName();
 
         ?>
     </title>
