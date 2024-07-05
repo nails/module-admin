@@ -46,7 +46,7 @@ class Migration12 implements Interfaces\Database\Migration
         $oResult = $this->query('SELECT id, acl FROM `{{NAILS_DB_PREFIX}}user_group`');
         while ($row = $oResult->fetchObject()) {
 
-            $acl = json_decode($row->acl) ?? [];
+            $acl = json_decode($row->acl ?? 'null') ?? [];
 
             foreach ($acl as &$old) {
 
