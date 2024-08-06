@@ -12,7 +12,7 @@ use Nails\Common\Resource\Entity;
 class Note extends Entity
 {
     /** @var string */
-    public $model;
+    public $item_model;
 
     /** @var int */
     public $item_id;

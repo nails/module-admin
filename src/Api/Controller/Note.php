@@ -42,7 +42,7 @@ class Note extends Api\Controller\CrudController
     {
         [$sModel, $iItemId] = $this->getModelClassAndId();
         $aData['where'] = [
-            ['model', $sModel],
+            ['item_model', $sModel],
             ['item_id', $iItemId],
         ];
 
@@ -91,7 +91,7 @@ class Note extends Api\Controller\CrudController
                 foreach ($aIds as $sId) {
 
                     $aOut[$sProvider][$sModel][$sId] = $this->oModel->countAll([
-                        new Where('model', $sModelClass),
+                        new Where('item_model', $sModelClass),
                         new Where('item_id', $sId),
                     ]);
                 }
@@ -123,7 +123,7 @@ class Note extends Api\Controller\CrudController
         $aData = parent::validateUserInput($aData, $oItem);
 
         [$sModel] = $this->getModelClassAndId();
-        $aData['model'] = $sModel;
+        $aData['item_model'] = $sModel;
 
         return $aData;
     }
