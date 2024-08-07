@@ -103,25 +103,32 @@ class Dashboard extends Base
         $oWidgets = Factory::service('DashboardWidget', Constants::MODULE_SLUG);
         return array_map(function (\Nails\Admin\Resource\Dashboard\Widget $oWidget) {
 
-            $sClass = $oWidget->slug;
-            /** @var \Nails\Admin\Interfaces\Dashboard\Widget $oInstance */
-            $oInstance = new $sClass($oWidget->config);
+            try {
 
-            return [
-                'id'           => $oWidget->id,
-                'slug'         => $oWidget->slug,
-                'title'        => $oInstance->getTitle(),
-                'description'  => $oInstance->getDescription(),
-                'image'        => $oInstance->getImage(),
-                'body'         => $oInstance->getBody(),
-                'padded'       => $oInstance->isPadded(),
-                'configurable' => $oInstance->isConfigurable(),
-                'x'            => $oWidget->x,
-                'y'            => $oWidget->y,
-                'w'            => $oWidget->w,
-                'h'            => $oWidget->h,
-                'config'       => (object) $oWidget->config,
-            ];
+                $sClass = $oWidget->slug;
+                /** @var \Nails\Admin\Interfaces\Dashboard\Widget $oInstance */
+                $oInstance = new $sClass($oWidget->config);
+
+                return [
+                    'id'           => $oWidget->id,
+                    'slug'         => $oWidget->slug,
+                    'title'        => $oInstance->getTitle(),
+                    'description'  => $oInstance->getDescription(),
+                    'image'        => $oInstance->getImage(),
+                    'body'         => $oInstance->getBody(),
+                    'padded'       => $oInstance->isPadded(),
+                    'configurable' => $oInstance->isConfigurable(),
+                    'x'            => $oWidget->x,
+                    'y'            => $oWidget->y,
+                    'w'            => $oWidget->w,
+                    'h'            => $oWidget->h,
+                    'config'       => (object) $oWidget->config,
+                ];
+
+            } catch (\Throwable $e) {
+                return null;
+            }
+
         }, $oWidgets->getWidgetsForUser());
     }
 }
