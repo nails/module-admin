@@ -109,25 +109,32 @@ class Dashboard extends Base
             array_filter(
                 array_map(function (\Nails\Admin\Resource\Dashboard\Widget $oWidget) {
 
-                    $sClass = $oWidget->slug;
-                    /** @var \Nails\Admin\Interfaces\Dashboard\Widget $oInstance */
-                    $oInstance = new $sClass($oWidget->config);
+                    try {
 
-                    return $oInstance->isEnabled() ? [
-                        'id'           => $oWidget->id,
-                        'slug'         => $oWidget->slug,
-                        'title'        => $oInstance->getTitle(),
-                        'description'  => $oInstance->getDescription(),
-                        'image'        => $oInstance->getImage(),
-                        'body'         => $oInstance->getBody(),
-                        'padded'       => $oInstance->isPadded(),
-                        'configurable' => $oInstance->isConfigurable(),
-                        'x'            => $oWidget->x,
-                        'y'            => $oWidget->y,
-                        'w'            => $oWidget->w,
-                        'h'            => $oWidget->h,
-                        'config'       => (object) $oWidget->config,
-                    ] : null;
+                        $sClass = $oWidget->slug;
+                        /** @var \Nails\Admin\Interfaces\Dashboard\Widget $oInstance */
+                        $oInstance = new $sClass($oWidget->config);
+
+                        return $oInstance->isEnabled() ? [
+                            'id'           => $oWidget->id,
+                            'slug'         => $oWidget->slug,
+                            'title'        => $oInstance->getTitle(),
+                            'description'  => $oInstance->getDescription(),
+                            'image'        => $oInstance->getImage(),
+                            'body'         => $oInstance->getBody(),
+                            'padded'       => $oInstance->isPadded(),
+                            'configurable' => $oInstance->isConfigurable(),
+                            'x'            => $oWidget->x,
+                            'y'            => $oWidget->y,
+                            'w'            => $oWidget->w,
+                            'h'            => $oWidget->h,
+                            'config'       => (object) $oWidget->config,
+                        ] : null;
+
+                    } catch (\Throwable $e) {
+                        return null;
+                    }
+
                 }, $oWidgets->getWidgetsForUser())
             )
         );
