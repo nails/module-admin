@@ -22,10 +22,7 @@ class ChangeLog extends Entity
     public $user;
 
     /** @var string */
-    public $verb;
-
-    /** @var string */
-    public $article;
+    public $operation;
 
     /** @var string */
     public $item;
@@ -56,34 +53,6 @@ class ChangeLog extends Entity
 
     // --------------------------------------------------------------------------
 
-    public function getSentence(): string
-    {
-        if (class_exists($this->item) && classImplements($this->item, \Nails\Admin\Interfaces\ChangeLog::class)) {
-            $sType    = call_user_func($this->item . '::getChageLogTypeLabel');
-            $sTypeUrl = call_user_func($this->item . '::getChageLogTypeUrl');
-        } else {
-            $sType    = $this->item;
-            $sTypeUrl = null;
-        }
-
-        return implode(' ', array_filter([
-            $this->getUser()
-                ? anchor(Accounts::url('edit/' . $this->getUser()->id), $this->getUser()->name)
-                : 'Someone',
-            $this->verb,
-            $this->article,
-            $sTypeUrl
-                ? anchor($sTypeUrl, $sType)
-                : $sType,
-            '&mdash;',
-            $this->url
-                ? '<strong>' . anchor($this->url, $this->title) . '</strong>'
-                : $this->title,
-        ]));
-    }
-
-    // --------------------------------------------------------------------------
-
     public function getChangesAsList(): string
     {
         $aChanges = json_decode($this->changes);
@@ -103,6 +72,8 @@ class ChangeLog extends Entity
             }, $aChanges ?? []))
         );
     }
+
+    // --------------------------------------------------------------------------
 
     public function getChangesAsTable(
         $sTableClass = 'table table-striped table-hover table-bordered table-responsive',

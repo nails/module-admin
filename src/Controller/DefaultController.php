@@ -2689,8 +2689,7 @@ abstract class DefaultController extends Base
         $this
             ->oChangeLogModel
             ->add(
-                'created',
-                'a',
+                $this->oChangeLogModel::OPERATION_CREATE,
                 get_class($oItem),
                 $oItem->id,
                 $oItem->label ?? 'Item #' . $oItem->id,
@@ -2753,8 +2752,7 @@ abstract class DefaultController extends Base
             $this
                 ->oChangeLogModel
                 ->add(
-                    'updated',
-                    'a',
+                    $this->oChangeLogModel::OPERATION_EDIT,
                     get_class($oItem),
                     $oItem->id,
                     $oItem->label ?? 'Item #' . $oItem->id,
@@ -2784,8 +2782,7 @@ abstract class DefaultController extends Base
         $this
             ->oChangeLogModel
             ->add(
-                'deleted',
-                'a',
+                $this->oChangeLogModel::OPERATION_DELETE,
                 get_class($oItem),
                 $oItem->id,
                 $oItem->label ?? 'Item #' . $oItem->id
@@ -2808,8 +2805,7 @@ abstract class DefaultController extends Base
         $this
             ->oChangeLogModel
             ->add(
-                'restored',
-                'a',
+                $this->oChangeLogModel::OPERATION_RESTORE,
                 get_class($oItem),
                 $oItem->id,
                 $oItem->label ?? 'Item #' . $oItem->id,

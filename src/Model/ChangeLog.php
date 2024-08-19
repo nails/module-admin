@@ -20,7 +20,6 @@ use Nails\Common\Exception\ModelException;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Model\Base;
 use Nails\Common\Service\Event;
-use Nails\Config;
 use Nails\Factory;
 
 /**
@@ -50,6 +49,16 @@ class ChangeLog extends Base
      * @var string
      */
     const RESOURCE_PROVIDER = Constants::MODULE_SLUG;
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Supported operations
+     */
+    const OPERATION_CREATE  = 'CREATE';
+    const OPERATION_EDIT    = 'EDIT';
+    const OPERATION_DELETE  = 'DELETE';
+    const OPERATION_RESTORE = 'RESTORE';
 
     // --------------------------------------------------------------------------
 
@@ -96,8 +105,7 @@ class ChangeLog extends Base
     {
         return [
             'user_id',
-            'verb',
-            'article',
+            'operation',
             'item',
             'item_id',
             'title',
@@ -111,25 +119,23 @@ class ChangeLog extends Base
     /**
      * Adds a new changelog item
      *
-     * @param string  $sVerb     The verb, e.g "created"
-     * @param string  $sArticle
-     * @param string  $sItem
-     * @param integer $iItemId   The item's ID (e.g the blog post's ID)
-     * @param string  $sTitle    The title of the item (e.g the blog post's title)
-     * @param string  $sUrl      The url to the item (e.g the blog post's URL)
+     * @param string  $sOperation The operation performed
+     * @param string  $sItem      The class of item being tracked
+     * @param integer $iItemId    The item's ID (e.g the blog post's ID)
+     * @param string  $sTitle     The title of the item (e.g the blog post's title)
+     * @param string  $sUrl       The url to the item (e.g the blog post's URL)
      * @param string  $sField
-     * @param mixed   $mOldValue The old value
-     * @param mixed   $mNewValue The new value
-     * @param boolean $bStrict   Whether or not to compare $mOldValue and $mNewValue strictly
-     * @param boolean $bForce    Whether to force the changelog (i.e do not discard identical values)
+     * @param mixed   $mOldValue  The old value
+     * @param mixed   $mNewValue  The new value
+     * @param boolean $bStrict    Whether or not to compare $mOldValue and $mNewValue strictly
+     * @param boolean $bForce     Whether to force the changelog (i.e do not discard identical values)
      *
      * @return bool
      * @throws FactoryException
      * @throws ModelException
      */
     public function add(
-        $sVerb,
-        $sArticle,
+        $sOperation,
         $sItem,
         $iItemId,
         $sTitle,
@@ -171,18 +177,17 @@ class ChangeLog extends Base
          * Define the key for this change; keys should be common across identical
          * items so we can group changes of the same item together.
          */
-        $key = md5(activeUser('id') . '|' . $sVerb . '|' . $sArticle . '|' . $sItem . '|' . $iItemId . '|' . $sTitle . '|' . $sUrl);
+        $key = md5(activeUser('id') . '|' . $sOperation . '|' . $sItem . '|' . $iItemId . '|' . $sTitle . '|' . $sUrl);
 
         if (empty($this->aChanges[$key])) {
             $this->aChanges[$key] = [
-                'user_id' => activeUser('id') ? activeUser('id') : null,
-                'verb'    => $sVerb,
-                'article' => $sArticle,
-                'item'    => $sItem,
-                'item_id' => $iItemId,
-                'title'   => $sTitle,
-                'url'     => $sUrl,
-                'changes' => [],
+                'user_id'   => activeUser('id') ? activeUser('id') : null,
+                'operation' => $sOperation,
+                'item'      => $sItem,
+                'item_id'   => $iItemId,
+                'title'     => $sTitle,
+                'url'       => $sUrl,
+                'changes'   => [],
             ];
         }
 

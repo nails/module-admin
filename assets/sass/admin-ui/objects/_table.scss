@@ -20,15 +20,6 @@
                 &.boolean {
                     text-align: center;
                 }
-
-                &.user {
-                    width: 200px;
-                }
-
-                &.date,
-                &.datetime {
-                    width: 150px;
-                }
             }
         }
     }
@@ -83,8 +74,9 @@
                     }
                 }
 
+                &.date,
                 &.datetime {
-                    min-width: 150px;
+                    width: 150px;
                 }
 
                 &.boolean {
