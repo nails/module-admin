@@ -23,10 +23,10 @@ class Migration14 implements Interfaces\Database\Migration
     public function execute(): void
     {
         $this->query('ALTER TABLE `{{NAILS_DB_PREFIX}}admin_changelog` DROP `article`;');
-        $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `operation` = "CREATE" WHERE `operation` = "created";');
-        $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `operation` = "EDIT" WHERE `operation` = "updated";');
-        $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `operation` = "DELETE" WHERE `operation` = "deleted";');
-        $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `operation` = "RESTORE" WHERE `operation` = "restore";');
+        $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `verb` = "CREATE" WHERE `verb` = "created";');
+        $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `verb` = "DELETE" WHERE `verb` = "deleted";');
+        $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `verb` = "RESTORE" WHERE `verb` = "restore";');
+        $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `verb` = "EDIT" WHERE `verb` NOT IN ("CREATE", "DELETE", "RESTORE");');
         $this->query('ALTER TABLE `{{NAILS_DB_PREFIX}}admin_changelog` CHANGE `verb` `operation` ENUM(\'CREATE\',\'EDIT\',\'DELETE\',\'RESTORE\') CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;');
     }
 }
