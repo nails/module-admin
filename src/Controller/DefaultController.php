@@ -27,7 +27,6 @@ use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ValidationException;
 use Nails\Common\Factory\Model\Field;
 use Nails\Common\Helper\Form;
-use Nails\Common\Helper\Inflector;
 use Nails\Common\Resource;
 use Nails\Common\Service\Database;
 use Nails\Common\Service\FormValidation;
