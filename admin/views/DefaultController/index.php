@@ -10,6 +10,7 @@ $oMustache = Factory::service('Mustache');
 
 ?>
 <div class="group-defaultcontroller browse" <?=$CONFIG['INDEX_PAGE_ID'] ? 'id="' . $CONFIG['INDEX_PAGE_ID'] . '"' : ''?>>
+    <?=$CONFIG['INDEX_HTML_HEADER']?>
     <?=Helper::loadSearch($search)?>
     <?=Helper::loadPagination($pagination)?>
     <table class="table table-striped table-hover table-bordered table-responsive">
@@ -309,4 +310,5 @@ $oMustache = Factory::service('Mustache');
         </tbody>
     </table>
     <?=Helper::loadPagination($pagination)?>
+    <?=$CONFIG['INDEX_HTML_FOOTER']?>
 </div>

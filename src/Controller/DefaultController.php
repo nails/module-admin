@@ -259,6 +259,16 @@ abstract class DefaultController extends Base
     const CONFIG_INDEX_NOTES_COUNT = false;
 
     /**
+     * Any additional markup to include at the head of the index page
+     */
+    const CONFIG_INDEX_HTML_HEADER = '';
+
+    /**
+     * Any additional markup to include at the foot of the index page
+     */
+    const CONFIG_INDEX_HTML_FOOTER = '';
+
+    /**
      * Fields which should be marked as readonly when creating an item
      */
     const CONFIG_CREATE_READONLY_FIELDS = [];
@@ -311,6 +321,16 @@ abstract class DefaultController extends Base
      * Enable or disable the "Notes" feature
      */
     const CONFIG_EDIT_NOTES_ENABLE = true;
+
+    /**
+     * Any additional markup to include at the head of the edit page
+     */
+    const CONFIG_EDIT_HTML_HEADER = '';
+
+    /**
+     * Any additional markup to include at the foot of the edit page
+     */
+    const CONFIG_EDIT_HTML_FOOTER = '';
 
     /**
      * Additional data to pass into the getAll call on the delete view
@@ -1344,6 +1364,8 @@ abstract class DefaultController extends Base
             'INDEX_PAGE_ID'          => static::CONFIG_INDEX_PAGE_ID,
             'INDEX_NOTES_ENABLE'     => static::CONFIG_INDEX_NOTES_ENABLE,
             'INDEX_NOTES_COUNT'      => static::CONFIG_INDEX_NOTES_COUNT,
+            'INDEX_HTML_HEADER'      => static::CONFIG_INDEX_HTML_HEADER,
+            'INDEX_HTML_FOOTER'      => static::CONFIG_INDEX_HTML_FOOTER,
             'CREATE_READONLY_FIELDS' => static::CONFIG_CREATE_READONLY_FIELDS,
             'CREATE_IGNORE_FIELDS'   => static::CONFIG_CREATE_IGNORE_FIELDS,
             'EDIT_HEADER_BUTTONS'    => static::CONFIG_EDIT_HEADER_BUTTONS,
@@ -1352,6 +1374,8 @@ abstract class DefaultController extends Base
             'EDIT_DATA'              => static::CONFIG_EDIT_DATA,
             'EDIT_PAGE_ID'           => static::CONFIG_EDIT_PAGE_ID,
             'EDIT_NOTES_ENABLE'      => static::CONFIG_EDIT_NOTES_ENABLE,
+            'EDIT_HTML_HEADER'       => static::CONFIG_EDIT_HTML_HEADER,
+            'EDIT_HTML_FOOTER'       => static::CONFIG_EDIT_HTML_FOOTER,
             'DELETE_DATA'            => static::CONFIG_DELETE_DATA,
             'SORT_DATA'              => static::CONFIG_SORT_DATA,
             'SORT_LABEL'             => static::CONFIG_SORT_LABEL,
