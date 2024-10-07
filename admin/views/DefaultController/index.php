@@ -10,6 +10,7 @@ $oMustache = Factory::service('Mustache');
 
 ?>
 <div class="group-defaultcontroller browse" <?=$CONFIG['INDEX_PAGE_ID'] ? 'id="' . $CONFIG['INDEX_PAGE_ID'] . '"' : ''?>>
+    <?=$CONFIG['INDEX_HTML_HEADER']?>
     <?=adminHelper('loadSearch', $search)?>
     <?=adminHelper('loadPagination', $pagination)?>
     <div class="table-responsive">
@@ -313,4 +314,5 @@ $oMustache = Factory::service('Mustache');
         </table>
     </div>
     <?=adminHelper('loadPagination', $pagination)?>
+    <?=$CONFIG['INDEX_HTML_FOOTER']?>
 </div>
