@@ -1941,7 +1941,7 @@ abstract class DefaultController extends Base
                 $oOptionNoExplicit
                     ->setLabel('Explicitly unpublished items')
                     ->setIsQuery(true)
-                    ->setValue('`' . $sColumnIsPublished . '` = 0',);
+                    ->setValue('`' . $sColumnIsPublished . '` = 0');
             }
 
             if ($sColumnDateExpire) {
