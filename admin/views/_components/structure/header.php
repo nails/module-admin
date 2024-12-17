@@ -19,6 +19,8 @@ $oView              = Factory::service('View');
 $oAsset             = Factory::service('Asset');
 $oControllerService = Factory::service('Controller', Constants::MODULE_SLUG);
 
+$sNonceAttr = $oAsset->getNonce() ? ' nonce="' . $oAsset->getNonce() . '"' : '';
+
 //  Elements closed in another view, helps IDE
 echo '<!DOCTYPE html>';
 echo '<html lang="en">';
@@ -32,10 +34,11 @@ echo '<html lang="en">';
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <!--    NAILS JS GLOBALS    -->
-        <script style="text/javascript">
+        <script style="text/javascript"<?=$sNonceAttr?>>
         /* jshint ignore:start */
         window.ENVIRONMENT = '<?=Environment::get()?>';
         window.SITE_URL = '<?=siteUrl('', Functions::isPageSecure())?>';
+        window.NONCE = '<?=$oAsset->getNonce()?>';
         window.NAILS = {
             URL: '<?=Config::get('NAILS_ASSETS_URL')?>',
             LANG: {},
@@ -49,15 +52,15 @@ echo '<html lang="en">';
         /* jshint ignore:end */
         </script>
         <noscript>
-            <style type="text/css">
+            <style type="text/css"<?=$sNonceAttr?>>
                 .js-only {
                     display: none;
                 }
             </style>
         </noscript>
         <!--    ASSETS  -->
-        <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css">
-        <link href="//fonts.googleapis.com/css?family=Roboto:400italic,700italic,400,700" rel="stylesheet" type="text/css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css"<?=$sNonceAttr?> />
+        <link href="//fonts.googleapis.com/css?family=Roboto:400italic,700italic,400,700" rel="stylesheet" type="text/css"<?=$sNonceAttr?> />
         <?php
 
         $aColours = array_map(
@@ -69,7 +72,7 @@ echo '<html lang="en">';
             ]
         );
 
-        echo '<style type="text/css">';
+        echo '<style type="text/css"' . $sNonceAttr . '>';
         echo ':root {';
         foreach ($aColours as $sVar => $sValue) {
             echo sprintf(
