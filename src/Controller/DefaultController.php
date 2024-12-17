@@ -949,16 +949,14 @@ abstract class DefaultController extends Base
                 $oUserModel = Factory::model('User', \Nails\Auth\Constants::MODULE_SLUG);
                 $oUser      = $oUserModel->getById($oItem->modified_by);
 
-                /** @var Asset $oAsset */
-                $oAsset      = Factory::service('Asset');
-                $sNonceAttr  = $oAsset->getNonce() ? ' nonce="' . $oAsset->getNonce() . '"' : '';
+                $sTagOpen    = scriptOpen();
                 $sUniqId     = uniqid();
                 $sButtonId   = sprintf('submitBtn_%s', $sUniqId);
                 $sFuncName   = sprintf('submitForm_%s', $sUniqId);
                 $sModifiedId = static::EDIT_MODIFIED_CHECK_ID_OVERWRITE;
 
                 $sBody = <<<EOT
-                    <script $sNonceAttr>
+                    $sTagOpen
                     function $sFuncName() {
                         document.getElementById('$sModifiedId').value = 1;
                         document.querySelector('body .content form').submit();
