@@ -1,11 +1,3 @@
-<?php
-
-/** @var \Nails\Common\Service\Asset $oAsset */
-$oAsset = Factory::service('Asset');
-
-$sNonceAttr = $oAsset->getNonce() ? ' nonce="' . $oAsset->getNonce() . '"' : '';
-
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,7 +16,7 @@ $sNonceAttr = $oAsset->getNonce() ? ' nonce="' . $oAsset->getNonce() . '"' : '';
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <!--    NAILS JS GLOBALS    -->
-    <script type="text/javascript"<?=$sNonceAttr?>>
+    <?=styleOpen()?>
     /* jshint ignore:start */
     window.ENVIRONMENT = '<?=\Nails\Environment::get()?>';
     window.SITE_URL = '<?=siteUrl('', \Nails\Functions::isPageSecure())?>';
@@ -40,17 +32,18 @@ $sNonceAttr = $oAsset->getNonce() ? ' nonce="' . $oAsset->getNonce() . '"' : '';
         }
     };
     /* jshint ignore:end */
-    </script>
+    <?=styleClose()?>
     <noscript>
-        <style type="text/css"<?=$sNonceAttr?>>
+        <?=styleOpen()?>
             .js-only {
                 display: none;
             }
-        </style>
+        <?=styleClose()?>
     </noscript>
     <!--    ASSETS  -->
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css"<?=$sNonceAttr?> />
     <?php
+
+    echo linkTag('http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700');
 
     $oAsset = \Nails\Factory::service('Asset');
     $oAsset->output('CSS');
@@ -61,8 +54,8 @@ $sNonceAttr = $oAsset->getNonce() ? ' nonce="' . $oAsset->getNonce() . '"' : '';
     $brandColorSecondary = appSetting('secondary_colour', 'admin') ?: '#515557';
     $brandColorHighlight = appSetting('highlight_colour', 'admin') ?: '#F09634';
 
+    echo styleOpen();
     ?>
-    <style type="text/css"<?=$sNonceAttr?>>
 
         .admin-branding-text-primary {
             color: <?=$brandColorPrimary?>;
@@ -93,7 +86,7 @@ $sNonceAttr = $oAsset->getNonce() ? ' nonce="' . $oAsset->getNonce() . '"' : '';
             background-color: <?=$brandColorPrimary?>;
         }
 
-    </style>
+    <?=styleClose()?>
 </head>
 <body class="<?=empty($adminControllers) ? 'no-modules' : ''?>">
 <div class="header">
