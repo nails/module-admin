@@ -1,3 +1,11 @@
+<?php
+
+/** @var \Nails\Common\Service\Asset $oAsset */
+$oAsset = Factory::service('Asset');
+
+$sNonceAttr = $oAsset->getNonce() ? ' nonce="' . $oAsset->getNonce() . '"' : '';
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,10 +24,11 @@
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
     <!--    NAILS JS GLOBALS    -->
-    <script type="text/javascript">
+    <script type="text/javascript"<?=$sNonceAttr?>>
     /* jshint ignore:start */
     window.ENVIRONMENT = '<?=\Nails\Environment::get()?>';
     window.SITE_URL = '<?=siteUrl('', \Nails\Functions::isPageSecure())?>';
+    window.NONCE = '<?=$oAsset->getNonce()?>';
     window.NAILS = {
         URL: '<?=\Nails\Config::get('NAILS_ASSETS_URL')?>',
         LANG: {},
@@ -33,14 +42,14 @@
     /* jshint ignore:end */
     </script>
     <noscript>
-        <style type="text/css">
+        <style type="text/css"<?=$sNonceAttr?>>
             .js-only {
                 display: none;
             }
         </style>
     </noscript>
     <!--    ASSETS  -->
-    <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700" rel="stylesheet" type="text/css"<?=$sNonceAttr?> />
     <?php
 
     $oAsset = \Nails\Factory::service('Asset');
@@ -53,7 +62,7 @@
     $brandColorHighlight = appSetting('highlight_colour', 'admin') ?: '#F09634';
 
     ?>
-    <style type="text/css">
+    <style type="text/css"<?=$sNonceAttr?>>
 
         .admin-branding-text-primary {
             color: <?=$brandColorPrimary?>;
