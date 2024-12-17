@@ -28,6 +28,7 @@ use Nails\Common\Exception\ValidationException;
 use Nails\Common\Factory\Model\Field;
 use Nails\Common\Helper\Form;
 use Nails\Common\Resource;
+use Nails\Common\Service\Asset;
 use Nails\Common\Service\Database;
 use Nails\Common\Service\FormValidation;
 use Nails\Common\Service\Input;
@@ -946,15 +947,26 @@ abstract class DefaultController extends Base
                 $oUserModel = Factory::model('User', \Nails\Auth\Constants::MODULE_SLUG);
                 $oUser      = $oUserModel->getById($oItem->modified_by);
 
-                $sFuncName   = sprintf('submitForm_%s', uniqid());
+                /** @var Asset $oAsset */
+                $oAsset      = Factory::service('Asset');
+                $sNonceAttr  = $oAsset->getNonce() ? ' nonce="' . $oAsset->getNonce() . '"' : '';
+                $sUniqId     = uniqid();
+                $sButtonId   = sprintf('submitBtn_%s', $sUniqId);
+                $sFuncName   = sprintf('submitForm_%s', $sUniqId);
                 $sModifiedId = static::EDIT_MODIFIED_CHECK_ID_OVERWRITE;
 
                 $sBody = <<<EOT
-                    <script>
+                    <script $sNonceAttr>
                     function $sFuncName() {
                         document.getElementById('$sModifiedId').value = 1;
                         document.querySelector('body .content form').submit();
                     }
+                    document
+                        .getElementById('$sButtonId')
+                        .addEventListener('click', function() {
+                            $sFuncName();
+                            return false;
+                        });
                     </script>
                     <p class="alert alert-danger">
                         This item has been modified since you started editing.
@@ -965,7 +977,7 @@ abstract class DefaultController extends Base
                     <p>
                         <button
                             class="btn btn-danger btn-block"
-                            onclick="$sFuncName()"
+                            id="$sButtonId"
                         >
                             Overwrite
                         </button>
