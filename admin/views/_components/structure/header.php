@@ -20,7 +20,7 @@
     /* jshint ignore:start */
     window.ENVIRONMENT = '<?=\Nails\Environment::get()?>';
     window.SITE_URL = '<?=siteUrl('', \Nails\Functions::isPageSecure())?>';
-    window.NONCE = '<?=$oAsset->getNonce()?>';
+    window.NONCE = '<?=$\Nails\Factory::service('Asset')->getNonce()?>';
     window.NAILS = {
         URL: '<?=\Nails\Config::get('NAILS_ASSETS_URL')?>',
         LANG: {},
