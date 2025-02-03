@@ -17,26 +17,26 @@ class Format extends Resource
      *
      * @var string
      */
-    public $slug = '';
+    public string $slug = '';
 
     /**
      * The format's label
      *
      * @var string
      */
-    public $label = '';
+    public string $label = '';
 
     /**
      * The format's description
      *
      * @var string
      */
-    public $description = '';
+    public string $description = '';
 
     /**
      * The format's instance
      *
      * @var Interfaces\DataExport\Format
      */
-    public $instance;
+    public Interfaces\DataExport\Format $instance;
 }
