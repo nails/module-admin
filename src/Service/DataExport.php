@@ -93,11 +93,12 @@ class DataExport
             foreach ($aClasses as $sClass) {
                 $oInstance        = new $sClass();
                 $this->aSources[] = new Source([
-                    'slug'        => $this->generateSlug($oComponent, $sClass),
-                    'label'       => $oInstance->getLabel(),
-                    'description' => $oInstance->getDescription(),
-                    'options'     => $oInstance->getOptions(),
-                    'instance'    => $oInstance,
+                    'slug'                 => $this->generateSlug($oComponent, $sClass),
+                    'label'                => $oInstance->getLabel(),
+                    'description'          => $oInstance->getDescription(),
+                    'description_extended' => $oInstance->getDescriptionExtended(),
+                    'options'              => $oInstance->getOptions(),
+                    'instance'             => $oInstance,
                 ]);
             }
 
