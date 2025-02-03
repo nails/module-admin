@@ -34,6 +34,13 @@ class Source extends Resource
     public $description = '';
 
     /**
+     * The source's extended description, HTML allowed, optional
+     *
+     * @var string
+     */
+    public string $description_extended = '';
+
+    /**
      * The source's options array
      *
      * @var array

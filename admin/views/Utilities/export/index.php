@@ -16,11 +16,33 @@
             'data'     => [
                 'revealer' => 'data-export',
             ],
+            'info'     => implode(
+                PHP_EOL,
+                array_filter(
+                    array_map(
+                        function (\Nails\Admin\Resource\DataExport\Source $oSource) {
+                            $sDescriptionExtended = $oSource->description_extended;
+                            return $sDescriptionExtended
+                                ? sprintf(
+                                    '<div class="alert alert-info" data-revealer="data-export" data-reveal-on="%s">%s</div>',
+                                    $oSource->slug,
+                                    $sDescriptionExtended
+                                )
+                                : null;
+                        },
+                        $aSources
+                    )
+                )
+            ),
         ];
 
         $aOptions = [];
         foreach ($aSources as $oSource) {
-            $aField['options'][$oSource->slug] = $oSource->label . ' - ' . $oSource->description;
+            $aField['options'][$oSource->slug] = sprintf(
+                '%s &mdash; %s',
+                $oSource->label,
+                $oSource->description
+            );
         }
 
         echo form_field_dropdown($aField);
