@@ -17,21 +17,21 @@ class Source extends Resource
      *
      * @var string
      */
-    public $slug = '';
+    public string $slug = '';
 
     /**
      * The source's label
      *
      * @var string
      */
-    public $label = '';
+    public string $label = '';
 
     /**
      * The source's description
      *
      * @var string
      */
-    public $description = '';
+    public string $description = '';
 
     /**
      * The source's extended description, HTML allowed, optional
@@ -45,12 +45,12 @@ class Source extends Resource
      *
      * @var array
      */
-    public $options = [];
+    public array $options = [];
 
     /**
      * The source's instance
      *
      * @var Interfaces\DataExport\Source
      */
-    public $instance;
+    public Interfaces\DataExport\Source $instance;
 }
