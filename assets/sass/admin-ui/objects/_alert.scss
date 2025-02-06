@@ -1,6 +1,27 @@
 .alert {
     position: relative;
 
+    > *:last-child {
+        margin-bottom: 0;
+    }
+
+    p, ul, ol, li {
+        margin-bottom: 0.25rem;
+    }
+
+    ul, ol {
+        list-style: initial;
+        margin-left: 1rem;
+
+        li {
+            color: inherit;
+        }
+
+        ul, ol {
+            list-style: circle;
+        }
+    }
+
     &__close {
         position: absolute;
         right: 0.5rem;
@@ -9,12 +30,8 @@
     }
 
     a {
-        :not(.btn) {
+        &:not(.btn) {
             text-decoration: underline;
         }
-    }
-
-    > *:last-child {
-        margin-bottom: 0;
     }
 }
