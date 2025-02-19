@@ -48,7 +48,28 @@ class Confirm {
                             'dialogClass': 'no-close',
                             'buttons': {
                                 'OK': function() {
-                                    window.location.href = $link.attr('href');
+
+                                    let href = $link.attr('href');
+                                    let target = $link.attr('target');
+
+                                    if (target === '_blank') {
+                                        window.open(href, '_blank');
+
+                                    } else if (target === '_parent') {
+                                        window.parent.location.href = href;
+
+                                    } else if (target === '_top') {
+                                        window.top.location.href = href;
+
+                                    } else if (target) {
+                                        window.open(href, target);
+
+                                    } else {
+                                        window.location.href = href;
+                                    }
+
+                                    $(this).dialog('close');
+
                                 },
                                 'Cancel': function() {
                                     $(this).dialog('close');
