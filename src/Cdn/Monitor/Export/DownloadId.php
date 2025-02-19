@@ -9,7 +9,7 @@ use Nails\Factory;
 
 class DownloadId extends ObjectIsInColumn
 {
-    protected function getModel(): Base
+    public function getModel(): Base
     {
         return Factory::model('Export', Constants::MODULE_SLUG);
     }
