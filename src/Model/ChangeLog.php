@@ -58,6 +58,7 @@ class ChangeLog extends Base
     const OPERATION_CREATE  = 'CREATE';
     const OPERATION_EDIT    = 'EDIT';
     const OPERATION_DELETE  = 'DELETE';
+    const OPERATION_DESTROY = 'DESTROY';
     const OPERATION_RESTORE = 'RESTORE';
 
     // --------------------------------------------------------------------------
