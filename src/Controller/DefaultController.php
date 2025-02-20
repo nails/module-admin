@@ -28,7 +28,6 @@ use Nails\Common\Exception\ValidationException;
 use Nails\Common\Factory\Model\Field;
 use Nails\Common\Helper\Form;
 use Nails\Common\Resource;
-use Nails\Common\Service\Asset;
 use Nails\Common\Service\Database;
 use Nails\Common\Service\FormValidation;
 use Nails\Common\Service\Input;
@@ -151,6 +150,11 @@ abstract class DefaultController extends Base
      * Specify whether the controller supports item deletion
      */
     const CONFIG_CAN_DELETE = true;
+
+    /**
+     * Specify whether the controller supports item destruction
+     */
+    const CONFIG_CAN_DESTROY = true;
 
     /**
      * Specify whether the controller supports item restoration
@@ -299,6 +303,11 @@ abstract class DefaultController extends Base
     const CONFIG_DELETE_DATA = [];
 
     /**
+     * Additional data to pass into the getAll call on the destroy view
+     */
+    const CONFIG_DESTROY_DATA = [];
+
+    /**
      * Additional data to pass into the getAll call on the sort view
      */
     const CONFIG_SORT_DATA = [];
@@ -332,6 +341,11 @@ abstract class DefaultController extends Base
      * When deleting, this string is passed to supporting functions
      */
     const EDIT_MODE_DELETE = 'DELETE';
+
+    /**
+     * When deleting, this string is passed to supporting functions
+     */
+    const EDIT_MODE_DESTROY = 'DESTROY';
 
     /**
      * When restoring, this string is passed to supporting functions
@@ -392,6 +406,16 @@ abstract class DefaultController extends Base
      * Message displayed to user when an item fails to be deleted
      */
     const DELETE_ERROR_MESSAGE = 'Failed to delete item.';
+
+    /**
+     * Message displayed to user when an item is successfully destroyed
+     */
+    const DESTROY_SUCCESS_MESSAGE = 'Item destroyed successfully.';
+
+    /**
+     * Message displayed to user when an item fails to be destroyed
+     */
+    const DESTROY_ERROR_MESSAGE = 'Failed to destroy item.';
 
     /**
      * Message displayed to user when an item is successfully restored
@@ -564,6 +588,7 @@ abstract class DefaultController extends Base
             $aPermissions[static::EDIT_MODE_CREATE]  = 'Can create items';
             $aPermissions[static::EDIT_MODE_EDIT]    = 'Can edit items';
             $aPermissions[static::EDIT_MODE_DELETE]  = 'Can delete items';
+            $aPermissions[static::EDIT_MODE_DESTROY] = 'Can destroy items';
             $aPermissions[static::EDIT_MODE_RESTORE] = 'Can restore items';
 
             if (static::isCopyButtonEnabled()) {
@@ -1039,7 +1064,7 @@ abstract class DefaultController extends Base
             if (classUses($oModel, Localised::class)) {
                 $oModel->delete($oItem->id, $oItem->locale);
             } elseif (!$oModel->delete($oItem->id)) {
-                throw new NailsException(static::DELETE_ERROR_MESSAGE . ' ' . $oModel->lastError());
+                throw new NailsException($oModel->lastError());
             }
 
             $this->afterDelete($oItem);
@@ -1119,6 +1144,55 @@ abstract class DefaultController extends Base
         } catch (\Exception $e) {
             $oDb->transaction()->rollback();
             $this->oUserFeedback->error(static::RESTORE_ERROR_MESSAGE . ' ' . $e->getMessage());
+            $this->returnToIndex();
+        }
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Destroy a deleted item
+     *
+     * @return void
+     */
+    public function destroy(): void
+    {
+        if (!static::userCan(static::EDIT_MODE_DESTROY)) {
+            unauthorised();
+        }
+
+        /** @var Database $oDb */
+        $oDb = Factory::service('Database');
+
+        $aConfig = $this->getConfig();
+        $oModel  = $this->getModel();
+        $oItem   = $this->getItem($aConfig['DESTROY_DATA'], bIncludeDeleted: true);
+
+        if (!static::isDestroyButtonEnabled($oItem)) {
+            show404();
+        }
+
+        try {
+
+            $oDb->transaction()->start();
+            $this->beforeDestroy($oItem);
+
+            if (classUses($oModel, Localised::class)) {
+                $oModel->destroy($oItem->id, $oItem->locale);
+            } elseif (!$oModel->destroy($oItem->id)) {
+                throw new NailsException($oModel->lastError());
+            }
+
+            $this->afterDestroy($oItem);
+            $this->addToChangeLog(static::EDIT_MODE_DESTROY, $oItem);
+            $oDb->transaction()->commit();
+
+            $this->oUserFeedback->success(static::DESTROY_SUCCESS_MESSAGE);
+            $this->returnToIndex();
+
+        } catch (\Exception $e) {
+            $oDb->transaction()->rollback();
+            $this->oUserFeedback->error(static::DESTROY_ERROR_MESSAGE . ' ' . $e->getMessage());
             $this->returnToIndex();
         }
     }
@@ -1371,6 +1445,7 @@ abstract class DefaultController extends Base
             'EDIT_HTML_HEADER'       => static::CONFIG_EDIT_HTML_HEADER,
             'EDIT_HTML_FOOTER'       => static::CONFIG_EDIT_HTML_FOOTER,
             'DELETE_DATA'            => static::CONFIG_DELETE_DATA,
+            'DESTROY_DATA'           => static::CONFIG_DESTROY_DATA,
             'SORT_DATA'              => static::CONFIG_SORT_DATA,
             'SORT_LABEL'             => static::CONFIG_SORT_LABEL,
             'SORT_COLUMNS'           => static::CONFIG_SORT_COLUMNS,
@@ -2047,6 +2122,19 @@ abstract class DefaultController extends Base
     // --------------------------------------------------------------------------
 
     /**
+     * Executed before an item is destroyed
+     *
+     * @param Resource $oItem The item being destroyed
+     *
+     * @return void
+     */
+    protected function beforeDestroy(Resource $oItem): void
+    {
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
      * Executed after an item is edited
      *
      * @param string   $sMode    Whether the action was CREATE or EDIT
@@ -2110,6 +2198,19 @@ abstract class DefaultController extends Base
      * @return void
      */
     protected function afterDelete(Resource $oItem): void
+    {
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Executed after an item is destroyed
+     *
+     * @param Resource $oItem The destroyed item
+     *
+     * @return void
+     */
+    protected function afterDestroy(Resource $oItem): void
     {
     }
 
@@ -2479,6 +2580,21 @@ abstract class DefaultController extends Base
     // --------------------------------------------------------------------------
 
     /**
+     * Determines whether the "Destroy" row button is enabled
+     *
+     * @param Resource|null $oItem The row item
+     *
+     * @return bool
+     */
+    protected static function isDestroyButtonEnabled($oItem = null): bool
+    {
+        return static::CONFIG_CAN_DESTROY
+            && static::userCan(static::EDIT_MODE_DESTROY);
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
      * Determines whether the "Restore" button is enabled
      *
      * @param Resource|null $oItem The row item
@@ -2678,6 +2794,9 @@ abstract class DefaultController extends Base
                 case static::EDIT_MODE_DELETE:
                     $this->addToChangeLogDelete($oItem);
                     break;
+                case static::EDIT_MODE_DESTROY:
+                    $this->addToChangeLogDestroy($oItem);
+                    break;
                 case static::EDIT_MODE_RESTORE:
                     $this->addToChangeLogRestore($oItem);
                     break;
@@ -2787,6 +2906,26 @@ abstract class DefaultController extends Base
             ->oChangeLogModel
             ->add(
                 'deleted',
+                'a',
+                static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
+                $oItem->id,
+                $oItem->label ?? 'Item #' . $oItem->id
+            );
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Adds a "Destroy" item to the ChangeLog
+     *
+     * @param Resource\Entity $oItem The destroyed item
+     */
+    protected function addToChangeLogDestroy(Resource\Entity $oItem): void
+    {
+        $this
+            ->oChangeLogModel
+            ->add(
+                'destroyed',
                 'a',
                 static::CHANGELOG_ENTITY_NAME ?? get_class($oItem),
                 $oItem->id,
