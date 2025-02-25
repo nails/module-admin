@@ -222,11 +222,14 @@ class Controller
      */
     protected function generatePartial(Component $oComponent, string $sClass): string
     {
-        return preg_replace(
+        $sPartial = preg_replace(
             '/^' . preg_quote(ltrim($oComponent->namespace, '\\') . static::SRC_PATH . '\\', '/') . '/',
             '',
             $sClass
         );
+
+        //  Nested classes should be represented by matching directory tree
+        return str_replace('\\', DIRECTORY_SEPARATOR, $sPartial);
     }
 
     // --------------------------------------------------------------------------
