@@ -250,8 +250,10 @@ class Navigation {
     enableAnimation() {
         clearTimeout(this.enableAnimationTimeout);
         this.enableAnimationTimeout = setTimeout(() => {
-            document.querySelector('.sidebar > ul.modules')
-                .classList.add('animate');
+            var modules = document.querySelector('.sidebar > ul.modules');
+            if (modules) {
+                modules.classList.add('animate');
+            }
         }, 1000);
         return this;
     }
@@ -264,8 +266,10 @@ class Navigation {
      */
     disableAnimation() {
         clearTimeout(this.enableAnimationTimeout);
-        document.querySelector('.sidebar > ul.modules')
-            .classList.remove('animate');
+        var modules = document.querySelector('.sidebar > ul.modules');
+        if (modules) {
+            modules.classList.remove('animate');
+        }
         return this;
     }
 
