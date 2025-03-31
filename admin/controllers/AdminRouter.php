@@ -278,7 +278,7 @@ class AdminRouter extends BaseMiddle
     protected function isValidAdminFile($file): bool
     {
         //  PHP file, no leading underscore
-        return preg_match('/^[^_][a-zA-Z_]+\.php$/', $file);
+        return preg_match('/^[^_][a-zA-Z0-9_]+\.php$/', $file);
     }
 
     // --------------------------------------------------------------------------
