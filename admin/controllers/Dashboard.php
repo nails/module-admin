@@ -57,7 +57,7 @@ class Dashboard extends Base
     {
         /** @var Asset $oAsset */
         $oAsset = Factory::service('Asset');
-        $oAsset->load('https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js');
+        $oAsset->vue2();
 
         //$this->data['page']->title = 'Welcome';
         $this->data['aAlerts']  = $this->getDashboardAlerts();
