@@ -167,7 +167,7 @@ class DataExport
      *
      * @return Source|null
      */
-    public function getSourceBySlug(string $sSlug = null): ?Source
+    public function getSourceBySlug(?string $sSlug = null): ?Source
     {
         foreach ($this->aSources as $oSource) {
             if ($sSlug === $oSource->slug) {

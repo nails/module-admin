@@ -16,7 +16,7 @@ trait Permission
      *
      * @return bool
      */
-    protected function userHasPermission(string $sPermission = null): bool
+    protected function userHasPermission(?string $sPermission = null): bool
     {
         return userHasPermission(
             $sPermission

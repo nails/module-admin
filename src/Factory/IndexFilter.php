@@ -113,7 +113,7 @@ class IndexFilter
      *
      * @return $this
      */
-    public function addOption($mLabel, $mValue = null, bool $bIsSelected = false, bool $bIsQuery = null): self
+    public function addOption($mLabel, $mValue = null, bool $bIsSelected = false, ?bool $bIsQuery = null): self
     {
         if ($mLabel instanceof Option) {
             $this->aOptions[] = $mLabel;
