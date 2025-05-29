@@ -88,7 +88,7 @@ class Widget
      *
      * @return Resource\Dashboard\Widget[]
      */
-    public function getWidgetsForUser(User $oUser = null): array
+    public function getWidgetsForUser(?User $oUser = null): array
     {
         /** @var \Nails\Admin\Model\Dashboard\Widget $oModel */
         $oModel = Factory::model('DashboardWidget', Constants::MODULE_SLUG);

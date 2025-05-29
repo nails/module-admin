@@ -2045,7 +2045,7 @@ abstract class DefaultController extends Base
      *
      * @return void
      */
-    protected function beforeCreateAndEdit($sMode, Resource $oItem = null): void
+    protected function beforeCreateAndEdit($sMode, ?Resource $oItem = null): void
     {
     }
 
@@ -2058,7 +2058,7 @@ abstract class DefaultController extends Base
      *
      * @return void
      */
-    protected function beforeEdit(Resource $oItem = null): void
+    protected function beforeEdit(?Resource $oItem = null): void
     {
         /** @var Input $oInput */
         $oInput = Factory::service('Input');
@@ -2143,7 +2143,7 @@ abstract class DefaultController extends Base
      *
      * @return void
      */
-    protected function afterCreateAndEdit($sMode, Resource $oNewItem, Resource $oOldItem = null): void
+    protected function afterCreateAndEdit($sMode, ?Resource $oNewItem, ?Resource $oOldItem = null): void
     {
     }
 
@@ -2157,7 +2157,7 @@ abstract class DefaultController extends Base
      *
      * @return void
      */
-    protected function afterEdit(Resource $oNewItem, Resource $oOldItem = null): void
+    protected function afterEdit(Resource $oNewItem, ?Resource $oOldItem = null): void
     {
     }
 
@@ -2278,7 +2278,7 @@ abstract class DefaultController extends Base
      * @throws FactoryException
      * @throws NailsException
      */
-    protected function loadEditViewData(Resource $oItem = null): void
+    protected function loadEditViewData(?Resource $oItem = null): void
     {
         $aConfig = $this->getConfig();
         $aFields = $aConfig['FIELDS'];
@@ -2303,7 +2303,7 @@ abstract class DefaultController extends Base
      * @param Field         $oField The field being set
      * @param Resource|null $oItem  The item being edited
      */
-    protected function loadEditViewDataSetDefaultValue(Field &$oField, Resource $oItem = null)
+    protected function loadEditViewDataSetDefaultValue(Field &$oField, ?Resource $oItem = null)
     {
         $sKey = preg_replace('/\[\]$/', '', $oField->getKey());
 
@@ -2346,7 +2346,7 @@ abstract class DefaultController extends Base
      * @throws FactoryException
      * @throws NailsException
      */
-    protected function loadEditViewDataSetReadOnly(Field &$oField, Resource $oItem = null)
+    protected function loadEditViewDataSetReadOnly(Field &$oField, ?Resource $oItem = null)
     {
         $aConfig = $this->getConfig();
         if (!is_null($oItem)) {
@@ -2482,7 +2482,7 @@ abstract class DefaultController extends Base
      * @return mixed
      * @throws FactoryException
      */
-    protected function getItem(array $aData = [], int $iSegment = null, bool $bIncludeDeleted = false, bool $b404 = true)
+    protected function getItem(array $aData = [], ?int $iSegment = null, bool $bIncludeDeleted = false, bool $b404 = true)
     {
         $iSegment = $iSegment ?? 5;
 
@@ -2678,9 +2678,9 @@ abstract class DefaultController extends Base
     protected function addIndexHeaderButton(
         string $mUrl,
         string $sLabel,
-        string $sContext = null,
-        string $sConfirmTitle = null,
-        string $sConfirmBody = null
+        ?string $sContext = null,
+        ?string $sConfirmTitle = null,
+        ?string $sConfirmBody = null
     ): void {
         $this->aConfig['INDEX_HEADER_BUTTONS'][] = [
             'url'           => $mUrl,
@@ -2705,9 +2705,9 @@ abstract class DefaultController extends Base
     protected function addEditHeaderButton(
         $mUrl,
         string $sLabel,
-        string $sContext = null,
-        string $sConfirmTitle = null,
-        string $sConfirmBody = null
+        ?string $sContext = null,
+        ?string $sConfirmTitle = null,
+        ?string $sConfirmBody = null
     ): void {
         $this->aConfig['EDIT_HEADER_BUTTONS'][] = [
             'url'           => $mUrl,
@@ -2752,9 +2752,9 @@ abstract class DefaultController extends Base
     protected static function addHeaderButton(
         $mUrl,
         string $sLabel,
-        string $sContext = null,
-        string $sConfirmTitle = null,
-        string $sConfirmBody = null
+        ?string $sContext = null,
+        ?string $sConfirmTitle = null,
+        ?string $sConfirmBody = null
     ) {
         Helper::addHeaderButton(
             $mUrl,
@@ -2780,7 +2780,7 @@ abstract class DefaultController extends Base
     protected function addToChangeLog(
         string $sMode,
         Resource\Entity $oItem,
-        Resource\Entity $oOldItem = null
+        ?Resource\Entity $oOldItem = null
     ): void {
 
         if (static::CHANGELOG_ENABLED) {
@@ -2836,7 +2836,7 @@ abstract class DefaultController extends Base
      * @param Resource\Entity      $oItem    The new item
      * @param Resource\Entity|null $oOldItem The old item
      */
-    protected function addToChangeLogEdit(Resource\Entity $oItem, Resource\Entity $oOldItem = null): void
+    protected function addToChangeLogEdit(Resource\Entity $oItem, ?Resource\Entity $oOldItem = null): void
     {
         $aNew = $this->changeLogFlattenObject($oItem);
         $aOld = $this->changeLogFlattenObject($oOldItem);
