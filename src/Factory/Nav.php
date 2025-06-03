@@ -157,7 +157,7 @@ class Nav implements \JsonSerializable
      * @return $this
      * @throws \Nails\Common\Exception\FactoryException
      */
-    public function addAction($mLabel, string $sUrl = 'index', array $aAlerts = [], int $iOrder = null, array $aKeywords = []): self
+    public function addAction($mLabel, string $sUrl = 'index', array $aAlerts = [], ?int $iOrder = null, array $aKeywords = []): self
     {
         if ($mLabel instanceof Action) {
             $this->aActions[$mLabel->getUrl()] = $mLabel;

@@ -103,7 +103,7 @@ class Permission
 
     // --------------------------------------------------------------------------
 
-    public function userHasPermission($mPermission, User $oUser = null): bool
+    public function userHasPermission($mPermission, ?User $oUser = null): bool
     {
         $oUser = $oUser ?? activeUser();
         return $oUser
@@ -113,7 +113,7 @@ class Permission
 
     // --------------------------------------------------------------------------
 
-    public function isSuperUser(User $oUser = null): bool
+    public function isSuperUser(?User $oUser = null): bool
     {
         $oUser = $oUser ?? activeUser();
         return $oUser
@@ -123,7 +123,7 @@ class Permission
 
     // --------------------------------------------------------------------------
 
-    public function isGroupSuperUser(Group $oGroup = null): bool
+    public function isGroupSuperUser(?Group $oGroup = null): bool
     {
         $oGroup = $oGroup ?? (activeUser() ? activeUser()->group() : null);
         return $oGroup
@@ -133,7 +133,7 @@ class Permission
 
     // --------------------------------------------------------------------------
 
-    public function isAdmin(User $oUser = null): bool
+    public function isAdmin(?User $oUser = null): bool
     {
         $oUser  = $oUser ?? activeUser();
         $oGroup = $oUser ? $oUser->group() : null;
@@ -142,7 +142,7 @@ class Permission
 
     // --------------------------------------------------------------------------
 
-    public function groupHasPermission($mPermission, Group $oGroup = null, bool $bIgnoreSuperUser = false): bool
+    public function groupHasPermission($mPermission, ?Group $oGroup = null, bool $bIgnoreSuperUser = false): bool
     {
         if (empty($mPermission)) {
             return true;

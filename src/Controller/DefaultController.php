@@ -2068,7 +2068,7 @@ abstract class DefaultController extends Base
      *
      * @return void
      */
-    protected function beforeCreateAndEdit($sMode, Resource $oItem = null): void
+    protected function beforeCreateAndEdit($sMode, ?Resource $oItem = null): void
     {
     }
 
@@ -2083,7 +2083,7 @@ abstract class DefaultController extends Base
      * @throws \Nails\Admin\Exception\DefaultController\ItemModifiedException
      * @throws FactoryException
      */
-    protected function beforeEdit(Resource $oItem = null): void
+    protected function beforeEdit(?Resource $oItem = null): void
     {
         /** @var Input $oInput */
         $oInput = Factory::service('Input');
@@ -2168,7 +2168,7 @@ abstract class DefaultController extends Base
      *
      * @return void
      */
-    protected function afterCreateAndEdit($sMode, Resource $oNewItem, Resource $oOldItem = null): void
+    protected function afterCreateAndEdit($sMode, Resource $oNewItem, ?Resource $oOldItem = null): void
     {
     }
 
@@ -2182,7 +2182,7 @@ abstract class DefaultController extends Base
      *
      * @return void
      */
-    protected function afterEdit(Resource $oNewItem, Resource $oOldItem = null): void
+    protected function afterEdit(Resource $oNewItem, ?Resource $oOldItem = null): void
     {
     }
 
@@ -2304,7 +2304,7 @@ abstract class DefaultController extends Base
      * @throws FactoryException
      * @throws NailsException
      */
-    protected function loadEditViewData(Resource $oItem = null): void
+    protected function loadEditViewData(?Resource $oItem = null): void
     {
         $aConfig = $this->getConfig();
         $aFields = $aConfig['FIELDS'];
@@ -2329,7 +2329,7 @@ abstract class DefaultController extends Base
      * @param Field         $oField The field being set
      * @param Resource|null $oItem  The item being edited
      */
-    protected function loadEditViewDataSetDefaultValue(Field &$oField, Resource $oItem = null)
+    protected function loadEditViewDataSetDefaultValue(Field &$oField, ?Resource $oItem = null)
     {
         $sKey = preg_replace('/\[]$/', '', $oField->getKey());
 
@@ -2371,7 +2371,7 @@ abstract class DefaultController extends Base
      * @throws FactoryException
      * @throws NailsException
      */
-    protected function loadEditViewDataSetReadOnly(Field &$oField, Resource $oItem = null)
+    protected function loadEditViewDataSetReadOnly(Field &$oField, ?Resource $oItem = null)
     {
         $aConfig = $this->getConfig();
         if (!is_null($oItem)) {
@@ -2393,7 +2393,7 @@ abstract class DefaultController extends Base
      * @throws FactoryException
      * @throws NailsException
      */
-    protected function loadEditViewDataSetFieldsets(array $aFields, Resource $oItem = null): array
+    protected function loadEditViewDataSetFieldsets(array $aFields, ?Resource $oItem = null): array
     {
         //  Extract the fields into fieldsets
         $aConfig    = $this->getConfig();
@@ -2509,7 +2509,7 @@ abstract class DefaultController extends Base
      * @throws FactoryException
      * @throws ModelException
      */
-    protected function getItem(array $aData = [], int $iSegment = null, bool $bIncludeDeleted = false, bool $b404 = true)
+    protected function getItem(array $aData = [], ?int $iSegment = null, bool $bIncludeDeleted = false, bool $b404 = true)
     {
         $iSegment = $iSegment ?? 5;
 
@@ -2583,7 +2583,7 @@ abstract class DefaultController extends Base
      *
      * @return bool
      */
-    protected static function isEditButtonEnabled(Resource $oItem = null): bool
+    protected static function isEditButtonEnabled(?Resource $oItem = null): bool
     {
         return static::CONFIG_CAN_EDIT
             && static::userCan(static::CONFIG_PERMISSION_EDIT);
@@ -2598,7 +2598,7 @@ abstract class DefaultController extends Base
      *
      * @return bool
      */
-    protected static function isDeleteButtonEnabled(Resource $oItem = null): bool
+    protected static function isDeleteButtonEnabled(?Resource $oItem = null): bool
     {
         return static::CONFIG_CAN_DELETE
             && static::userCan(static::CONFIG_PERMISSION_DELETE);
@@ -2613,7 +2613,7 @@ abstract class DefaultController extends Base
      *
      * @return bool
      */
-    protected static function isDestroyButtonEnabled(Resource $oItem = null): bool
+    protected static function isDestroyButtonEnabled(?Resource $oItem = null): bool
     {
         return static::CONFIG_CAN_DESTROY
             && static::userCan(static::CONFIG_PERMISSION_DESTROY);
@@ -2629,7 +2629,7 @@ abstract class DefaultController extends Base
      * @return bool
      * @throws FactoryException
      */
-    protected static function isRestoreButtonEnabled(Resource $oItem = null): bool
+    protected static function isRestoreButtonEnabled(?Resource $oItem = null): bool
     {
         return static::CONFIG_CAN_RESTORE
             && static::userCan(static::CONFIG_PERMISSION_RESTORE)
@@ -2646,7 +2646,7 @@ abstract class DefaultController extends Base
      * @return bool
      * @throws FactoryException
      */
-    protected static function isCopyButtonEnabled(Resource $oItem = null): bool
+    protected static function isCopyButtonEnabled(?Resource $oItem = null): bool
     {
         return static::CONFIG_CAN_COPY
             && static::userCan(static::CONFIG_PERMISSION_COPY)
@@ -2708,9 +2708,9 @@ abstract class DefaultController extends Base
     protected function addIndexHeaderButton(
         string $mUrl,
         string $sLabel,
-        string $sContext = null,
-        string $sConfirmTitle = null,
-        string $sConfirmBody = null
+        ?string $sContext = null,
+        ?string $sConfirmTitle = null,
+        ?string $sConfirmBody = null
     ): void {
         $this->aConfig['INDEX_HEADER_BUTTONS'][] = [
             'url'           => $mUrl,
@@ -2735,9 +2735,9 @@ abstract class DefaultController extends Base
     protected function addEditHeaderButton(
         $mUrl,
         string $sLabel,
-        string $sContext = null,
-        string $sConfirmTitle = null,
-        string $sConfirmBody = null
+        ?string $sContext = null,
+        ?string $sConfirmTitle = null,
+        ?string $sConfirmBody = null
     ): void {
         $this->aConfig['EDIT_HEADER_BUTTONS'][] = [
             'url'           => $mUrl,
@@ -2782,9 +2782,9 @@ abstract class DefaultController extends Base
     protected static function addHeaderButton(
         $mUrl,
         string $sLabel,
-        string $sContext = null,
-        string $sConfirmTitle = null,
-        string $sConfirmBody = null
+        ?string $sContext = null,
+        ?string $sConfirmTitle = null,
+        ?string $sConfirmBody = null
     ) {
         Helper::addHeaderButton(
             $mUrl,
@@ -2810,7 +2810,7 @@ abstract class DefaultController extends Base
     protected function addToChangeLog(
         string $sMode,
         Resource\Entity $oItem,
-        Resource\Entity $oOldItem = null
+        ?Resource\Entity $oOldItem = null
     ): void {
 
         if (static::CHANGELOG_ENABLED) {
@@ -2869,7 +2869,7 @@ abstract class DefaultController extends Base
      * @throws FactoryException
      * @throws ModelException
      */
-    protected function addToChangeLogEdit(Resource\Entity $oItem, Resource\Entity $oOldItem = null): void
+    protected function addToChangeLogEdit(Resource\Entity $oItem, ?Resource\Entity $oOldItem = null): void
     {
         $oModel = static::getModel();
         $aNew   = $this->changeLogFlattenObject($oItem);
@@ -3007,7 +3007,7 @@ abstract class DefaultController extends Base
      *
      * @return array
      */
-    protected function changeLogFlattenObject($mItem, string $sPrefix = '', int $iDepth = null): array
+    protected function changeLogFlattenObject($mItem, string $sPrefix = '', ?int $iDepth = null): array
     {
         $sPrefix = $sPrefix ? $sPrefix . '.' : '';
         $aOut    = [];

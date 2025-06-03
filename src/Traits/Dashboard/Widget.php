@@ -49,7 +49,7 @@ trait Widget
      *
      * @return bool
      */
-    public function isEnabled(User $oUser = null): bool
+    public function isEnabled(?User $oUser = null): bool
     {
         return true;
     }

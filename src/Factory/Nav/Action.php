@@ -35,7 +35,7 @@ class Action implements \JsonSerializable
      * @param int|null $iOrder
      * @param array    $aKeywords
      */
-    public function __construct(string $sLabel, string $sUrl, array $aAlerts = [], int $iOrder = null, array $aKeywords = [])
+    public function __construct(string $sLabel, string $sUrl, array $aAlerts = [], ?int $iOrder = null, array $aKeywords = [])
     {
         $this
             ->setLabel($sLabel)

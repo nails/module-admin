@@ -52,7 +52,7 @@ class Group
 
     // --------------------------------------------------------------------------
 
-    public function sort(\Closure $cSortFunction = null): self
+    public function sort(?\Closure $cSortFunction = null): self
     {
 
         $cSortFunction =

@@ -5,7 +5,7 @@ use Nails\Auth\Resource\User;
 use Nails\Auth\Resource\User\Group;
 
 if (!function_exists('userHasPermission')) {
-    function userHasPermission($mPermission, User $oUser = null): bool
+    function userHasPermission($mPermission, ?User $oUser = null): bool
     {
         /** @var \Nails\Admin\Service\Permission $oPermission */
         $oPermission = \Nails\Factory::service('Permission', Constants::MODULE_SLUG);
@@ -14,7 +14,7 @@ if (!function_exists('userHasPermission')) {
 }
 
 if (!function_exists('userHasAnyPermission')) {
-    function userHasAnyPermission(array $aPermissions, User $oUser = null): bool
+    function userHasAnyPermission(array $aPermissions, ?User $oUser = null): bool
     {
         /** @var \Nails\Admin\Service\Permission $oPermission */
         $oPermission = \Nails\Factory::service('Permission', Constants::MODULE_SLUG);
@@ -29,7 +29,7 @@ if (!function_exists('userHasAnyPermission')) {
 }
 
 if (!function_exists('groupHasPermission')) {
-    function groupHasPermission($mPermission, Group $oGroup = null, bool $bIgnoreSuperUser = false): bool
+    function groupHasPermission($mPermission, ?Group $oGroup = null, bool $bIgnoreSuperUser = false): bool
     {
         /** @var \Nails\Admin\Service\Permission $oPermission */
         $oPermission = \Nails\Factory::service('Permission', Constants::MODULE_SLUG);
@@ -38,7 +38,7 @@ if (!function_exists('groupHasPermission')) {
 }
 
 if (!function_exists('isSuperUser')) {
-    function isSuperUser(User $oUser = null)
+    function isSuperUser(?User $oUser = null)
     {
         /** @var \Nails\Admin\Service\Permission $oPermission */
         $oPermission = \Nails\Factory::service('Permission', Constants::MODULE_SLUG);
@@ -47,7 +47,7 @@ if (!function_exists('isSuperUser')) {
 }
 
 if (!function_exists('isGroupSuperUser')) {
-    function isGroupSuperUser(Group $oGroup = null)
+    function isGroupSuperUser(?Group $oGroup = null)
     {
         /** @var \Nails\Admin\Service\Permission $oPermission */
         $oPermission = \Nails\Factory::service('Permission', Constants::MODULE_SLUG);
@@ -56,7 +56,7 @@ if (!function_exists('isGroupSuperUser')) {
 }
 
 if (!function_exists('isAdmin')) {
-    function isAdmin(User $oUser = null): bool
+    function isAdmin(?User $oUser = null): bool
     {
         /** @var \Nails\Admin\Service\Permission $oPermission */
         $oPermission = \Nails\Factory::service('Permission', Constants::MODULE_SLUG);
