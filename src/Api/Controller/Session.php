@@ -366,7 +366,7 @@ class Session extends BaseApi
      * @throws FactoryException
      * @throws ValidationException
      */
-    private function response(array $aData = null, int $iCode = null): Api\Factory\ApiResponse
+    private function response(?array $aData = null, ?int $iCode = null): Api\Factory\ApiResponse
     {
         /** @var Api\Factory\ApiResponse $oApiResponse */
         $oApiResponse = Factory::factory('ApiResponse', Api\Constants::MODULE_SLUG);
