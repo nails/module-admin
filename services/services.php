@@ -185,7 +185,7 @@ return [
             string $sLabel,
             string $sUrl,
             array $aAlerts = [],
-            int $iOrder = null,
+            ?int $iOrder = null,
             array $aKeywords = []
         ): Factory\Nav\Action {
             if (class_exists('\App\Admin\Factory\Nav\Action')) {
