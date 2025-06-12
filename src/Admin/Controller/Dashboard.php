@@ -13,14 +13,15 @@
 namespace Nails\Admin\Admin\Controller;
 
 use Nails\Admin\Constants;
+use Nails\Admin\Controller\Base;
 use Nails\Admin\Factory\Nav;
+use Nails\Admin\Helper;
 use Nails\Admin\Interfaces\Dashboard\Alert;
 use Nails\Admin\Service\Dashboard\Widget;
+use Nails\Common\Exception\FactoryException;
 use Nails\Common\Service\Asset;
 use Nails\Components;
 use Nails\Factory;
-use Nails\Admin\Controller\Base;
-use Nails\Admin\Helper;
 
 /**
  * Class Dashboard
@@ -32,10 +33,9 @@ class Dashboard extends Base
     /**
      * Announces this controller's navGroups
      *
-     * @return \Nails\Admin\Factory\Nav
-     * @throws \Nails\Common\Exception\FactoryException
+     * @throws FactoryException
      */
-    public static function announce()
+    public static function announce(): Nav|array|null;
     {
         /** @var Nav $oNavGroup */
         $oNavGroup = Factory::factory('Nav', Constants::MODULE_SLUG);

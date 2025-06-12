@@ -15,24 +15,26 @@ namespace Nails\Admin\Admin\Controller;
 use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\Base;
+use Nails\Admin\Factory\Nav;
 use Nails\Admin\Helper;
+use Nails\Common\Exception\FactoryException;
+use Nails\Common\Exception\ModelException;
 use Nails\Factory;
 
 class Help extends Base
 {
     /**
-     * @return \Nails\Admin\Factory\Nav|void
-     * @throws \Nails\Common\Exception\FactoryException
-     * @throws \Nails\Common\Exception\ModelException
+     * @throws FactoryException
+     * @throws ModelException
      */
-    public static function announce()
+    public static function announce(): Nav|array|null
     {
         /** @var \Nails\Admin\Model\Help $oHelpModel */
         $oHelpModel = Factory::model('Help', Constants::MODULE_SLUG);
 
         if (userHasPermission(Permission\Help\View::class) && $oHelpModel->countAll()) {
 
-            /** @var \Nails\Admin\Factory\Nav $oNavGroup */
+            /** @var Nav $oNavGroup */
             $oNavGroup = Factory::factory('Nav', Constants::MODULE_SLUG);
             $oNavGroup
                 ->setLabel('Dashboard')
@@ -41,6 +43,8 @@ class Help extends Base
 
             return $oNavGroup;
         }
+
+        return $oNavGroup ?? null;
     }
 
     // --------------------------------------------------------------------------
@@ -49,8 +53,8 @@ class Help extends Base
      * Renders the admin help page
      *
      * @return void
-     * @throws \Nails\Common\Exception\FactoryException
-     * @throws \Nails\Common\Exception\ModelException
+     * @throws FactoryException
+     * @throws ModelException
      */
     public function index()
     {

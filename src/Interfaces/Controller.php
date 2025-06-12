@@ -9,9 +9,9 @@ interface Controller
     /**
      * Announces the controller's sidebar Nav Groups
      *
-     * @return Nav|Nav[]
+     * @return Nav|Nav[]|null
      */
-    public static function announce();
+    public static function announce(): Nav|array|null;
 
     /**
      * Compiles the URL for the controller, appending the supplied string

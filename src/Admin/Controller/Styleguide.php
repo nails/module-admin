@@ -18,7 +18,7 @@ use Nails\Admin\Helper;
 
 class Styleguide extends Base
 {
-    public static function announce()
+    public static function announce(): Nav|array|null
     {
         return null;
     }

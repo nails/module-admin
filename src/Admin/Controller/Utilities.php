@@ -15,6 +15,7 @@ namespace Nails\Admin\Admin\Controller;
 use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\Base;
+use Nails\Admin\Factory\Nav;
 use Nails\Admin\Helper;
 use Nails\Admin\Service\DataExport;
 use Nails\Common\Events;
@@ -34,9 +35,9 @@ class Utilities extends Base
 
     // --------------------------------------------------------------------------
 
-    public static function announce()
+    public static function announce(): Nav|array|null
     {
-        /** @var \Nails\Admin\Factory\Nav $oNavGroup */
+        /** @var Nav $oNavGroup */
         $oNavGroup = Factory::factory('Nav', Constants::MODULE_SLUG);
         $oNavGroup
             ->setLabel('Utilities')
