@@ -35,7 +35,7 @@ class Dashboard extends Base
      *
      * @throws FactoryException
      */
-    public static function announce(): Nav|array|null;
+    public static function announce(): Nav|array|null
     {
         /** @var Nav $oNavGroup */
         $oNavGroup = Factory::factory('Nav', Constants::MODULE_SLUG);
