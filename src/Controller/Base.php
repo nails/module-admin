@@ -15,6 +15,7 @@ namespace Nails\Admin\Controller;
 
 use Nails\Admin\Constants;
 use Nails\Admin\Events;
+use Nails\Admin\Factory\Nav;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Service\Asset;
 use Nails\Common\Service\Event;
@@ -345,12 +346,10 @@ abstract class Base extends BaseMiddle
 
     /**
      * Defines the admin controller
-     *
-     * @return array
      */
-    public static function announce()
+    public static function announce(): Nav|array|null
     {
-        return [];
+        return null;
     }
 
     // --------------------------------------------------------------------------

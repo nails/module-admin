@@ -37,7 +37,7 @@ class Settings extends Base
      *
      * @return \stdClass
      */
-    public static function announce()
+    public static function announce(): Nav|array|null
     {
         /** @var Nav $oNav */
         $oNav = Factory::factory('Nav', Constants::MODULE_SLUG);

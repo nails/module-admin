@@ -14,6 +14,7 @@ namespace Nails\Admin\Admin;
 
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\Base;
+use Nails\Admin\Factory\Nav;
 use Nails\Admin\Helper;
 use Nails\Factory;
 
@@ -21,21 +22,19 @@ class Help extends Base
 {
     /**
      * Announces this controller's navGroups
-     * @return stdClass
      */
-    public static function announce()
+    public static function announce(): Nav|array|null
     {
         $oHelpModel = Factory::model('Help', Constants::MODULE_SLUG);
 
         if (userHasPermission('admin:admin:help:view') && $oHelpModel->countAll()) {
-
             $oNavGroup = Factory::factory('Nav', Constants::MODULE_SLUG);
             $oNavGroup->setLabel('Dashboard');
             $oNavGroup->setIcon('fa-home');
             $oNavGroup->addAction('Help Videos');
-
-            return $oNavGroup;
         }
+
+        return $oNavGroup ?? null;
     }
 
     // --------------------------------------------------------------------------

@@ -32,10 +32,8 @@ class Logs extends Base
 {
     /**
      * Announces this controller's navGroups
-     *
-     * @return Nav
      */
-    public static function announce()
+    public static function announce(): Nav|array|null
     {
         /** @var Nav $oNavGroup */
         $oNavGroup = Factory::factory('Nav', Constants::MODULE_SLUG);

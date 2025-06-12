@@ -548,10 +548,9 @@ abstract class DefaultController extends Base
     /**
      * Announces this controller's navGroups
      *
-     * @return array|Nav
      * @throws NailsException
      */
-    public static function announce()
+    public static function announce(): Nav|array|null
     {
         /** @var Nav $oNavGroup */
         $oNavGroup = Factory::factory('Nav', Constants::MODULE_SLUG);
