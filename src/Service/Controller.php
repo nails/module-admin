@@ -139,19 +139,20 @@ class Controller
         $sClass2 = array_values(class_parents($oController))[0];
         $oComp2  = Components::detectClassComponent($sClass2);
 
-        $sClass3 = array_values(class_parents($oController))[1];
-        $oComp3  = Components::detectClassComponent($sClass3);
+        $sClass3 = array_values(class_parents($oController))[1] ?? null;
+        $oComp3  = $sClass3 ? Components::detectClassComponent($sClass3) : null;
 
         /**
-         * Detect the hierarchy controllers under normal circumstances are up
-         * to three layers deep, with the top of the hierarchy being Nails\Admin\Controller\Base
-         * or Nails\Admin\Controller\DefaultController
+         * Controllers can be up to three layers deep, with the top of the hierarchy being
+         * Nails\Admin\Controller\Base or Nails\Admin\Controller\DefaultController
          *
-         * - {App} -> {Module} -> {Admin}
+         * - {App} extends {Module} extends {Admin}
          *
-         * But more typically, they simply extend Nails\Admin\Controller\Base or Nails\Admin\Controller\DefaultController
-         * - {App} -> {Admin}
-         * - {Module} -> {Admin}
+         * But more typically, they simply extend Nails\Admin\Controller\Base or
+         * Nails\Admin\Controller\DefaultController
+         *
+         * - {App} extends {Admin}
+         * - {Module} extends {Admin}
          */
 
         $aPaths = [];
