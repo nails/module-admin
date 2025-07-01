@@ -17,42 +17,16 @@ use Nails\Admin\Constants;
 use Nails\Admin\Events;
 use Nails\Admin\Helper;
 use Nails\Admin\Interfaces\Controller;
+use Nails\Common\Exception\AssetException;
 use Nails\Common\Exception\FactoryException;
+use Nails\Common\Exception\NailsException;
 use Nails\Common\Service\Asset;
 use Nails\Common\Service\Event;
 use Nails\Common\Service\UserFeedback;
 use Nails\Components;
 use Nails\Config;
 use Nails\Factory;
-
-// --------------------------------------------------------------------------
-
-/**
- * Allow the app to add functionality, if needed
- */
-if (!class_exists('\App\Admin\Controller\Base')) {
-    abstract class BaseMiddle
-    {
-        protected UserFeedback $oUserFeedback;
-
-        public function __construct()
-        {
-            $this->oUserFeedback = Factory::service('UserFeedback');
-        }
-    }
-} else {
-    abstract class BaseMiddle extends \App\Admin\Controller\Base
-    {
-        protected \AdminRouter $oRouter;
-        protected UserFeedback $oUserFeedback;
-
-        public function __construct()
-        {
-            parent::__construct();
-            $this->oUserFeedback = Factory::service('UserFeedback');
-        }
-    }
-}
+use ReflectionException;
 
 // --------------------------------------------------------------------------
 
@@ -61,7 +35,7 @@ if (!class_exists('\App\Admin\Controller\Base')) {
  *
  * @package Nails\Admin\Controller
  */
-abstract class Base extends BaseMiddle implements Controller
+abstract class Base implements Controller
 {
     /**
      * Will be passed to the views
@@ -70,15 +44,20 @@ abstract class Base extends BaseMiddle implements Controller
      */
     public array $data = [];
 
+    protected UserFeedback $oUserFeedback;
+
     // --------------------------------------------------------------------------
 
     /**
      * Construct the controller, load all the admin assets, etc
+     *
+     * @throws FactoryException
+     * @throws AssetException
+     * @throws NailsException
+     * @throws ReflectionException
      */
     public function __construct()
     {
-        parent::__construct();
-
         //  Setup Events
         /** @var Event $oEventService */
         $oEventService = Factory::service('Event');
@@ -100,6 +79,10 @@ abstract class Base extends BaseMiddle implements Controller
 
         // --------------------------------------------------------------------------
 
+        $this->oUserFeedback = Factory::service('UserFeedback');
+
+        // --------------------------------------------------------------------------
+
         $this
             ->loadConfigs()
             ->loadHelpers();
@@ -114,6 +97,7 @@ abstract class Base extends BaseMiddle implements Controller
             ->compileGlobalData();
 
         //  @todo (Pablo - 2017-06-08) - Try and reduce the number of things being loaded, or theme it
+
         $this
             ->loadLibraries()
             ->loadCss()
@@ -138,7 +122,7 @@ abstract class Base extends BaseMiddle implements Controller
      * @param string $sUrl
      *
      * @return string
-     * @throws \Nails\Common\Exception\FactoryException
+     * @throws FactoryException
      */
     public static function url(string $sUrl = ''): string
     {
@@ -202,7 +186,7 @@ abstract class Base extends BaseMiddle implements Controller
     /**
      * @return $this
      * @throws \Nails\Common\Exception\AssetException
-     * @throws \Nails\Common\Exception\FactoryException
+     * @throws FactoryException
      */
     protected function loadCss(): self
     {
@@ -223,7 +207,7 @@ abstract class Base extends BaseMiddle implements Controller
      *
      * @return $this
      * @throws \Nails\Common\Exception\AssetException
-     * @throws \Nails\Common\Exception\FactoryException
+     * @throws FactoryException
      */
     protected function loadJs(): self
     {
@@ -252,7 +236,7 @@ abstract class Base extends BaseMiddle implements Controller
      * Load services required by admin
      *
      * @throws \Nails\Common\Exception\AssetException
-     * @throws \Nails\Common\Exception\FactoryException
+     * @throws FactoryException
      */
     protected function loadLibraries(): self
     {
@@ -311,7 +295,7 @@ abstract class Base extends BaseMiddle implements Controller
      * Autoload component items
      *
      * @throws \Nails\Common\Exception\AssetException
-     * @throws \Nails\Common\Exception\FactoryException
+     * @throws FactoryException
      * @throws \Nails\Common\Exception\NailsException
      */
     protected function autoLoad(): self
@@ -423,7 +407,7 @@ abstract class Base extends BaseMiddle implements Controller
      * @param string $sView
      *
      * @return $this
-     * @throws \Nails\Common\Exception\FactoryException
+     * @throws FactoryException
      */
     protected function loadView(string $sView): self
     {
