@@ -12,44 +12,17 @@
 
 use Nails\Admin\Constants;
 use Nails\Admin\Exception\RouterException;
+use Nails\Common\Controller\Base;
 use Nails\Common\Exception\FactoryException;
-use Nails\Common\Exception\NailsException;
 use Nails\Components;
 use Nails\Factory;
 
 // --------------------------------------------------------------------------
 
 /**
- * Allow the app to add functionality, if needed
- * Negative conditional helps with static analysis
- */
-if (!class_exists('\App\Admin\Controller\BaseRouter')) {
-    abstract class BaseMiddle extends \Nails\Common\Controller\Base
-    {
-    }
-} else {
-    abstract class BaseMiddle extends \App\Admin\Controller\BaseRouter
-    {
-        public function __construct()
-        {
-            if (!classExtends(parent::class, \Nails\Common\Controller\Base::class)) {
-                throw new NailsException(sprintf(
-                    'Class %s must extend %s',
-                    parent::class,
-                    \Nails\Common\Controller\Base::class
-                ));
-            }
-            parent::__construct();
-        }
-    }
-}
-
-// --------------------------------------------------------------------------
-
-/**
  * Class AdminRouter
  */
-class AdminRouter extends BaseMiddle
+class AdminRouter extends Base
 {
     /** @var \stdClass[] */
     protected $adminControllers;
