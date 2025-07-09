@@ -14,6 +14,18 @@ trait RestrictToAdmin
      */
     public static function isAuthenticated($sHttpMethod = '', $sMethod = '')
     {
-        return parent::isAuthenticated($sHttpMethod, $sMethod) && isAdmin();
+        return parent::isAuthenticated($sHttpMethod, $sMethod)
+            && isAdmin()
+            && (!static::requirePermission() || userHasPermission(static::requirePermission()));
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * If, in addition to being an admin, a particular permission is required
+     */
+    public static function requirePermission(): ?string
+    {
+        return null;
     }
 }

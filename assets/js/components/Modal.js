@@ -38,8 +38,6 @@ class Modal {
                 let title = $('.modal__title', el).get(0);
                 let body = $('.modal__body', el).get(0);
 
-                console.log(el, inner, close, title, body);
-
                 this.modals.push(new Instance(
                     this.adminController,
                     {

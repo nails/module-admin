@@ -12,18 +12,22 @@
 
 namespace Nails\Admin\Service;
 
+use DateTime;
+use Exception;
 use Nails\Admin\Constants;
 use Nails\Admin\DataExport\SourceResponse;
 use Nails\Admin\Interfaces;
 use Nails\Admin\Resource\DataExport\Format;
 use Nails\Admin\Resource\DataExport\Source;
 use Nails\Cdn;
+use Nails\Common\Exception\FactoryException;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Factory\Component;
 use Nails\Common\Service\FileCache;
 use Nails\Components;
 use Nails\Config;
 use Nails\Factory;
+use stdClass;
 
 /**
  * Class DataExport
@@ -58,26 +62,28 @@ class DataExport
      *
      * @var Source[]
      */
-    protected $aSources = [];
+    protected array $aSources = [];
 
     /**
      * The available formats
      *
      * @var Format[]
      */
-    protected $aFormats = [];
+    protected array $aFormats = [];
 
     /**
      * Any generated cache files
      *
      * @var array
      */
-    protected $aCacheFiles = [];
+    protected array $aCacheFiles = [];
 
     // --------------------------------------------------------------------------
 
     /**
      * DataExport constructor.
+     *
+     * @throws NailsException
      */
     public function __construct()
     {
@@ -197,9 +203,9 @@ class DataExport
      *
      * @param string|null $sSlug The format's slug
      *
-     * @return \stdClass|null
+     * @return stdClass|null
      */
-    public function getFormatBySlug($sSlug): ?Format
+    public function getFormatBySlug(?string $sSlug): ?Format
     {
         foreach ($this->aFormats as $oFormat) {
             if ($sSlug === $oFormat->slug) {
@@ -213,7 +219,7 @@ class DataExport
     // --------------------------------------------------------------------------
 
     /**
-     * Executes a DateExport source then passes to a DataExport format. Once complete
+     * Executes a DateExport source then passes to a DataExport format. Once complete,
      * the resulting file is uploaded to the CDN and the object's ID returned.
      *
      * @param string $sSourceSlug The slug of the source to use
@@ -223,7 +229,7 @@ class DataExport
      * @return int
      * @throws NailsException
      */
-    public function export($sSourceSlug, $sFormatSlug, $aOptions = []): int
+    public function export(string $sSourceSlug, string $sFormatSlug, array $aOptions = []): int
     {
         $oSource = $this->getSourceBySlug($sSourceSlug);
         if (empty($oSource)) {
@@ -242,7 +248,7 @@ class DataExport
             $aSourceResponses = $oSourceResponse;
         }
 
-        //  Create temporary working directory
+        //  Create a temporary working directory
         /** @var FileCache $oFileCache */
         $oFileCache = Factory::service('FileCache');
         $sTempDir   = $oFileCache->getDir() . 'data-export-' . md5(microtime(true)) . mt_rand() . '/';
@@ -340,7 +346,8 @@ class DataExport
      * Returns whether the export cron job has been run in the past 5 minutes
      *
      * @return bool
-     * @throws \Nails\Common\Exception\FactoryException
+     * @throws FactoryException
+     * @throws Exception
      */
     public function isRunning(): bool
     {
@@ -348,7 +355,7 @@ class DataExport
         $bIsRunning = false;
         if ($sLastRun) {
             $oNow       = Factory::factory('DateTime');
-            $oLastRun   = new \DateTime($sLastRun);
+            $oLastRun   = new DateTime($sLastRun);
             $iDiff      = $oNow->getTimestamp() - $oLastRun->getTimestamp();
             $bIsRunning = $iDiff <= 300;
         }

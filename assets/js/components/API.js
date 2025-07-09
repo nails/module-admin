@@ -17,7 +17,12 @@ const API = {
         heartbeat: (token) => `admin/session/${token}/heartbeat`,
         inactive: (token) => `admin/session/${token}/inactive`,
     },
-    quickAction: (query, origin) => `admin/quickAction?query=${query}&origin=${origin}`
+    quickAction: (query, origin) => `admin/quickAction?query=${query}&origin=${origin}`,
+    export: {
+        list: 'admin/export',
+        create: 'admin/export',
+        fetch: (id) => `admin/export/${id}`,
+    }
 };
 
 export default API;

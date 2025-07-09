@@ -6,6 +6,7 @@ import Alerts from './components/Alerts.js';
 import Confirm from './components/Confirm.js';
 import CopyToClipboard from './components/CopyToClipboard.js';
 import DashboardWidgets from './components/DashboardWidgets.js';
+import DataExport from './components/DataExport.js';
 import DateTime from './components/DateTime.js';
 import DisabledElements from './components/DisabledElements.js';
 import DynamicTable from './components/DynamicTable.js';
@@ -298,6 +299,13 @@ window
         'DashboardWidgets',
         function(controller) {
             return new DashboardWidgets(controller);
+        }
+    )
+    .registerPlugin(
+        window.NAILS.ADMIN.namespace,
+        'DataExport',
+        function(controller) {
+            return new DataExport(controller);
         }
     )
     .registerPlugin(
