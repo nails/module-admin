@@ -11,6 +11,12 @@ class DataExport {
             recent: document.getElementById('export-recent'),
             recentContainer: document.getElementById('export-recent-container'),
         }
+
+        if (!this.dom.form) {
+            this.adminController.log('Not data export UI')
+            return;
+        }
+
         this.modal = (new Modal(this.adminController));
         this.recent = [];
         this.bindForm()
