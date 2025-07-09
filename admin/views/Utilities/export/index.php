@@ -144,7 +144,7 @@ use Nails\Admin\Resource\Export;
                     <th class="export-actions actions">Actions</th>
                 </tr>
             </thead>
-            <tbody id="export-recent">
+            <tbody id="export-recent" class="align-middle">
             </tbody>
         </table>
     </div>

@@ -262,13 +262,13 @@ class DataExport {
         let classes = ['export-status'];
 
         if (item.status === 'COMPLETE') {
-            classes.push('success');
+            classes.push('table-success');
 
         } else if (item.status === 'FAILED') {
-            classes.push('danger');
+            classes.push('table-danger');
 
         } else {
-            classes.push('warning');
+            classes.push('table-warning');
         }
 
         return classes;
