@@ -132,8 +132,8 @@ use Nails\Admin\Resource\Export;
             <?php
         }
         ?>
-        <table>
-            <thead>
+        <table class="table table-striped table-hover table-bordered table-responsive">
+            <thead class="table-dark">
                 <tr>
                     <th class="export-source">Export</th>
                     <th class="export-options">Options</th>
