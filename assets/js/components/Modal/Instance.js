@@ -4,7 +4,7 @@ class Instance {
      * @param {_ADMIN_PROXY} adminController
      * @param {object} options
      */
-    constructor(adminController, options) {
+    constructor(adminController, options = {}) {
 
         this.adminController = adminController;
         options = options || {};

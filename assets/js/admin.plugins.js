@@ -14,6 +14,7 @@ import Alerts from './components/Alerts.js';
 import Confirm from './components/Confirm.js';
 import CopyToClipboard from './components/CopyToClipboard.js';
 import DashboardWidgets from './components/DashboardWidgets.js';
+import DataExport from './components/DataExport.js';
 import DateTime from './components/DateTime.js';
 import DisabledElements from './components/DisabledElements.js';
 import DynamicTable from './components/DynamicTable.js';
@@ -296,6 +297,7 @@ window
     .registerPlugin(namespace, 'Confirm', (controller) => new Confirm(controller))
     .registerPlugin(namespace, 'CopyToClipboard', (controller) => new CopyToClipboard(controller))
     .registerPlugin(namespace, 'DashboardWidgets', (controller) => new DashboardWidgets(controller))
+    .registerPlugin(namespace, 'DataExport', (controller) => new DataExport(controller))
     .registerPlugin(namespace, 'DateTime', (controller) => new DateTime(controller))
     .registerPlugin(namespace, 'DisabledElements', (controller) => new DisabledElements(controller))
     .registerPlugin(namespace, 'DynamicTable', (controller) => new DynamicTable(controller))

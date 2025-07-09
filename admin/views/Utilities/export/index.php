@@ -1,8 +1,22 @@
 <?php
 
+use Nails\Admin\Helper;
+use Nails\Admin\Resource\DataExport\Format;
+use Nails\Admin\Resource\DataExport\Source;
+use Nails\Admin\Resource\Export;
+
+/**
+ * @var Source[] $aSources
+ * @var Format[] $aFormats
+ * @var Export   $aRecent
+ * @var string   $sDefaultFormat
+ * @var int      $iRetentionPeriod
+ * @var int      $iUrlTtl
+ */
+
 ?>
 <div class="group-utilities export">
-    <?=form_open()?>
+    <?=form_open(null, 'id="export-form"')?>
     <fieldset>
         <legend>Data Source</legend>
         <?php
@@ -20,7 +34,7 @@
                 PHP_EOL,
                 array_filter(
                     array_map(
-                        function (\Nails\Admin\Resource\DataExport\Source $oSource) {
+                        function (Source $oSource) {
                             $sDescriptionExtended = $oSource->description_extended;
                             return $sDescriptionExtended
                                 ? sprintf(
@@ -96,76 +110,42 @@
 
         ?>
     </fieldset>
-    <p>
-        <?=form_submit('submit', 'Export', 'class="btn btn-primary"')?>
-    </p>
-    <?=form_close()?>
-    <hr>
-    <h2>Recent exports</h2>
     <?php
-    if ($iRetentionPeriod) {
-        ?>
-        <p class="alert alert-info">
-            Reports are automatically removed after <?=floor($iRetentionPeriod / 60)?> minutes.
-        </p>
-        <?php
-    }
+
+    echo Helper::floatingControls([
+        'save' => [
+            'text' => 'Export',
+        ],
+    ]);
+
     ?>
-    <table class="table table-striped table-hover table-bordered table-responsive">
-        <thead class="table-dark">
-            <tr>
-                <th>Export</th>
-                <th>Options</th>
-                <th width="100">Format</th>
-                <th>Status</th>
-                <th width="150">Requested</th>
-                <th width="150">Generated</th>
-                <th class="actions" width="100">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-
-            if (!empty($aRecent)) {
-                foreach ($aRecent as $oItem) {
-                    ?>
-                    <tr>
-                        <td><?=$oItem->source?></td>
-                        <td><?=$oItem->options?></td>
-                        <td><?=$oItem->format?></td>
-                        <td>
-                            <?=$oItem->status?>
-                            <?=$oItem->status === 'FAILED' ? '<small>' . $oItem->error . '</small>' : ''?>
-                        </td>
-                        <?=Nails\Admin\Helper::loadDateCell($oItem->created)?>
-                        <?=Nails\Admin\Helper::loadDateCell($oItem->status === 'COMPLETE' ? $oItem->modified : '', '&mdash;')?>
-                        <td class="actions">
-                            <?php
-
-                            if ($oItem->download_id) {
-                                echo anchor(
-                                    cdnExpiringUrl($oItem->download_id, $iUrlTtl, true),
-                                    'Download',
-                                    'class="btn btn-xs btn-primary"'
-                                );
-                            }
-
-                            ?>
-                        </td>
-                    </tr>
-                    <?php
-                }
-            } else {
-                ?>
-                <tr>
-                    <td colspan="7" class="no-data">
-                        You have not generated any reports
-                    </td>
-                </tr>
-                <?php
-            }
-
+    <?=form_close()?>
+    <div id="export-recent-container" class="hidden">
+        <hr>
+        <h2>Recent exports</h2>
+        <?php
+        if ($iRetentionPeriod) {
             ?>
-        </tbody>
-    </table>
+            <p class="alert alert-info">
+                Reports are automatically removed after <?=floor($iRetentionPeriod / 60)?> minutes.
+            </p>
+            <?php
+        }
+        ?>
+        <table>
+            <thead>
+                <tr>
+                    <th class="export-source">Export</th>
+                    <th class="export-options">Options</th>
+                    <th class="export-format">Format</th>
+                    <th class="export-status">Status</th>
+                    <th class="export-requested">Requested</th>
+                    <th class="export-generated">Generated</th>
+                    <th class="export-actions actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="export-recent">
+            </tbody>
+        </table>
+    </div>
 </div>

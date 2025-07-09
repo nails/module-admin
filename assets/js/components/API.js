@@ -24,6 +24,11 @@ const API = {
                 search: (query) => `admin/ui/header/button/search?query=${query}`
             }
         }
+    },
+    export: {
+        list: 'admin/export',
+        create: 'admin/export',
+        fetch: (id) => `admin/export/${id}`,
     }
 };
 

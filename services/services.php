@@ -124,6 +124,13 @@ return [
                 return new Resource\DataExport\Source($mObj);
             }
         },
+        'Export'           => function ($mObj): Resource\Export {
+            if (class_exists('\App\Admin\Resource\Export')) {
+                return new \App\Admin\Resource\Export($mObj);
+            } else {
+                return new Resource\Export($mObj);
+            }
+        },
         'Note'             => function ($mObj): Resource\Note {
             if (class_exists('\App\Admin\Resource\Note')) {
                 return new \App\Admin\Resource\Note($mObj);
