@@ -45,7 +45,7 @@ class Instance {
             this.body = this.newDiv('body');
             this.actions = this.newDiv('actions');
 
-            this.addClass(this.container, 'processed')
+            this.addClass(this.container, 'processed');
 
             //  Set styles
             if (minWidth) {
@@ -265,18 +265,18 @@ class Instance {
             event.stopPropagation();
             event.preventDefault();
             callback(event, this);
-        }
+        };
 
         let btn = document.createElement('button');
 
         btn.innerHTML = label;
-        btn.classList.add('btn', ...classes)
+        btn.classList.add('btn', ...classes);
         btn.addEventListener('click', (event) => {
             compiledCallback(event);
         });
         btn.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
-                compiledCallback(event)
+                compiledCallback(event);
             }
         });
 
@@ -296,6 +296,20 @@ class Instance {
         for (let i = 0; i < this.actionButtons.length; i++) {
             this.actions.append(this.actionButtons[i]);
         }
+    }
+
+    // --------------------------------------------------------------------------
+
+    scrollToTop() {
+        this.inner.scrollTop = 0;
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    scrollToBottom() {
+        this.inner.scrollTop = this.inner.offsetHeight;
+        return this;
     }
 }
 
