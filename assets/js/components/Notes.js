@@ -134,7 +134,8 @@ class Notes {
     load(modelName, modelProvider, itemId, showCount, counter) {
 
         this.modal
-            .setBody('Loading...');
+            .setBody('Loading...')
+            .setActions(null);
 
         this.loadNotes(modelName, modelProvider, itemId)
             .done((response) => {
@@ -165,44 +166,62 @@ class Notes {
                     }
                 }
 
-                let formItem = document.createElement('li');
+                //  Build form
                 let textarea = document.createElement('textarea');
-
                 let btn = document.createElement('button');
+
+                textarea.placeholder = 'Enter a note';
+                textarea.style.width = '100%';
+                textarea.style.height = '100px';
+
+                textarea.addEventListener('keyup', () => {
+                    btn.disabled = textarea.value.length <= 0;
+                });
+
                 btn.classList.add('btn', 'btn-block', 'btn-primary');
                 btn.innerText = 'Add Note';
+                btn.disabled = true;
                 btn.addEventListener('click', () => {
+
+                    textarea.disabled = true;
+                    textarea.style.background = '#f9f9f9';
+                    btn.innerText = 'Saving';
+                    btn.disabled = true;
 
                     this.saveNote(modelName, modelProvider, itemId, textarea.value)
                         .done((response) => {
                             textarea.value = '';
+
+                            let li = this.renderMessageItem(
+                                ul,
+                                response.data.id,
+                                response.data.message,
+                                response.data.user,
+                                response.data.date,
+                                showCount,
+                                counter
+                            );
+
                             ul.querySelector('.admin-notes__empty').classList.add('hidden');
-                            formItem
-                                .before(
-                                    this.renderMessageItem(
-                                        ul,
-                                        response.data.id,
-                                        response.data.message,
-                                        response.data.user,
-                                        response.data.date,
-                                        showCount,
-                                        counter
-                                    )
-                                );
+                            ul.append(li);
 
                             if (showCount) {
                                 this.setCounter(counter, ul.querySelectorAll('.admin-notes__note').length);
                             }
 
-                            this.modal.scrollToBottom();
+                            li.scrollIntoView();
+                        })
+                        .always(() => {
+                            textarea.disabled = false;
+                            textarea.style.background = '#ffffff';
+                            btn.innerText = 'Add Note';
+                            btn.disabled = textarea.value.length <= 0;
                         });
                 });
 
-                formItem.append(textarea, btn);
-
-                ul.append(formItem);
-
-                this.modal.setBody(ul);
+                this.modal
+                    .setBody(ul)
+                    .setActions([textarea, btn]);
             });
     }
 
@@ -370,7 +389,7 @@ class Notes {
 
         let spanUser = document.createElement('span');
         spanUser.classList.add('admin-notes__note__meta__user');
-        spanUser.innerHTML = `${user.first_name} ${user.last_name}`;
+        spanUser.innerHTML = user.id ? `${user.first_name} ${user.last_name}` : 'Unknown User';
 
         let spanDate = document.createElement('span');
         spanDate.classList.add('admin-notes__note__meta__date');

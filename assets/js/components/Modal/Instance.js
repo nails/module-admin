@@ -227,22 +227,8 @@ class Instance {
      * @returns {Instance}
      */
     setBody(elements) {
-        this.body.innerHTML = '';
-
-        if (Array.isArray(elements)) {
-            elements.map((element) => {
-                this.body.append(element);
-            });
-
-        } else if (typeof elements === 'string') {
-            this.body.innerHTML = elements;
-
-        } else {
-            this.body.append(elements);
-        }
-
+        this.setAreaContents(this.body, elements)
         this.adminController.refreshUi(this.body);
-
         return this;
     }
 
@@ -289,13 +275,36 @@ class Instance {
 
     // --------------------------------------------------------------------------
 
-    renderActions() {
+    setActions(elements) {
+        this.setAreaContents(this.actions, elements)
+        this.adminController.refreshUi(this.actions);
+        return this;
+    }
 
-        this.actions.innerHTML = '';
+    // --------------------------------------------------------------------------
 
-        for (let i = 0; i < this.actionButtons.length; i++) {
-            this.actions.append(this.actionButtons[i]);
+    setAreaContents(area, elements) {
+        area.innerHTML = '';
+
+        if (Array.isArray(elements)) {
+            elements.map((element) => {
+                area.append(element);
+            });
+
+        } else if (typeof elements === 'string') {
+            area.innerHTML = elements;
+
+        } else if (elements) {
+            area.append(elements);
         }
+
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    renderActions() {
+        this.setAreaContents(this.actions, this.actionButtons)
     }
 
     // --------------------------------------------------------------------------

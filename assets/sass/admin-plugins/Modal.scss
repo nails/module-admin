@@ -1,82 +1,97 @@
+// Modal Component Styles
+
+// Modal container - hidden by default
 .modal {
+    display: none;
     position: fixed;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.25);
     z-index: 1000;
-    overflow: auto;
-    justify-content: center;
-    align-items: center;
-    display: none;
 
-    &--open {
-        display: flex !important;
-    }
-
-    &__inner {
-        margin: 1rem;
-        padding: 1rem;
-        background: #ffffff;
-        min-width: 300px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-        position: relative;
-        overflow-y: auto;
-        max-height: 90vh;
-    }
-
-    &__close {
-        border: 1px solid #e2e2e2;
-        border-radius: 100%;
-        width: 20px;
-        height: 20px;
-        text-align: center;
-        line-height: 16px;
-        color: #aaaaaa;
+    // Semi-transparent overlay
+    &::before {
+        content: '';
         position: absolute;
-        right: 1rem;
-        top: 1rem;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); // Semi-transparent black/grey
+        z-index: -1;
+    }
+
+    // Show modal when .modal--open class is applied
+    &.modal--open {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    // Inner modal container
+    &__inner {
+        position: relative;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh;
+        background-color: white; // White background
+        border-radius: 8px; // Rounded corners
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; // Ensures content doesn't overflow rounded corners
+    }
+
+    // Close button
+    &__close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        line-height: 1;
         cursor: pointer;
-        transition: border-color 0.5s;
-        text-decoration: none;
+        z-index: 10;
 
         &:hover {
-            border: 1px solid #aaaaaa;
+            opacity: 0.7;
         }
     }
 
+    // Title section - sticky at the top
     &__title {
-        margin-bottom: 1rem;
-        font-size: 1rem;
+        padding: 16px 48px 16px 16px; // Extra padding on right for close button
         font-weight: bold;
-        border-bottom: 1px solid #ececec;
-        padding-bottom: 0.5rem;
-        padding-right: 2rem;
+        font-size: 18px;
+        border-bottom: 1px solid #d9d9d9;
+        position: sticky;
+        top: 0;
+        background-color: #f9f9f9;
+        box-shadow: 0 -10px 15px rgba(0, 0, 0, 0.5);
+        z-index: 5;
     }
 
+    // Body section - scrollable
     &__body {
-        > *:last-child {
-            margin-bottom: 0;
-        }
+        padding: 16px;
+        overflow-y: auto; // Makes it scrollable
+        flex: 1 1 auto; // Takes available space
+        max-height: calc(80vh - 120px); // Adjust based on title and actions height
     }
 
+    // Actions section - sticky at the bottom
     &__actions {
-        &:empty {
-            display: none;
-        }
-
-        margin-top: 1rem;
-        padding-top: 1em;
-        border-top: 1px solid #ececec;
-
-        button {
-            margin-right: 0.3em;
-
-            &:last-child {
-                margin-right: 0;
-            }
-        }
+        padding: 16px;
+        border-top: 1px solid #d9d9d9; // Visibly distinct from body
+        position: sticky;
+        bottom: 0;
+        background-color: #f9f9f9;
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+        z-index: 5;
     }
 }
