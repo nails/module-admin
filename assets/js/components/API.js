@@ -22,6 +22,12 @@ const API = {
         list: 'admin/export',
         create: 'admin/export',
         fetch: (id) => `admin/export/${id}`,
+    },
+    notes: {
+        list: 'admin/note',
+        create: 'admin/note',
+        delete: (id) => `admin/note/${id}`,
+        count: 'admin/note/count',
     }
 };
 

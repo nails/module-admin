@@ -1,4 +1,6 @@
-/* export Notes */
+import services from './Services';
+import API from './API';
+import Modal from './Modal/Instance';
 
 /* globals $, jQuery */
 class Notes {
@@ -9,8 +11,15 @@ class Notes {
     constructor(adminController) {
 
         this.adminController = adminController;
+        this.adminController.log('Constructing Notes');
+
+        this.modal = (new Modal(this.adminController, {
+            minWidth: '600px',
+            maxWidth: '600px'
+        }));
+
         this.adminController
-            .onRefreshUi((e, domElement) => {
+            .onRefreshUi(() => {
                 this.init();
             });
 
@@ -24,90 +33,90 @@ class Notes {
      * @returns {Notes}
      */
     init() {
-        $('.js-admin-notes:not(.js-admin-notes--processed)')
-            .addClass('js-admin-notes--processed')
-            .each((index, element) => {
 
-                let $btn = $(element);
-                let $counter = $('<span>').addClass('admin-notes__counter');
-                let modelName = $btn.data('model-name');
-                let modelProvider = $btn.data('model-provider');
-                let itemId = $btn.data('id');
-                let title = $btn.data('modal-title') || 'Notes';
-                let width = $btn.data('modal-width') || 500;
-                let maxHeight = $btn.data('modal-max-height') || 750;
-                let showCount = $btn.data('show-count');
+        this.adminController.log('Initialising Notes UI');
+
+        let btns = document.querySelectorAll('.js-admin-notes:not(.js-admin-notes--processed)');
+        btns
+            .forEach(btn => {
+                btn.classList.add('js-admin-notes--processed');
+
+                let counter = document.createElement('span');
+                counter.classList.add('admin-notes__counter');
+
+                let modelName = btn.dataset['model-name'];
+                let modelProvider = btn.dataset['model-provider'];
+                let itemId = btn.dataset['id'];
+                let title = btn.dataset['modal-title'] || 'Notes';
+                let showCount = btn.dataset['show-count'];
 
                 if (showCount) {
-                    $btn.append($counter);
-                    this.setCounter($counter, '...');
+                    btn.append(counter);
+                    this.setCounter(counter, '...');
                 }
 
-                $btn
-                    .on('click', () => {
+                btn
+                    .addEventListener('click', (event) => {
 
-                        let $modal = $('<div>')
-                            .dialog({
-                                modal: true,
-                                title: title,
-                                width: width,
-                                maxHeight: maxHeight,
-                                position: {
-                                    my: 'center',
-                                    at: 'center',
-                                    of: window
-                                }
-                            });
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        this.modal
+                            .setTitle(title)
+                            .show();
 
                         this.load(
-                            $modal,
                             modelName,
                             modelProvider,
                             itemId,
                             showCount,
-                            $counter
+                            counter
                         );
-
-                        return false;
                     });
             });
 
-
         let itemsToCount = {};
 
-        $('.js-admin-notes:not(.js-admin-notes--count-processed[data-show-count="true"])')
-            .addClass('js-admin-notes--count-processed')
-            .each((index, item) => {
+        let items = document.querySelectorAll('.js-admin-notes:not(.js-admin-notes--count-processed[data-show-count="true"])');
 
-                let modelName = item.dataset.modelName;
-                let modelProvider = item.dataset.modelProvider;
-                let id = item.dataset.id;
+        items.forEach(item => {
 
-                if (!itemsToCount.hasOwnProperty(modelProvider)) {
-                    itemsToCount[modelProvider] = {};
-                }
+            item.classList.add('js-admin-notes--count-processed');
 
-                if (!itemsToCount[modelProvider].hasOwnProperty(modelName)) {
-                    itemsToCount[modelProvider][modelName] = [];
-                }
+            let modelName = item.dataset.modelName;
+            let modelProvider = item.dataset.modelProvider;
+            let id = item.dataset.id;
 
-                itemsToCount[modelProvider][modelName].push(id);
+            if (!Object.prototype.hasOwnProperty.call(itemsToCount, modelProvider)) {
+                itemsToCount[modelProvider] = {};
+            }
 
-            });
+            if (!Object.prototype.hasOwnProperty.call(itemsToCount[modelProvider], modelName)) {
+                itemsToCount[modelProvider][modelName] = [];
+            }
 
-        this.countNotes(itemsToCount)
-            .done((response) => {
-                for (const [provider, models] of Object.entries(response)) {
-                    for (const [model, ids] of Object.entries(models)) {
-                        for (const [id, count] of Object.entries(ids)) {
-                            let counter = $(`.js-admin-notes.js-admin-notes--processed[data-model-name="${model}"][data-model-provider="${provider}"][data-id="${id}"]`)
-                                .find('.admin-notes__counter');
+            itemsToCount[modelProvider][modelName].push(id);
 
-                            this.setCounter(counter, count);
+        });
+
+        if (Object.entries(itemsToCount).length > 0) {
+            this.countNotes(itemsToCount)
+                .done((response) => {
+                    for (const [provider, models] of Object.entries(response.data)) {
+                        for (const [model, ids] of Object.entries(models)) {
+                            for (const [id, count] of Object.entries(ids)) {
+                                let containers = document.querySelectorAll(`.js-admin-notes.js-admin-notes--processed[data-model-name="${model}"][data-model-provider="${provider}"][data-id="${id}"]`);
+                                containers.forEach((container) => {
+                                    let counters = container.querySelectorAll('.admin-notes__counter');
+                                    counters.forEach((counter) => {
+                                        this.setCounter(counter, count);
+                                    });
+                                });
+                            }
                         }
                     }
-                }
-            });
+                });
+        }
 
         return this;
     };
@@ -116,139 +125,115 @@ class Notes {
 
     /**
      * Load notes from the server
-     * @param {jQuery} $modal The modal object
      * @param {String} modelName The model name
      * @param {String} modelProvider The model provider
      * @param {Number} itemId The item's ID
      * @param {Boolean} showCount Whether the button is showing a counter
-     * @param {jQuery} $btnOpener The element which contains the counter
+     * @param {Element} counter The element which contains the counter
      */
-    load($modal, modelName, modelProvider, itemId, showCount, $counter) {
+    load(modelName, modelProvider, itemId, showCount, counter) {
 
-        $modal.html($('<p>').text('Loading...'));
+        this.modal
+            .setBody('Loading...');
 
         this.loadNotes(modelName, modelProvider, itemId)
             .done((response) => {
 
-                let $ul = $('<ul>').addClass('admin-notes');
-                let $empty = $('<li>')
-                    .addClass('admin-notes__empty')
-                    .append($('<p>').text('No notes recorded for this item'));
+                let ul = document.createElement('ul');
+                ul.classList.add('admin-notes', 'list-unstyled');
 
-                $ul.append($empty);
+                let liEmpty = document.createElement('li');
+                liEmpty.classList.add('admin-notes__empty');
+                liEmpty.innerText = 'No notes recorded for this item';
+
+                ul.append(liEmpty);
 
                 if (response.data.length) {
-                    $empty.hide();
+                    liEmpty.classList.add('hidden');
                     for (let i = 0, j = response.data.length; i < j; i++) {
-                        $ul.append(
+                        ul.append(
                             this.renderMessageItem(
-                                $modal,
+                                ul,
                                 response.data[i].id,
                                 response.data[i].message,
                                 response.data[i].user,
                                 response.data[i].date,
                                 showCount,
-                                $counter
+                                counter
                             )
                         );
                     }
                 }
 
-                let $formItem = $('<li>');
-                let $textarea = $('<textarea>');
-                let $btn = $('<button>')
-                    .addClass('btn btn-block btn-primary')
-                    .text('Add Note')
-                    .on('click', () => {
-                        this.saveNote(modelName, modelProvider, itemId, $textarea.val())
-                            .done((response) => {
-                                $textarea.val('');
-                                $('.admin-notes__empty', $modal).hide();
-                                $formItem
-                                    .before(
-                                        this.renderMessageItem(
-                                            $modal,
-                                            response.data.id,
-                                            response.data.message,
-                                            response.data.user,
-                                            response.data.date
-                                        )
-                                    );
+                let formItem = document.createElement('li');
+                let textarea = document.createElement('textarea');
 
-                                if (showCount) {
-                                    this.setCounter($counter, $('.admin-notes__note', $modal).length)
-                                        .centerModal($modal, true);
-                                }
-                            });
-                    });
+                let btn = document.createElement('button');
+                btn.classList.add('btn', 'btn-block', 'btn-primary');
+                btn.innerText = 'Add Note';
+                btn.addEventListener('click', () => {
 
-                $ul.append(
-                    $formItem
-                        .append($textarea)
-                        .append($btn)
-                );
+                    this.saveNote(modelName, modelProvider, itemId, textarea.value)
+                        .done((response) => {
+                            textarea.value = '';
+                            ul.querySelector('.admin-notes__empty').classList.add('hidden');
+                            formItem
+                                .before(
+                                    this.renderMessageItem(
+                                        ul,
+                                        response.data.id,
+                                        response.data.message,
+                                        response.data.user,
+                                        response.data.date,
+                                        showCount,
+                                        counter
+                                    )
+                                );
 
-                $modal.html($ul);
-                this.centerModal($modal, true);
+                            if (showCount) {
+                                this.setCounter(counter, ul.querySelectorAll('.admin-notes__note').length);
+                            }
+
+                            this.modal.scrollToBottom();
+                        });
+                });
+
+                formItem.append(textarea, btn);
+
+                ul.append(formItem);
+
+                this.modal.setBody(ul);
             });
-    };
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Centers the modal in the screen
-     * @param {jQuery} $modal The modal object
-     * @param {boolean} scrollToBottom Whether tos croll the view to the bottom
-     * @return {Notes}
-     */
-    centerModal($modal, scrollToBottom) {
-        $modal
-            .dialog(
-                'option',
-                'position',
-                {
-                    my: 'center',
-                    at: 'center',
-                    of: window
-                }
-            );
-
-        if (scrollToBottom) {
-            $modal
-                .animate(
-                    {
-                        scrollTop: $modal.find('.admin-notes').outerHeight()
-                    },
-                    200
-                );
-        }
-
-        return this;
     }
 
     // --------------------------------------------------------------------------
 
     /**
      * Loads notes from the server
-     * @param {object} dataBundle
+     * @param {object} dataBundle The data bundle
      * @return {jQuery.Deferred}
      */
     countNotes(dataBundle) {
 
         let $deferred = new $.Deferred();
-        $.ajax({
-            'url': window.SITE_URL + 'api/admin/note/count',
-            'method': 'POST',
-            'data': {
-                'dataBundle': dataBundle,
-            }
-        })
-            .done((response) => {
+
+        services
+            .apiRequest({
+                'url': API.notes.count,
+                'method': 'POST',
+                'data': {
+                    'dataBundle': dataBundle,
+                }
+            })
+            .then((response) => {
                 $deferred.resolve(response.data);
             })
-            .fail((response) => {
-                this.showError(response.responseText);
-                $deferred.reject(response.responseText);
+            .catch((error) => {
+                this.showError(
+                    'Failed to count notes',
+                    error.response.data
+                );
+                $deferred.reject(error.response.data);
             });
 
         return $deferred.promise();
@@ -265,20 +250,24 @@ class Notes {
      */
     loadNotes(modelName, modelProvider, itemId) {
         let $deferred = new $.Deferred();
-        $.ajax({
-            'url': window.SITE_URL + 'api/admin/note',
-            'data': {
-                'model_name': modelName,
-                'model_provider': modelProvider,
-                'item_id': itemId
-            }
-        })
-            .done((response) => {
-                $deferred.resolve(response);
+        services
+            .apiRequest({
+                'url': API.notes.list,
+                'data': {
+                    'model_name': modelName,
+                    'model_provider': modelProvider,
+                    'item_id': itemId
+                }
             })
-            .fail((response) => {
-                this.showError(response.responseText);
-                $deferred.reject(response.responseText);
+            .then((response) => {
+                $deferred.resolve(response.data);
+            })
+            .catch((error) => {
+                this.showError(
+                    'Failed to load notes',
+                    error.response.data
+                );
+                $deferred.reject(error.response.data);
             });
 
         return $deferred.promise();
@@ -296,22 +285,26 @@ class Notes {
      */
     saveNote(modelName, modelProvider, itemId, message) {
         let $deferred = new $.Deferred();
-        $.ajax({
-            'url': window.SITE_URL + 'api/admin/note',
-            'method': 'POST',
-            'data': {
-                'model_name': modelName,
-                'model_provider': modelProvider,
-                'item_id': itemId,
-                'message': message
-            }
-        })
-            .done((response) => {
-                $deferred.resolve(response);
+        services
+            .apiRequest({
+                'url': API.notes.create,
+                'method': 'POST',
+                'data': {
+                    'model_name': modelName,
+                    'model_provider': modelProvider,
+                    'item_id': itemId,
+                    'message': message
+                }
             })
-            .fail((response) => {
-                this.showError(response.responseText);
-                $deferred.reject(response.responseText);
+            .then((response) => {
+                $deferred.resolve(response.data);
+            })
+            .catch((error) => {
+                this.showError(
+                    'Failed to save note',
+                    error.response.data
+                );
+                $deferred.reject(error.response.data);
             });
 
         return $deferred.promise();
@@ -326,16 +319,21 @@ class Notes {
      */
     deleteNote(id) {
         let $deferred = new $.Deferred();
-        $.ajax({
-            'url': window.SITE_URL + 'api/admin/note/' + id,
-            'method': 'DELETE'
-        })
-            .done((response) => {
-                $deferred.resolve(response);
+
+        services
+            .apiRequest({
+                'url': API.notes.delete(id),
+                'method': 'DELETE'
             })
-            .fail((response) => {
-                this.showError(response.responseText);
-                $deferred.reject(response.responseText);
+            .then((response) => {
+                $deferred.resolve(response.data);
+            })
+            .catch((error) => {
+                this.showError(
+                    'Failed to delete note',
+                    error.response.data
+                );
+                $deferred.reject(error.response.data);
             });
 
         return $deferred.promise();
@@ -345,77 +343,103 @@ class Notes {
 
     /**
      * Compiles the message item
+     * @param {Element} ul The containing list element
      * @param {Number} id The message ID
      * @param {String} message The message string
      * @param {Object} user The user object
      * @param {String} date The date string
      * @param {Boolean} showCount Whether the button is showing a counter
-     * @param {jQuery} $btnOpener The element which contains the counter
-     * @return {jQuery}
+     * @param {Element} counter The element which contains the counter
+     * @return {Element}
      */
-    renderMessageItem($modal, id, message, user, date, showCount, $counter) {
+    renderMessageItem(ul, id, message, user, date, showCount, counter) {
 
-        let $li = $('<li>').addClass('admin-notes__note');
-        let $message = $('<div>').addClass('admin-notes__note__message').html(message);
-        let $delete = $('<button>').addClass('admin-notes__note__delete').html('&times;');
-        let $meta = $('<div>').addClass('admin-notes__note__meta');
-        let $user = $('<span>').addClass('admin-notes__note__meta__user').html(user.first_name + ' ' + user.last_name);
-        let $date = $('<span>').addClass('admin-notes__note__meta__date').html(date);
+        let li = document.createElement('li');
+        li.classList.add('admin-notes__note');
 
-        $delete
-            .on('click', () => {
+        let divMessage = document.createElement('div');
+        divMessage.classList.add('admin-notes__note__message');
+        divMessage.innerHTML = message;
+
+        let buttonDelete = document.createElement('button');
+        buttonDelete.classList.add('admin-notes__note__delete');
+        buttonDelete.innerHTML = '&times;';
+
+        let divMeta = document.createElement('div');
+        divMeta.classList.add('admin-notes__note__meta');
+
+        let spanUser = document.createElement('span');
+        spanUser.classList.add('admin-notes__note__meta__user');
+        spanUser.innerHTML = `${user.first_name} ${user.last_name}`;
+
+        let spanDate = document.createElement('span');
+        spanDate.classList.add('admin-notes__note__meta__date');
+        spanDate.innerHTML = date;
+
+
+        buttonDelete
+            .addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
                 this.deleteNote(id)
                     .done(() => {
-                        $li.remove();
-                        this.centerModal($modal, false);
-                        let count = $('.admin-notes__note', $modal).length;
+                        li.remove();
+                        let count = ul.querySelectorAll('.admin-notes__note').length;
                         if (showCount) {
-                            this.setCounter($counter, count);
+                            this.setCounter(counter, count);
                         }
                         if (count === 0) {
-                            $('.admin-notes__empty', $modal).show();
+                            ul.querySelector('.admin-notes__empty').classList.remove('hidden');
                         }
                     });
-                return false;
             });
 
-        return $li
-            .append($message)
-            .append($delete)
-            .append(
-                $meta
-                    .append($user)
-                    .append($date)
-            );
-    };
+        divMeta.append(
+            spanUser,
+            spanDate
+        );
 
-    // --------------------------------------------------------------------------
+        li.append(
+            divMessage,
+            buttonDelete,
+            divMeta
+        );
 
-    /**
-     * Set the counter to a specific value
-     * @param {Number} count The value
-     * @return {Notes}
-     */
-    setCounter($element, count) {
-        $element.text(count || '');
-        return this;
+        return li;
     }
 
     // --------------------------------------------------------------------------
 
     /**
-     * Renders an error
-     * @param {String} responseText The response text from the server
+     * Set the counter to a specific value
+     * @param {Element} element The DOMElement
+     * @param {Number|String} count The value
+     * @return {Notes}
      */
-    showError(responseText) {
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (e) {
-            data = {'error': 'An unknown error occurred'};
-        }
+    setCounter(element, count) {
+        element.innerHTML = count || '';
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+    /**
+     * Renders an error
+     * @param {String} title The title to give the modal
+     * @param {Object} data The response text from the server
+     */
+    showError(title, data) {
 
         this.adminController.error(data.error);
+
+        let message = data.error || data.message || 'An unknown error occurred';
+
+        let alert = document.createElement('div');
+        alert.classList.add('alert', 'alert-danger');
+        alert.innerHTML = `<p><strong>${title}</strong></p><p>${message}</p>`;
+
+        this.modal.setBody(alert);
+
+        return this;
     }
 }
 

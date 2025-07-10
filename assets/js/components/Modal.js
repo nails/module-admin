@@ -14,7 +14,7 @@ class Modal {
         this.modals = [];
 
         this.adminController
-            .onRefreshUi((e, domElement) => {
+            .onRefreshUi(() => {
                 this.init();
             });
 
@@ -29,22 +29,16 @@ class Modal {
      */
     init() {
 
-        $('.modal:not(.modal--processed)')
-            .addClass('modal--processed')
-            .each((index, el) => {
-
-                let inner = $('.modal__inner', el).get(0);
-                let close = $('.modal__close', el).get(0);
-                let title = $('.modal__title', el).get(0);
-                let body = $('.modal__body', el).get(0);
-
-                this.modals.push(new Instance(
-                    this.adminController,
-                    {
-                        el: el
-                    }
-                ));
-            });
+        let modals = document.querySelectorAll('.modal:not(.modal--processed)');
+        modals.forEach(modal => {
+            modal.classList.add('modal--processed');
+            this.modals.push(new Instance(
+                this.adminController,
+                {
+                    el: modal
+                }
+            ));
+        });
 
         return this;
     }

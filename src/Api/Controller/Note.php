@@ -2,14 +2,18 @@
 
 namespace Nails\Admin\Api\Controller;
 
+use Exception;
 use Nails\Admin\Constants;
 use Nails\Admin\Traits\Api\RestrictToAdmin;
 use Nails\Api;
 use Nails\Common\Exception\FactoryException;
+use Nails\Common\Exception\ModelException;
+use Nails\Common\Exception\ValidationException;
 use Nails\Common\Helper\ArrayHelper;
 use Nails\Common\Helper\Model\Where;
 use Nails\Common\Service\Input;
 use Nails\Factory;
+use stdClass;
 
 /**
  * Class Note
@@ -37,6 +41,7 @@ class Note extends Api\Controller\CrudController
      * @return Api\Factory\ApiResponse
      * @throws Api\Exception\ApiException
      * @throws FactoryException
+     * @throws ModelException
      */
     public function getRemap($sMethod, array $aData = [])
     {
@@ -59,6 +64,8 @@ class Note extends Api\Controller\CrudController
      * @return Api\Factory\ApiResponse
      * @throws Api\Exception\ApiException
      * @throws FactoryException
+     * @throws ModelException
+     * @throws ValidationException
      */
     public function postCount(array $aData = [])
     {
@@ -79,7 +86,7 @@ class Note extends Api\Controller\CrudController
                     $oModel      = Factory::model($sModel, $sProvider);
                     $sModelClass = get_class($oModel);
 
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     throw new Api\Exception\ApiException(
                         '"' . $sProvider . ':' . $sModel . '" is not a valid model'
                     );
@@ -112,11 +119,12 @@ class Note extends Api\Controller\CrudController
      * Validates user input; adds the model to the response
      *
      * @param array     $aData The user data to validate
-     * @param \stdClass $oItem The current object (when editing)
+     * @param stdClass $oItem The current object (when editing)
      *
      * @return array
      * @throws Api\Exception\ApiException
      * @throws FactoryException
+     * @throws ValidationException
      */
     protected function validateUserInput($aData, $oItem = null): array
     {
@@ -131,7 +139,7 @@ class Note extends Api\Controller\CrudController
     // --------------------------------------------------------------------------
 
     /**
-     * Returns an arry of the model's class name and the item's ID
+     * Returns an array of the model's class name and the item's ID
      *
      * @return array
      * @throws Api\Exception\ApiException
@@ -142,14 +150,18 @@ class Note extends Api\Controller\CrudController
         /** @var Input $oInput */
         $oInput = Factory::service('Input');
 
-        $sModelName     = $oInput->get('model_name') ?: $oInput->post('model_name');
-        $sModelProvider = $oInput->get('model_provider') ?: $oInput->post('model_provider');
-        $iItemId        = (int) $oInput->get('item_id');
+        $aData = $this->getRequestData();
+
+        $sModelName     = $oInput->get('model_name') ?: ($aData['model_name'] ?? null);
+        $sModelProvider = $oInput->get('model_provider') ?: ($aData['model_provider'] ?? null);
+        $iItemId        = (int) ($oInput->get('item_id') ?: ($aData['item_id'] ?? null));
 
         try {
+
             $oModel = Factory::model($sModelName, $sModelProvider);
             $sModel = get_class($oModel);
-        } catch (\Exception $e) {
+
+        } catch (Exception) {
             throw new Api\Exception\ApiException(
                 '"' . $sModelProvider . ':' . $sModelName . '" is not a valid model'
             );
@@ -163,11 +175,11 @@ class Note extends Api\Controller\CrudController
     /**
      * Formats the response object
      *
-     * @param \stdClass $oObj The object to format
+     * @param stdClass $oObj The object to format
      *
-     * @return \stdClass
+     * @return stdClass
      */
-    protected function formatObject($oObj): \stdClass
+    protected function formatObject($oObj): stdClass
     {
         return (object) [
             'id'      => $oObj->id,
