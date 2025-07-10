@@ -225,6 +225,7 @@
 .admin-notes__note {
   border: 1px solid #ccc;
   position: relative;
+  margin-bottom: 1rem;
 }
 .admin-notes__note__message {
   padding: 1rem;
