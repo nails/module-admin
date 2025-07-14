@@ -2,6 +2,7 @@
 
 namespace Nails\Admin\Api\Controller;
 
+use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Service\DataExport;
 use Nails\Admin\Traits\Api\RestrictToAdmin;
@@ -56,7 +57,7 @@ class Export extends Api\Controller\CrudController
 
     public static function requirePermission(): ?string
     {
-        return 'admin:admin:utilities:export';
+        return Permission\Utilities\DataExport\Generate::class;
     }
 
     // --------------------------------------------------------------------------
