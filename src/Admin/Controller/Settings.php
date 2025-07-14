@@ -6,18 +6,16 @@ use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\Base;
 use Nails\Admin\Factory\Nav;
-use Nails\Admin\Helper;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ValidationException;
 use Nails\Common\Factory\Component;
-use Nails\Common\Factory\Model\Field;
-use Nails\Common\Service\AppSetting;
+use Nails\Common\Interfaces;
 use Nails\Common\Service\FormValidation;
 use Nails\Common\Service\Input;
 use Nails\Components;
 use Nails\Factory;
-use Nails\Common\Interfaces;
+use stdClass;
 
 /**
  * Class Settings
@@ -27,12 +25,16 @@ use Nails\Common\Interfaces;
 class Settings extends Base
 {
     /**
-     * @var \stdClass[]
+     * @var stdClass[]
      */
-    protected static $aSettings = [];
+    protected static array $aSettings = [];
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @throws FactoryException
+     * @throws NailsException
+     */
     public static function announce(): Nav|array|null
     {
         /** @var Nav $oNav */
@@ -75,35 +77,6 @@ class Settings extends Base
 
     // --------------------------------------------------------------------------
 
-    public static function permissions(): array
-    {
-        $aPermissions = parent::permissions();
-
-        static::discoverSettings();
-
-        foreach (static::$aSettings as $sSlug => $oSetting) {
-
-            $aPermissions[$oSetting->slug] = sprintf(
-                'Can manage settings for %s <small><code>%s</code></small>',
-                $oSetting->label,
-                $oSetting->component->slug
-            );
-
-            foreach ($oSetting->instance->getPermissions() as $sPermission => $sLabel) {
-                $aPermissions[$oSetting->slug . ':' . $sPermission] = sprintf(
-                    'Can manage settings for %s &rsaquo; %s <small><code>%s</code></small>',
-                    $oSetting->label,
-                    $sLabel,
-                    $oSetting->component->slug
-                );
-            }
-        }
-
-        return $aPermissions;
-    }
-
-    // --------------------------------------------------------------------------
-
     /**
      * Discovers component settings classes
      *
@@ -122,7 +95,7 @@ class Settings extends Base
 
                     /** @var Interfaces\Component\Settings $oClass */
                     $oClass = new $sClass();
-                    // Remove leading backslash as calls to ::class don't have leading slashes
+                    // Remove the leading backslash as calls to `::class` don't have leading slashes
                     $sSlug = md5(preg_replace('/^\\\\/', '', $sClass));
 
                     static::$aSettings[$sSlug] = (object) [
@@ -229,11 +202,9 @@ class Settings extends Base
     /**
      * Compiles the form URL
      *
-     * @param \stdClass $oSetting
-     *
-     * @return string
+     * @param stdClass $oSetting The setting object
      */
-    protected function compileFormUrl(\stdClass $oSetting)
+    protected function compileFormUrl(stdClass $oSetting): string
     {
         return siteUrl(uri_String() . '?setting=' . $oSetting->slug);
     }
@@ -243,9 +214,7 @@ class Settings extends Base
     /**
      * Compiles the fields into their relevant fieldsets
      *
-     * @param array $aSettings
-     *
-     * @return array
+     * @param stdClass[] $aSettings The setting objects
      */
     protected function compileFieldSets(array $aSettings): array
     {
@@ -268,10 +237,9 @@ class Settings extends Base
     // --------------------------------------------------------------------------
 
     /**
-     * @param Interfaces\Component\Settings $oSettings
-     * @param Component                     $oComponent
+     * @param Interfaces\Component\Settings $oSettings  The setting object
+     * @param Component                     $oComponent The component object
      *
-     * @return array
      * @throws FactoryException
      */
     protected function getSettingsWithDefaults(Interfaces\Component\Settings $oSettings, Component $oComponent): array
@@ -302,12 +270,10 @@ class Settings extends Base
     /**
      * Trailing square brackets are a quirk of the form validation system and should be removed for lookup
      *
-     * @param string $sKey
-     *
-     * @return string
+     * @param string $sKey The key to normalise
      */
     protected function normaliseKey(string $sKey): string
     {
-        return preg_replace('/\[\]$/', '', $sKey);
+        return preg_replace('/\[]$/', '', $sKey);
     }
 }

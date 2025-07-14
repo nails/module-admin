@@ -73,11 +73,11 @@ class Ui extends BaseApi
         $sMethod = ucfirst(strtolower($this->oUri->segment($iSegment)));
         $aMethod = [$this, $sPrefix . $sMethod];
 
-        if (is_callable($aMethod)) {
-            return call_user_func($aMethod);
+        if (!is_callable($aMethod)) {
+            $this->show404();
         }
 
-        $this->show404();
+        return call_user_func($aMethod);
     }
 
     // --------------------------------------------------------------------------

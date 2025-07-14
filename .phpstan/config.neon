@@ -4,3 +4,6 @@ parameters:
         - ../helpers
         - ../src
         - ../tests
+    scanDirectories:
+        - ../vendor/pocketarc/codeigniter
+        - ../vendor/nails

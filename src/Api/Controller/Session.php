@@ -12,10 +12,13 @@
 
 namespace Nails\Admin\Api\Controller;
 
+use ApiRouter;
+use DateTime;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\BaseApi;
-use Nails\Admin\Traits\Api\RestrictToAdmin;
+use Nails\Admin\Model;
 use Nails\Admin\Resource;
+use Nails\Admin\Traits\Api\RestrictToAdmin;
 use Nails\Api;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Exception\ModelException;
@@ -25,7 +28,9 @@ use Nails\Common\Helper\Model\Expand;
 use Nails\Common\Service\FormValidation;
 use Nails\Common\Service\HttpCodes;
 use Nails\Common\Service\Uri;
-use NAils\Factory;
+use Nails\Factory;
+use ReflectionException;
+use stdClass;
 
 /**
  * Class Session
@@ -38,11 +43,8 @@ class Session extends BaseApi
 
     // --------------------------------------------------------------------------
 
-    /** @var \Nails\Admin\Model\Session */
-    protected $oModel;
-
-    /** @var Uri */
-    protected $oUri;
+    protected Model\Session $oModel;
+    protected Uri           $oUri;
 
     // --------------------------------------------------------------------------
 
@@ -53,9 +55,9 @@ class Session extends BaseApi
      *
      * @throws FactoryException
      * @throws NailsException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    public function __construct(\ApiRouter $oApiRouter)
+    public function __construct(ApiRouter $oApiRouter)
     {
         parent::__construct($oApiRouter);
 
@@ -68,9 +70,10 @@ class Session extends BaseApi
     /**
      * Route all POST requests
      *
-     * @return Api\Factory\ApiResponse
      * @throws Api\Exception\ApiException
+     * @throws FactoryException
      * @throws ModelException
+     * @throws ValidationException
      */
     public function postRemap(): Api\Factory\ApiResponse
     {
@@ -88,20 +91,20 @@ class Session extends BaseApi
     /**
      * Route all PUT requests
      *
-     * @return Api\Factory\ApiResponse
      * @throws Api\Exception\ApiException
+     * @throws FactoryException
      * @throws ModelException
+     * @throws ValidationException
      */
     public function putRemap(): Api\Factory\ApiResponse
     {
         $oSession = $this->getSession();
 
-        switch ($this->oUri->segment(5)) {
-            case 'heartbeat':
-                return $this->pulse($oSession);
-            case 'inactive':
-                return $this->setInactive($oSession);
-        }
+        return match ($this->oUri->segment(5)) {
+            'heartbeat' => $this->pulse($oSession),
+            'inactive' => $this->setInactive($oSession),
+            default => throw new Api\Exception\ApiException('Invalid request'),
+        };
     }
 
     // --------------------------------------------------------------------------
@@ -109,20 +112,19 @@ class Session extends BaseApi
     /**
      * Route all DELETE requests
      *
-     * @return Api\Factory\ApiResponse
      * @throws Api\Exception\ApiException
+     * @throws FactoryException
      * @throws ModelException
+     * @throws ValidationException
      */
     public function deleteRemap(): Api\Factory\ApiResponse
     {
         $oSession = $this->getSession();
 
-        switch ($this->oUri->segment(5)) {
-            case 'inactive':
-                return $this->setActive($oSession);
-            default:
-                return $this->delete($oSession);
-        }
+        return match ($this->oUri->segment(5)) {
+            'inactive' => $this->setActive($oSession),
+            default => $this->delete($oSession),
+        };
     }
 
     // --------------------------------------------------------------------------
@@ -140,7 +142,7 @@ class Session extends BaseApi
         $aData = $this->getRequestData();
         /** @var FormValidation $oValidation */
         $oValidation = Factory::service('FormValidation');
-        /** @var \DateTime $oNow */
+        /** @var DateTime $oNow */
         $oNow = Factory::factory('DateTime');
 
         $oValidation
@@ -244,10 +246,10 @@ class Session extends BaseApi
      *
      * @param Resource\Session $oSession The session to delete
      *
-     * @return Api\Factory\ApiResponse
      * @throws Api\Exception\ApiException
      * @throws FactoryException
      * @throws ModelException
+     * @throws ValidationException
      */
     public function delete(Resource\Session $oSession): Api\Factory\ApiResponse
     {
@@ -287,8 +289,9 @@ class Session extends BaseApi
     /**
      * Updates a session timestamp
      *
-     * @param Resource\Session|null $oSession
-     * @param string                $sColumn
+     * @param Resource\Session $oSession The session to update
+     * @param string           $sColumn The column to update
+     * @param string|null      $sValue The value to set
      *
      * @throws FactoryException
      * @throws ModelException
@@ -316,7 +319,7 @@ class Session extends BaseApi
      *
      * @param Resource\Session|null $oSession
      *
-     * @return \stdClass[]
+     * @return stdClass[]
      * @throws FactoryException
      * @throws ModelException
      */
@@ -326,7 +329,7 @@ class Session extends BaseApi
             return [];
         }
 
-        /** @var \Nails\Admin\Model\Session $oModel */
+        /** @var Model\Session $oModel */
         $oModel = Factory::model('Session', Constants::MODULE_SLUG);
 
         /** @var Resource\Session[] $aSessions */
@@ -347,9 +350,7 @@ class Session extends BaseApi
                     'name' => $oSession->user->name,
                 ],
                 'created'  => $oSession->created->relative(false),
-                'inactive' => $oSession->inactive
-                    ? $oSession->inactive->relative(false)
-                    : null,
+                'inactive' => $oSession->inactive?->relative(false),
             ];
         }, $aSessions);
     }

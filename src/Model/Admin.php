@@ -13,24 +13,27 @@
 namespace Nails\Admin\Model;
 
 use Nails\Auth;
+use Nails\Common\Exception\FactoryException;
 use Nails\Common\Model\Base;
 use Nails\Config;
 use Nails\Factory;
 
+//  @todo (Pablo 2025-07-14) - This should not be a model
 class Admin extends Base
 {
-    protected $oUserMetaService;
-    protected $aJsonFields;
+    protected Auth\Service\User\Meta $oUserMetaService;
+    protected array                  $aJsonFields;
 
     // --------------------------------------------------------------------------
 
     /**
      * Admin constructor.
      *
-     * @throws \Nails\Common\Exception\FactoryException
+     * @throws FactoryException
      */
     public function __construct()
     {
+        parent::__construct();
         $this->oUserMetaService = Factory::service('UserMeta', Auth\Constants::MODULE_SLUG);
         $this->aJsonFields      = [
             'nav_state',
@@ -42,13 +45,13 @@ class Admin extends Base
     /**
      * Sets a piece of admin data
      *
-     * @param string $key    The key to set
-     * @param mixed  $value  The value to set
-     * @param mixed  $userId The user's ID, if null active user is used.
+     * @param string   $key    The key to set
+     * @param mixed    $value  The value to set
+     * @param int|null $userId The user's ID, if null active user is used.
      *
-     * @return boolean
+     * @return bool
      */
-    public function setAdminData($key, $value, $userId = null)
+    public function setAdminData(string $key, mixed $value, ?int $userId = null): bool
     {
         return $this->setUnsetAdminData($key, $value, $userId, true);
     }
@@ -58,12 +61,12 @@ class Admin extends Base
     /**
      * Unsets a piece of admin data
      *
-     * @param string $key    The key to set
-     * @param mixed  $userId The user's ID, if null active user is used.
+     * @param string   $key    The key to set
+     * @param int|null $userId The user's ID, if null active user is used.
      *
-     * @return boolean
+     * @return bool
      */
-    public function unsetAdminData($key, $userId = null)
+    public function unsetAdminData(string $key, ?int $userId = null): bool
     {
         return $this->setUnsetAdminData($key, null, $userId, false);
     }
@@ -73,14 +76,14 @@ class Admin extends Base
     /**
      * Handles the setting and unsetting of admin data
      *
-     * @param string  $key    The key to set
-     * @param mixed   $value  The value to set
-     * @param mixed   $userId The user's ID, if null active user is used.
-     * @param boolean $set    Whether the data is being set or unset
+     * @param string   $key    The key to set
+     * @param mixed    $value  The value to set
+     * @param int|null $userId The user's ID, if null active user is used.
+     * @param bool     $set    Whether the data is being set or unset
      *
-     * @return boolean
+     * @return bool
      */
-    protected function setUnsetAdminData($key, $value, $userId, $set)
+    protected function setUnsetAdminData(string $key, mixed $value, ?int $userId, bool $set): bool
     {
         //  Get the user ID
         $userId = $this->adminDataGetUserId($userId);
@@ -103,7 +106,7 @@ class Admin extends Base
         }
 
         //  Save to the DB
-        $bResult = $this->oUserMetaService->update(
+        return $this->oUserMetaService->update(
             $this->getUserMetaTable(),
             $userId,
             $existing
@@ -115,12 +118,12 @@ class Admin extends Base
     /**
      * Gets items from the admin data, or the entire array of $key is null
      *
-     * @param string $key    The key to set
-     * @param mixed  $userId The user's ID, if null active user is used.
+     * @param string|null $key    The key to get
+     * @param int|null    $userId The user's ID, if null active user is used.
      *
      * @return mixed
      */
-    public function getAdminData($key = null, $userId = null)
+    public function getAdminData(?string $key = null, ?int $userId = null): mixed
     {
         //  Get the user ID
         $userId = $this->adminDataGetUserId($userId);
@@ -181,11 +184,11 @@ class Admin extends Base
     /**
      * Completely clears out the admin array
      *
-     * @param mixed $userId The user's ID, if null active user is used.
+     * @param int|null $userId The user's ID, if null active user is used.
      *
-     * @return boolean
+     * @return bool
      */
-    public function clearAdminData($userId)
+    public function clearAdminData(?int $userId): bool
     {
         //  Get the user ID
         $userId = $this->adminDataGetUserId($userId);
@@ -210,9 +213,9 @@ class Admin extends Base
     /**
      * Extracts the user ID to use
      *
-     * @param int $iUserId The User ID, or null for active user
+     * @param int|null $iUserId The User ID, or null for active user
      *
-     * @return int
+     * @return int|null
      */
     protected function adminDataGetUserId(?int $iUserId): ?int
     {

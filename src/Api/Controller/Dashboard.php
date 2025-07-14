@@ -19,6 +19,7 @@ use Nails\Admin\Service\Dashboard\Widget;
 use Nails\Admin\Traits\Api\RestrictToAdmin;
 use Nails\Api;
 use Nails\Common\Exception\FactoryException;
+use Nails\Common\Exception\ModelException;
 use Nails\Common\Exception\ValidationException;
 use Nails\Common\Service\Uri;
 use Nails\Factory;
@@ -34,8 +35,7 @@ class Dashboard extends BaseApi
 
     // --------------------------------------------------------------------------
 
-    /** @var Widget */
-    private $oWidgetService;
+    private Widget $oWidgetService;
 
     // --------------------------------------------------------------------------
 
@@ -86,6 +86,10 @@ class Dashboard extends BaseApi
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @throws Api\Exception\ApiException
+     * @throws FactoryException
+     */
     public function postWidget(): Api\Factory\ApiResponse
     {
         /** @var Uri $oUri */
@@ -98,20 +102,20 @@ class Dashboard extends BaseApi
             );
         }
 
-        switch ($oUri->segment(5)) {
-            case 'body':
-                return $this->getBodyHtml($aData['slug'], $aData['config'] ?? []);
-
-            case 'config':
-                return $this->getConfigHtml($aData['slug'], $aData['config'] ?? []);
-
-            default:
-                throw new Api\Exception\ApiException('Unsupported method');
-        }
+        return match ($oUri->segment(5)) {
+            'body' => $this->getBodyHtml($aData['slug'], $aData['config'] ?? []),
+            'config' => $this->getConfigHtml($aData['slug'], $aData['config'] ?? []),
+            default => throw new Api\Exception\ApiException('Unsupported method'),
+        };
     }
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @throws FactoryException
+     * @throws ValidationException
+     * @throws ModelException
+     */
     public function putWidget(): Api\Factory\ApiResponse
     {
         /** @var \Nails\Admin\Model\Dashboard\Widget $oModel */
@@ -167,6 +171,14 @@ class Dashboard extends BaseApi
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @param string $sSlug   The widget instance's slug
+     * @param array  $aConfig The widget config
+     *
+     * @throws Api\Exception\ApiException
+     * @throws FactoryException
+     * @throws ValidationException
+     */
     private function getBodyHtml(string $sSlug, array $aConfig): Api\Factory\ApiResponse
     {
         /** @var Api\Factory\ApiResponse $oApiResponse */
@@ -181,6 +193,14 @@ class Dashboard extends BaseApi
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @param string $sSlug   The widget instance's slug
+     * @param array  $aConfig The widget config
+     *
+     * @throws Api\Exception\ApiException
+     * @throws FactoryException
+     * @throws ValidationException
+     */
     private function getConfigHtml(string $sSlug, array $aConfig): Api\Factory\ApiResponse
     {
         /** @var Api\Factory\ApiResponse $oApiResponse */
@@ -195,12 +215,18 @@ class Dashboard extends BaseApi
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @param string $sSlug   The widget instance's slug
+     * @param array  $aConfig The widget config
+     *
+     * @throws Api\Exception\ApiException
+     */
     private function getWidgetInstance(string $sSlug, array $aConfig): \Nails\Admin\Interfaces\Dashboard\Widget
     {
         $oWidget = $this->oWidgetService->getBySlug($sSlug, $aConfig);
         if (empty($oWidget)) {
             throw new Api\Exception\ApiException(sprintf(
-                '"" is not a valid widget',
+                '"%s" is not a valid widget',
                 $sSlug
             ));
         }
