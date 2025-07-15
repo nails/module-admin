@@ -44,11 +44,11 @@ class Notes {
                 let counter = document.createElement('span');
                 counter.classList.add('admin-notes__counter');
 
-                let modelName = btn.dataset['model-name'];
-                let modelProvider = btn.dataset['model-provider'];
-                let itemId = btn.dataset['id'];
-                let title = btn.dataset['modal-title'] || 'Notes';
-                let showCount = btn.dataset['show-count'];
+                let modelName = btn.dataset.modelName;
+                let modelProvider = btn.dataset.modelProvider;
+                let itemId = btn.dataset.id;
+                let title = btn.dataset.modalTitle || 'Notes';
+                let showCount = btn.dataset.showCount;
 
                 if (showCount) {
                     btn.append(counter);
