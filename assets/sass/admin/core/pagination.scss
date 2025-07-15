@@ -1,0 +1,49 @@
+/* --------------------------------------------------------------
+   Pagination
+-------------------------------------------------------------- */
+
+.pagination {
+    clear: both;
+
+    small,
+    ul {
+        margin: 15px 0;
+        float: left;
+    }
+
+    ul {
+        float: right;
+
+        li.page {
+            display: inline;
+            margin-left: 5px;
+
+            a,
+            span.current {
+                border: 1px solid #cfcfcf;
+                padding: 5px 8px;
+                @include rounded(3px);
+                @include nifty-drop-shadow();
+                text-decoration: none;
+                background: #efefef;
+                font-weight: bold;
+            }
+
+            span.current {
+                background: #ffffff;
+                border: 1px solid #000000;
+            }
+
+            a {
+                &:hover {
+                    background: #f4f4f4;
+                }
+
+                &:active {
+                    position: relative;
+                    top: 1px;
+                }
+            }
+        }
+    }
+}

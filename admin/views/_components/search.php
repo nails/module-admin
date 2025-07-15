@@ -47,71 +47,86 @@
     // --------------------------------------------------------------------------
 
     //  Filters
+    echo !empty($dropdownFilter) || !empty($checkboxFilter) ? '<div class="filter">' : '';
+
     if (!empty($dropdownFilter)) {
 
         echo !empty($injectHtml) || $searchable ? '<hr />' : '';
         foreach ($dropdownFilter as $iFilterIndex => $oFilter) {
 
-            echo '<span class="filterGroup dropdown">';
-            echo '<span class="filterLabel">';
-            echo $oFilter->getLabel();
-            echo '</span>';
+            ?>
+            <div class="filter__group">
+                <div class="filter__label">
+                    <?=$oFilter->getLabel()?>
+                </div>
+                <div class="filter__control">
+                    <select name="ddF[<?=$iFilterIndex?>]" class="select2">
+                        <?php
 
-            echo '<span class="filterDropdown">';
-            echo '<select name="ddF[' . $iFilterIndex . ']" class="select2">';
-            foreach ($oFilter->getOptions() as $iOptionIndex => $oOption) {
+                        foreach ($oFilter->getOptions() as $iOptionIndex => $oOption) {
 
-                //  Checked or not?
-                if (!empty($_GET)) {
-                    $bSelected = isset($_GET['ddF'][$iFilterIndex]) && $_GET['ddF'][$iFilterIndex] == $iOptionIndex;
-                } else {
-                    $bSelected = $oOption->isSelected();
-                }
+                            //  Checked or not?
+                            if (!empty($_GET)) {
+                                $bSelected = isset($_GET['ddF'][$iFilterIndex]) && $_GET['ddF'][$iFilterIndex] == $iOptionIndex;
+                            } else {
+                                $bSelected = $oOption->isSelected();
+                            }
 
-                $sSelected = $bSelected ? 'selected="selected"' : '';
+                            $sSelected = $bSelected ? 'selected="selected"' : '';
 
-                echo '<option value="' . $iOptionIndex . '" ' . $sSelected . '>';
-                echo $oOption->getLabel();
-                echo '</option>';
-            }
-            echo '</select>';
-            echo '</span>';
+                            ?>
+                            <option value="<?=$iOptionIndex?>" <?=$sSelected?>>
+                                <?=$oOption->getLabel()?>
+                            </option>
+                            <?php
+                        }
 
-            echo '</span>';
+                        ?>
+                    </select>
+                </div>
+            </div>
+            <?php
         }
     }
 
     if (!empty($checkboxFilter)) {
 
-        echo '<hr>';
-        echo !empty($injectHtml) || $searchable || !empty($dropdownFilter) ? '<hr />' : '';
         foreach ($checkboxFilter as $iFilterIndex => $oFilter) {
 
-            echo '<span class="filterGroup">';
-            echo '<span class="filterLabel">';
-            echo $oFilter->getLabel();
-            echo '</span>';
+            ?>
+            <div class="filter__group">
+                <div class="filter__label">
+                    <?=$oFilter->getLabel()?>
+                </div>
+                <div class="filter__control">
+                    <?php
 
-            foreach ($oFilter->getOptions() as $iOptionIndex => $oOption) {
+                    foreach ($oFilter->getOptions() as $iOptionIndex => $oOption) {
 
-                //  Checked or not?
-                if (!empty($_GET)) {
-                    $bChecked = !empty($_GET['cbF'][$iFilterIndex][$iOptionIndex]);
-                } else {
-                    $bChecked = $oOption->isSelected();
-                }
+                        //  Checked or not?
+                        if (!empty($_GET)) {
+                            $bChecked = !empty($_GET['cbF'][$iFilterIndex][$iOptionIndex]);
+                        } else {
+                            $bChecked = $oOption->isSelected();
+                        }
 
-                $sChecked = $bChecked ? 'checked="checked"' : '';
+                        $sChecked = $bChecked ? 'checked="checked"' : '';
+                        ?>
+                        <label class="filter__option">
+                            <input type="checkbox" name="cbF[<?=$iFilterIndex?>][<?=$iOptionIndex?>]" <?=$sChecked?> value="1">
+                            <?=$oOption->getLabel()?>
+                        </label>
+                        <?php
+                    }
 
-                echo '<label class="filterOption">';
-                echo '<input type="checkbox" name="cbF[' . $iFilterIndex . '][' . $iOptionIndex . ']" ' . $sChecked . ' value="1">';
-                echo $oOption->getLabel();
-                echo '</label>';
-            }
-
-            echo '</span>';
+                    ?>
+                </div>
+            </div>
+            <?php
         }
     }
+
+    echo !empty($dropdownFilter) || !empty($checkboxFilter) ? '</div>' : '';
 
     // --------------------------------------------------------------------------
 
