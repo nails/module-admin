@@ -96,53 +96,56 @@ return [
         },
     ],
     'resources' => [
-        'ChangeLog'        => function ($mObj): Resource\ChangeLog {
+        'ChangeLog'        => function ($resource, $model): Resource\ChangeLog {
             if (class_exists('\App\Admin\Resource\ChangeLog')) {
-                return new \App\Admin\Resource\ChangeLog($mObj);
+                return new \App\Admin\Resource\ChangeLog($resource, $model);
             } else {
-                return new Resource\ChangeLog($mObj);
+                return new Resource\ChangeLog($resource, $model);
             }
         },
-        'DashboardWidget'  => function ($mObj): Resource\Dashboard\Widget {
+        'DashboardWidget'  => function ($resource, $model = null): Resource\Dashboard\Widget {
+            //  @todo (Pablo 2025-07-15) - this should be a factory
             if (class_exists('\App\Admin\Resource\Dashboard\Widget')) {
-                return new \App\Admin\Resource\Dashboard\Widget($mObj);
+                return new \App\Admin\Resource\Dashboard\Widget($resource);
             } else {
-                return new Resource\Dashboard\Widget($mObj);
+                return new Resource\Dashboard\Widget($resource);
             }
         },
-        'DataExportFormat' => function ($mObj): Resource\DataExport\Format {
+        'DataExportFormat' => function ($resource, $model = null): Resource\DataExport\Format {
+            //  @todo (Pablo 2025-07-15) - this should be a factory
             if (class_exists('\App\Admin\Resource\DataExport\Format')) {
-                return new \App\Admin\Resource\DataExport\Format($mObj);
+                return new \App\Admin\Resource\DataExport\Format($resource);
             } else {
-                return new Resource\DataExport\Format($mObj);
+                return new Resource\DataExport\Format($resource);
             }
         },
-        'DataExportSource' => function ($mObj): Resource\DataExport\Source {
+        'DataExportSource' => function ($resource, $model = null): Resource\DataExport\Source {
+            //  @todo (Pablo 2025-07-15) - this should be a factory
             if (class_exists('\App\Admin\Resource\DataExport\Source')) {
-                return new \App\Admin\Resource\DataExport\Source($mObj);
+                return new \App\Admin\Resource\DataExport\Source($resource);
             } else {
-                return new Resource\DataExport\Source($mObj);
+                return new Resource\DataExport\Source($resource);
             }
         },
-        'Export'           => function ($mObj): Resource\Export {
+        'Export'           => function ($resource, $model): Resource\Export {
             if (class_exists('\App\Admin\Resource\Export')) {
-                return new \App\Admin\Resource\Export($mObj);
+                return new \App\Admin\Resource\Export($resource, $model);
             } else {
-                return new Resource\Export($mObj);
+                return new Resource\Export($resource, $model);
             }
         },
-        'Note'             => function ($mObj): Resource\Note {
+        'Note'             => function ($resource, $model): Resource\Note {
             if (class_exists('\App\Admin\Resource\Note')) {
-                return new \App\Admin\Resource\Note($mObj);
+                return new \App\Admin\Resource\Note($resource, $model);
             } else {
-                return new Resource\Note($mObj);
+                return new Resource\Note($resource, $model);
             }
         },
-        'Session'          => function ($mObj): Resource\Session {
+        'Session'          => function ($resource, $model): Resource\Session {
             if (class_exists('\App\Admin\Resource\Session')) {
-                return new \App\Admin\Resource\Session($mObj);
+                return new \App\Admin\Resource\Session($resource, $model);
             } else {
-                return new Resource\Session($mObj);
+                return new Resource\Session($resource, $model);
             }
         },
     ],

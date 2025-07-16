@@ -2,14 +2,14 @@
 
 namespace Nails\Admin\Resource\Dashboard;
 
-use Nails\Common\Resource\Entity;
+use Nails\Common\Resource;
 
 /**
  * Class Widget
  *
  * @package Nails\Admin\Resource\Dashboard
  */
-class Widget extends Entity
+class Widget extends Resource
 {
     /** @var string */
     public $slug;
@@ -31,9 +31,9 @@ class Widget extends Entity
 
     // --------------------------------------------------------------------------
 
-    public function __construct($mObj = [])
+    public function __construct(self|\stdClass|array $resource = [])
     {
-        parent::__construct($mObj);
+        parent::__construct($resource);
         $this->config = json_decode($this->config, JSON_OBJECT_AS_ARRAY) ?? [];
     }
 }
