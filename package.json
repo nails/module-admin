@@ -22,7 +22,7 @@
         "core-js": "^3.8",
         "cross-env": "^10.0",
         "css-loader": "^7.1",
-        "debounce": "^2.2",
+        "debounce": "^3.0",
         "mini-css-extract-plugin": "^2.6",
         "mustache": "^4.0",
         "postcss-loader": "^8.1",
