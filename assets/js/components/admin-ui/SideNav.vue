@@ -5,7 +5,7 @@
                 keyProp="label"
                 v-model="sidebarItems"
                 v-bind:max-depth="1"
-                v-bind:children-prop="null"
+                v-bind:children-prop="'children'"
                 v-on:change="changeOrder"
             >
                 <template
@@ -120,27 +120,40 @@
             v-show="isMobileMenuOpen"
             class="sidenav sidenav__mobile"
         >
-            <ul>
-                <li
-                    v-for="item in sidebarItems"
-                    v-bind:key="item.label"
-                    class="sidenav__list-item"
+            <vue-nestable
+                keyProp="label"
+                v-model="sidebarItems"
+                v-bind:max-depth="1"
+                v-bind:children-prop="'children'"
+                v-on:change="changeOrder"
+            >
+                <template
+                    slot-scope="{ item }"
                 >
                     <menu-collapse
                         v-if="item.actions && item.actions.length"
                         v-bind:title="item.label"
                         v-bind:icon="item.icon"
                         v-bind:is-open="item.is_open"
+                        v-on:change="changeOrder"
                         v-on:toggle="toggleMenuItem(item)"
                     >
                         <template slot="handler">
-                            <span class="sidenav__icon">
-                                <span class="handle fa fa-bars" />
-                                <i
-                                    class="fa"
-                                    v-bind:class="`${item.icon || 'fa-cog'}`"
-                                />
-                            </span>
+                            <VueNestableHandle
+                                v-bind:item="item"
+                            >
+                                <span
+                                    class="sidenav__icon"
+                                    v-on:click.stop="() => {}"
+                                >
+                                    <span class="handle fa fa-bars" />
+                                    <i
+                                        v-bind:class="[
+                                            `fa ${item.icon || 'fa-cog'}`,
+                                        ]"
+                                    />
+                                </span>
+                            </VueNestableHandle>
                         </template>
                         <ul>
                             <li
@@ -173,16 +186,22 @@
                         class="sidenav__item"
                         v-bind:class="{'sidenav__item--active': item.is_open}"
                     >
-                        <span class="sidenav__icon">
-                            <span class="handle fa fa-bars" />
-                            <i
-                                class="fa"
-                                v-bind:class="`${item.icon || 'fa-cog'}`"
-                            />
-                        </span>
+                        <VueNestableHandle
+                            v-bind:item="item"
+                        >
+                            <span class="sidenav__icon">
+                                <span class="handle fa fa-bars" />
+                                <i
+                                    class="fa"
+                                    v-bind:class="`${item.icon || 'fa-cog'}`"
+                                />
+                            </span>
+                        </VueNestableHandle>
                         {{ item.label }}
                     </a>
-                </li>
+                </template>
+            </vue-nestable>
+            <ul class="mt-3">
                 <li class="mt-5">
                     <a
                         href="#"
