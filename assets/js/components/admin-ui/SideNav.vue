@@ -135,6 +135,7 @@
                     >
                         <template slot="handler">
                             <span class="sidenav__icon">
+                                <span class="handle fa fa-bars" />
                                 <i
                                     class="fa"
                                     v-bind:class="`${item.icon || 'fa-cog'}`"
@@ -173,6 +174,7 @@
                         v-bind:class="{'sidenav__item--active': item.is_open}"
                     >
                         <span class="sidenav__icon">
+                            <span class="handle fa fa-bars" />
                             <i
                                 class="fa"
                                 v-bind:class="`${item.icon || 'fa-cog'}`"
