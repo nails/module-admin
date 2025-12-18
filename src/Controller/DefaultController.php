@@ -696,7 +696,7 @@ abstract class DefaultController extends Base
         // --------------------------------------------------------------------------
 
         $this
-            ->setTitles([$aConfig['TITLE_PLURAL'], 'Manage'])
+            ->setTitles([static::CONFIG_SIDEBAR_GROUP, $aConfig['TITLE_PLURAL'], 'Manage'])
             ->loadView('index');
     }
 
@@ -865,7 +865,7 @@ abstract class DefaultController extends Base
         // --------------------------------------------------------------------------
 
         $this
-            ->setTitles([$aConfig['TITLE_SINGLE'], 'Create'])
+            ->setTitles([static::CONFIG_SIDEBAR_GROUP, $aConfig['TITLE_SINGLE'], 'Create'])
             ->loadView('edit');
     }
 
@@ -1034,7 +1034,7 @@ abstract class DefaultController extends Base
         // --------------------------------------------------------------------------
 
         $this
-            ->setTitles([$aConfig['TITLE_SINGLE'], 'Edit'])
+            ->setTitles([static::CONFIG_SIDEBAR_GROUP, $aConfig['TITLE_SINGLE'], 'Edit'])
             ->loadView('edit');
     }
 
