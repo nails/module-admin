@@ -43,7 +43,7 @@
     <!--    ASSETS  -->
     <?php
 
-    echo linkTag('http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700');
+    echo linkTag('https://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,400,700');
 
     $oAsset = \Nails\Factory::service('Asset');
     $oAsset->output('CSS');
