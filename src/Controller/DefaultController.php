@@ -2336,7 +2336,7 @@ abstract class DefaultController extends Base
             $oField->setDefault(call_user_func($oField->getDefault(), $oItem));
 
         } elseif (!is_null($oItem) && property_exists($oItem, $sKey)) {
-            if ($oItem->{$sKey} instanceof Resource\ExpandableField) {
+            if ($oItem->{$sKey} instanceof Resource\ExpandableFieldData) {
                 $oField->setDefault($oItem->{$sKey}->data);
 
             } else {
@@ -3017,7 +3017,7 @@ abstract class DefaultController extends Base
                 continue;
             }
 
-            if ($mValue instanceof Resource\ExpandableField) {
+            if ($mValue instanceof Resource\ExpandableFieldData) {
                 foreach ($mValue->data as $iIndex => $mArrayValue) {
                     $aOut = array_merge(
                         $aOut,
