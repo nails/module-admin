@@ -166,6 +166,59 @@ class Notes {
                     }
                 }
 
+                const renderLoadMore = (nextUrl) => {
+                    const existing = ul.querySelector('.admin-notes__load-more');
+                    if (existing) {
+                        existing.remove();
+                    }
+
+                    if (!nextUrl) {
+                        return;
+                    }
+
+                    const liLoadMore = document.createElement('li');
+                    liLoadMore.classList.add('admin-notes__load-more');
+
+                    const btnLoadMore = document.createElement('button');
+                    btnLoadMore.classList.add('btn', 'btn-block', 'btn-default');
+                    btnLoadMore.innerText = 'Load more';
+
+                    btnLoadMore.addEventListener('click', () => {
+                        btnLoadMore.disabled = true;
+                        btnLoadMore.innerText = 'Loading...';
+
+                        this.loadMoreNotes(nextUrl)
+                            .done((response) => {
+                                for (let i = 0, j = response.data.length; i < j; i++) {
+                                    ul.insertBefore(
+                                        this.renderMessageItem(
+                                            ul,
+                                            response.data[i].id,
+                                            response.data[i].message,
+                                            response.data[i].user,
+                                            response.data[i].date,
+                                            showCount,
+                                            counter
+                                        ),
+                                        liLoadMore
+                                    );
+                                }
+                                renderLoadMore(response.meta?.pagination?.next || null);
+                            })
+                            .always(() => {
+                                if (btnLoadMore.isConnected) {
+                                    btnLoadMore.disabled = false;
+                                    btnLoadMore.innerText = 'Load more';
+                                }
+                            });
+                    });
+
+                    liLoadMore.append(btnLoadMore);
+                    ul.append(liLoadMore);
+                };
+
+                renderLoadMore(response.meta?.pagination?.next || null);
+
                 //  Build form
                 let textarea = document.createElement('textarea');
                 let btn = document.createElement('button');
@@ -286,6 +339,30 @@ class Notes {
                     'Failed to load notes',
                     error.response.data
                 );
+                $deferred.reject(error.response.data);
+            });
+
+        return $deferred.promise();
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Loads the next page of notes from a pagination URL
+     * @param {String} nextUrl The absolute URL returned by meta.pagination.next
+     * @return {jQuery.Deferred}
+     */
+    loadMoreNotes(nextUrl) {
+        let $deferred = new $.Deferred();
+        const url = new URL(nextUrl);
+        const params = {};
+        url.searchParams.forEach((value, key) => { params[key] = value; });
+
+        services
+            .apiRequest({ url: API.notes.list, data: params })
+            .then((response) => { $deferred.resolve(response.data); })
+            .catch((error) => {
+                this.showError('Failed to load notes', error.response.data);
                 $deferred.reject(error.response.data);
             });
 

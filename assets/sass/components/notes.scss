@@ -21,6 +21,14 @@
         }
     }
 
+    &__load-more {
+        padding-top: 1rem;
+
+        .btn {
+            width: 100%;
+        }
+    }
+
     &__note {
         border: 1px solid #ccc;
         position: relative;
