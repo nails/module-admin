@@ -2,6 +2,8 @@
 
 use Nails\Admin\Helper;
 use Nails\Common\Service\Asset;
+use Nails\Components;
+use Nails\Config;
 use Nails\Factory;
 
 if (empty($isModal)) {
@@ -11,17 +13,23 @@ if (empty($isModal)) {
         <small class="float-start">
             Rendered in {elapsed_time} seconds
         </small>
-        <?php
-
-        if (\Nails\Config::get('NAILS_BRANDING')) {
-            ?>
-            <small class="float-end">
-                Powered by <a href="https://nailsapp.co.uk" target="_blank">Nails</a>
-            </small>
+        <small class="float-end">
             <?php
-        }
 
-        ?>
+            echo sprintf(
+                'Version: %s (admin: %s)',
+                [
+                    Components::getApp()->version,
+                    Components::getBySlug(\Nails\Admin\Constants::MODULE_SLUG)->version
+                ]
+            );
+
+            if (Config::get('NAILS_BRANDING')) {
+                echo ' // Powered by <a href="https://nailsapp.co.uk" target="_blank">Nails</a>'
+            }
+
+            ?>
+        </small>
     </footer>
     <?php
 
