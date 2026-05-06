@@ -27,6 +27,7 @@ $lang['admin_nav_unlisted'] = 'Unlisted';
 // --------------------------------------------------------------------------
 
 //  Footer
+$lang['admin_version']         = 'Version: %s (admin: %s)';
 $lang['admin_rendered_in']     = 'Rendered in %s seconds';
 $lang['admin_rendered_in_tip'] = 'That\'s zippity quick!';
 $lang['admin_powered_by']      = 'Powered by <a href="%s" target="_blank">Nails</a>';

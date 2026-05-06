@@ -2,17 +2,27 @@
                     <small rel="tooltip-r" title="<?=lang('admin_rendered_in_tip')?>">
                         <?=lang('admin_rendered_in', '{elapsed_time}')?>
                     </small>
-                    <?php
-
-                    if (NAILS_BRANDING) {
-                        ?>
-                        <small class="right">
-                            <?=lang('admin_powered_by', 'http://nailsapp.co.uk')?>
-                        </small>
+                    <small class="right">
                         <?php
-                    }
 
-                    ?>
+                        echo lang(
+                            'admin_version',
+                            [
+                                Nails\Components::getApp()->version,
+                                Nails\Components::getBySlug(\Nails\Admin\Constants::MODULE_SLUG)->version
+                            ]
+                        );
+
+                        if (NAILS_BRANDING) {
+                            ?>
+                            <span>
+                                // <?=lang('admin_powered_by', 'http://nailsapp.co.uk')?>
+                            </span>
+                            <?php
+                        }
+
+                        ?>
+                    </small>
                 </footer>
             </div><!--  /.content_inner -->
         </div>
