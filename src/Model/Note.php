@@ -6,7 +6,6 @@ use Nails\Admin\Constants;
 use Nails\Auth;
 use Nails\Common\Exception\ModelException;
 use Nails\Common\Model\Base;
-use Nails\Config;
 
 class Note extends Base
 {
@@ -37,6 +36,12 @@ class Note extends Base
      * @var bool
      */
     const DESTRUCTIVE_DELETE = false;
+
+    /**
+     * Sort notes date descending so newest notes appear first
+     */
+    const DEFAULT_SORT_COLUMN = 'created';
+    const DEFAULT_SORT_ORDER  = self::SORT_DESC;
 
     // --------------------------------------------------------------------------
 
