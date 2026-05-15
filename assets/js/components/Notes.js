@@ -18,6 +18,11 @@ class Notes {
             maxWidth: '600px'
         }));
 
+        this.confirmModal = (new Modal(this.adminController, {
+            minWidth: '400px',
+            maxWidth: '400px'
+        }));
+
         this.adminController
             .onRefreshUi(() => {
                 this.init();
@@ -256,13 +261,14 @@ class Notes {
                             );
 
                             ul.querySelector('.admin-notes__empty').classList.add('hidden');
-                            ul.append(li);
+                            ul.prepend(li);
+                            li.classList.add('admin-notes__note--new');
 
                             if (showCount) {
                                 this.setCounter(counter, ul.querySelectorAll('.admin-notes__note').length);
                             }
 
-                            li.scrollIntoView();
+                            li.scrollIntoView({behavior: 'smooth'});
                         })
                         .always(() => {
                             textarea.disabled = false;
@@ -356,11 +362,15 @@ class Notes {
         let $deferred = new $.Deferred();
         const url = new URL(nextUrl);
         const params = {};
-        url.searchParams.forEach((value, key) => { params[key] = value; });
+        url.searchParams.forEach((value, key) => {
+            params[key] = value;
+        });
 
         services
-            .apiRequest({ url: API.notes.list, data: params })
-            .then((response) => { $deferred.resolve(response.data); })
+            .apiRequest({url: API.notes.list, data: params})
+            .then((response) => {
+                $deferred.resolve(response.data);
+            })
             .catch((error) => {
                 this.showError('Failed to load notes', error.response.data);
                 $deferred.reject(error.response.data);
@@ -477,17 +487,34 @@ class Notes {
             .addEventListener('click', (event) => {
                 event.preventDefault();
                 event.stopPropagation();
-                this.deleteNote(id)
-                    .done(() => {
-                        li.remove();
-                        let count = ul.querySelectorAll('.admin-notes__note').length;
-                        if (showCount) {
-                            this.setCounter(counter, count);
-                        }
-                        if (count === 0) {
-                            ul.querySelector('.admin-notes__empty').classList.remove('hidden');
-                        }
+
+                this.confirmModal
+                    .setTitle('Delete Note')
+                    .setBody('Are you sure you want to delete this note?')
+                    .clearActions()
+                    .addAction('Cancel', ['btn-default'], () => {
+                        this.confirmModal.hide();
+                    })
+                    .addAction('Delete', ['btn-danger'], () => {
+                        this.confirmModal.hide();
+                        this.deleteNote(id)
+                            .done(() => {
+                                li.classList.add('admin-notes__note--removing');
+                                li.addEventListener('animationend', () => {
+                                    li.remove();
+                                    let count = ul.querySelectorAll('.admin-notes__note').length;
+                                    if (showCount) {
+                                        this.setCounter(counter, count);
+                                    }
+                                    if (count === 0) {
+                                        ul.querySelector('.admin-notes__empty').classList.remove('hidden');
+                                    }
+                                }, {once: true});
+                            });
                     });
+
+                this.confirmModal.actionButtons[0].style.marginRight = '0.5rem';
+                this.confirmModal.show();
             });
 
         divMeta.append(

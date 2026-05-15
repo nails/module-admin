@@ -1,3 +1,18 @@
+@keyframes admin-notes-remove-note {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@keyframes admin-notes-new-note {
+    0%   { opacity: 0; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); border-color: rgba(66, 153, 225, 0.7); }
+    15%  { opacity: 1; box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); border-color: rgba(66, 153, 225, 0.7); }
+    33%  { box-shadow: none; border-color: #ccc; }
+    50%  { box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.4); border-color: rgba(66, 153, 225, 0.6); }
+    67%  { box-shadow: none; border-color: #ccc; }
+    82%  { box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.25); border-color: rgba(66, 153, 225, 0.4); }
+    100% { box-shadow: none; border-color: #ccc; }
+}
+
 .admin-notes {
     &__empty {
         padding: 2rem;
@@ -33,6 +48,7 @@
         border: 1px solid #ccc;
         position: relative;
         margin-bottom: 1rem;
+        scroll-margin-top: 1rem;
 
         &__message {
             padding: 1rem;
@@ -75,6 +91,15 @@
             &__date {
                 float: right;
             }
+        }
+
+        &--new {
+            animation: admin-notes-new-note 3.5s ease-out forwards;
+        }
+
+        &--removing {
+            animation: admin-notes-remove-note 0.8s ease-in forwards;
+            pointer-events: none;
         }
 
         &:last-child {
