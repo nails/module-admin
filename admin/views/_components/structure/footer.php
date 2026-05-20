@@ -18,14 +18,12 @@ if (empty($isModal)) {
 
             echo sprintf(
                 'Version: %s (admin: %s)',
-                [
-                    Components::getApp()->version,
-                    Components::getBySlug(\Nails\Admin\Constants::MODULE_SLUG)->version
-                ]
+                Components::getApp()->version,
+                Components::getBySlug(\Nails\Admin\Constants::MODULE_SLUG)->version
             );
 
             if (Config::get('NAILS_BRANDING')) {
-                echo ' // Powered by <a href="https://nailsapp.co.uk" target="_blank">Nails</a>'
+                echo ' // Powered by <a href="https://nailsapp.co.uk" target="_blank">Nails</a>';
             }
 
             ?>
