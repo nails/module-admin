@@ -27,7 +27,7 @@
         "mustache": "^4.0",
         "postcss-loader": "^8.1",
         "sass": "^1.51",
-        "sass-loader": "^16.0",
+        "sass-loader": "^17.0",
         "vue": "^2.6",
         "vue-grid-layout": "^2.3",
         "vue-loader": "^15.9",
