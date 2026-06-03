@@ -12,10 +12,12 @@
 
 namespace Nails\Admin;
 
-use Nails\Admin\Constants;
+use Nails\Admin\Factory\Helper\DynamicTable;
 use Nails\Admin\Factory\IndexFilter;
+use Nails\Admin\Service\Controller;
 use Nails\Auth;
 use Nails\Common\Exception\FactoryException;
+use Nails\Common\Exception\ModelException;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Exception\ViewNotFoundException;
 use Nails\Common\Service\Input;
@@ -23,6 +25,8 @@ use Nails\Common\Service\Output;
 use Nails\Common\Service\View;
 use Nails\Config;
 use Nails\Factory;
+use ReflectionException;
+use stdClass;
 
 /**
  * Class Helper
@@ -31,8 +35,8 @@ use Nails\Factory;
  */
 class Helper
 {
-    protected static $aHeaderButtons = [];
-    protected static $aModals        = [];
+    protected static array $aHeaderButtons = [];
+    protected static array $aModals        = [];
 
     // --------------------------------------------------------------------------
 
@@ -57,14 +61,16 @@ class Helper
      * Loads a view in admin taking into account the module being accessed. Passes controller
      * data and optionally loads the header and footer views.
      *
-     * @param string  $sViewFile      The view to load
-     * @param boolean $bLoadStructure Whether or not to include the header and footers in the output
-     * @param boolean $bReturnView    Whether to return the view or send it to the Output class
+     * @param string $sViewFile      The view to load
+     * @param bool   $bLoadStructure Whether or not to include the header and footers in the output
+     * @param bool   $bReturnView    Whether to return the view or send it to the Output class
      *
-     * @return mixed                  String when $bReturnView is true, void otherwise
+     * @return string|void           String when $bReturnView is true, void otherwise
      * @throws FactoryException
+     * @throws ReflectionException
+     * @throws ViewNotFoundException
      */
-    public static function loadView($sViewFile, $bLoadStructure = true, $bReturnView = false)
+    public static function loadView(string $sViewFile, bool $bLoadStructure = true, bool $bReturnView = false)
     {
         $aData =& getControllerData();
 
@@ -111,58 +117,52 @@ class Helper
      * Generates a CSV and sends to the browser, if a filename is given then it's
      * sent as a download
      *
-     * @param mixed   $mData      The data to render, either an array or a DB query object
-     * @param string  $sFilename  The filename to give the file if downloading
-     * @param boolean $bHeaderRow The first element in the $mData resultset is a header row
+     * @param mixed  $mData      The data to render, either an array or a DB query object
+     * @param string $sFilename  The filename to give the file if downloading
+     * @param bool   $bHeaderRow The first element in the $mData resultset is a header row
      *
-     * @return void
      * @throws FactoryException
+     * @throws ViewNotFoundException
+     * @throws NailsException
      */
-    public static function loadCsv($mData, $sFilename = '', $bHeaderRow = true)
+    public static function loadCsv(array|\CI_DB_mysqli_result $mData, string $sFilename = '', bool $bHeaderRow = true): void
     {
-        //  Determine what type of data has been supplied
-        if (is_array($mData) || get_class($mData) == 'CI_DB_mysqli_result') {
+        //  If filename has been specified then set some additional headers
+        if (!empty($sFilename)) {
 
-            //  If filename has been specified then set some additional headers
-            if (!empty($sFilename)) {
+            /** @var Input $oInput */
+            $oInput = Factory::service('Input');
+            /** @var Output $oOutput */
+            $oOutput = Factory::service('Output');
 
-                /** @var Input $oInput */
-                $oInput = Factory::service('Input');
-                /** @var Output $oOutput */
-                $oOutput = Factory::service('Output');
+            //  Common headers
+            $oOutput
+                ->setContentType('text/csv')
+                ->setHeader('Content-Disposition: attachment; filename="' . $sFilename . '"')
+                ->setHeader('Expires: 0')
+                ->setHeader("Content-Transfer-Encoding: binary");
 
-                //  Common headers
+            //  Handle IE, classic.
+            $userAgent = $oInput->server('HTTP_USER_AGENT');
+
+            if (str_contains($userAgent, "MSIE")) {
                 $oOutput
-                    ->setContentType('text/csv')
-                    ->setHeader('Content-Disposition: attachment; filename="' . $sFilename . '"')
-                    ->setHeader('Expires: 0')
-                    ->setHeader("Content-Transfer-Encoding: binary");
+                    ->setHeader('Cache-Control: must-revalidate, post-check=0, pre-check=0')
+                    ->setHeader('Pragma: public');
 
-                //  Handle IE, classic.
-                $userAgent = $oInput->server('HTTP_USER_AGENT');
-
-                if (strpos($userAgent, "MSIE") !== false) {
-                    $oOutput
-                        ->setHeader('Cache-Control: must-revalidate, post-check=0, pre-check=0')
-                        ->setHeader('Pragma: public');
-
-                } else {
-                    $oOutput->setHeader('Pragma: no-cache');
-                }
+            } else {
+                $oOutput->setHeader('Pragma: no-cache');
             }
+        }
 
-            //  Not using self::loadInlineView() as this may be called from many contexts
-            /** @var View $oView */
-            $oView = Factory::service('View');
-            if (is_array($mData)) {
-                $oView->load('admin/_components/csv/array', ['data' => $mData, 'header' => $bHeaderRow]);
+        //  Not using self::loadInlineView() as this may be called from many contexts
+        /** @var View $oView */
+        $oView = Factory::service('View');
+        if (is_array($mData)) {
+            $oView->load('admin/_components/csv/array', ['data' => $mData, 'header' => $bHeaderRow]);
 
-            } elseif (get_class($mData) == 'CI_DB_mysqli_result') {
-                $oView->load('admin/_components/csv/dbResult', ['data' => $mData, 'header' => $bHeaderRow]);
-            }
-
-        } else {
-            throw new NailsException('Unsupported object type passed to ' . get_class() . '::loadCSV');
+        } elseif (get_class($mData) == 'CI_DB_mysqli_result') {
+            $oView->load('admin/_components/csv/dbResult', ['data' => $mData, 'header' => $bHeaderRow]);
         }
     }
 
@@ -171,20 +171,21 @@ class Helper
     /**
      * Load a single view taking into account the module being accessed.
      *
-     * @param string  $sViewFile   The view to load
-     * @param array   $aViewData   The data to pass to the view
-     * @param boolean $bReturnView Whether to return the view or send it to the Output class
+     * @param string $sViewFile   The view to load
+     * @param array  $aViewData   The data to pass to the view
+     * @param bool   $bReturnView Whether to return the view or send it to the Output class
      *
-     * @return mixed               String when $bReturnView is true, void otherwise
-     * @throws \Exception
-     *
+     * @return string|void        String when $bReturnView is true, void otherwise
+     * @throws FactoryException
+     * @throws ViewNotFoundException
+     * @throws ReflectionException
      */
-    public static function loadInlineView($sViewFile, $aViewData = [], $bReturnView = false)
+    public static function loadInlineView(string $sViewFile, array $aViewData = [], bool $bReturnView = false)
     {
         /** @var View $oView */
         $oView = Factory::service('View');
-        /** @var \Nails\Admin\Service\Controller $oControllerService */
-        $oControllerService = Factory::service('Controller', \Nails\Admin\Constants::MODULE_SLUG);
+        /** @var Controller $oControllerService */
+        $oControllerService = Factory::service('Controller', Constants::MODULE_SLUG);
 
         $oController = $oControllerService->getRoute();
         $aViewPaths  = $oControllerService->getViewPathsForController($oController);
@@ -212,23 +213,24 @@ class Helper
     /**
      * Loads the admin "search" component
      *
-     * @param \stdClass $oSearchObj  An object as created by self::searchObject();
-     * @param boolean   $bReturnView Whether to return the view to the caller, or output to the browser
+     * @param stdClass $oSearchObj  An object as created by self::searchObject();
+     * @param bool     $bReturnView Whether to return the view to the caller, or output to the browser
      *
-     * @return mixed                  String when $bReturnView is true, void otherwise
+     * @return string|void          String when $bReturnView is true, void otherwise
      * @throws FactoryException
+     * @throws ViewNotFoundException
      */
-    public static function loadSearch($oSearchObj, $bReturnView = true)
+    public static function loadSearch(stdClass $oSearchObj, bool $bReturnView = true)
     {
         $aData = [
-            'searchable'     => isset($oSearchObj->searchable) ? $oSearchObj->searchable : true,
-            'sortColumns'    => isset($oSearchObj->sortColumns) ? $oSearchObj->sortColumns : [],
-            'sortOn'         => isset($oSearchObj->sortOn) ? $oSearchObj->sortOn : null,
-            'sortOrder'      => isset($oSearchObj->sortOrder) ? $oSearchObj->sortOrder : null,
-            'perPage'        => isset($oSearchObj->perPage) ? $oSearchObj->perPage : 50,
-            'keywords'       => isset($oSearchObj->keywords) ? $oSearchObj->keywords : '',
-            'checkboxFilter' => isset($oSearchObj->checkboxFilter) ? $oSearchObj->checkboxFilter : [],
-            'dropdownFilter' => isset($oSearchObj->dropdownFilter) ? $oSearchObj->dropdownFilter : [],
+            'searchable'     => $oSearchObj->searchable ?? true,
+            'sortColumns'    => $oSearchObj->sortColumns ?? [],
+            'sortOn'         => $oSearchObj->sortOn ?? null,
+            'sortOrder'      => $oSearchObj->sortOrder ?? null,
+            'perPage'        => $oSearchObj->perPage ?? 50,
+            'keywords'       => $oSearchObj->keywords ?? '',
+            'checkboxFilter' => $oSearchObj->checkboxFilter ?? [],
+            'dropdownFilter' => $oSearchObj->dropdownFilter ?? [],
         ];
 
         //  Not using self::loadInlineView() as this may be called from many contexts
@@ -242,27 +244,25 @@ class Helper
     /**
      * Creates a standard object designed for use with self::loadSearch()
      *
-     * @param boolean $bSearchable     Whether the result set is keyword searchable
-     * @param array   $aSortColumns    An array of columns to sort results by
-     * @param string  $sSortOn         The column to sort on
-     * @param string  $sSortOrder      The order to sort results in
-     * @param integer $iPerPage        The number of results to show per page
-     * @param string  $sKeywords       Keywords to apply to the search result
-     * @param array   $aCheckboxFilter An array of filters to filter the results by, presented as checkboxes
-     * @param array   $aDropdownFilter An array of filters to filter the results by, presented as a dropdown
-     *
-     * @return \stdClass
+     * @param bool   $bSearchable     Whether the result set is keyword searchable
+     * @param array  $aSortColumns    An array of columns to sort results by
+     * @param string $sSortOn         The column to sort on
+     * @param string $sSortOrder      The order to sort results in
+     * @param int    $iPerPage        The number of results to show per page
+     * @param string $sKeywords       Keywords to apply to the search result
+     * @param array  $aCheckboxFilter An array of filters to filter the results by, presented as checkboxes
+     * @param array  $aDropdownFilter An array of filters to filter the results by, presented as a dropdown
      */
     public static function searchObject(
-        $bSearchable,
-        $aSortColumns,
-        $sSortOn,
-        $sSortOrder,
-        $iPerPage,
-        $sKeywords = '',
-        $aCheckboxFilter = [],
-        $aDropdownFilter = []
-    ) {
+        bool $bSearchable,
+        array $aSortColumns,
+        string $sSortOn,
+        string $sSortOrder,
+        int $iPerPage,
+        string $sKeywords = '',
+        array $aCheckboxFilter = [],
+        array $aDropdownFilter = []
+    ): stdClass {
         return (object) [
             'searchable'     => $bSearchable,
             'sortColumns'    => $aSortColumns,
@@ -281,19 +281,16 @@ class Helper
      * Creates a standard object designed for use with self::searchObject()'s
      * $checkboxFilter and $dropdownFilter parameters
      *
-     * @param string $sColumn   The name of the column to filter on, leave blank if you do not wish to use Nails's
-     *                          automatic filtering
-     * @param string $sLabel    The label to give the filter group
-     * @param array  $aOptions  An array of options for the dropdown, either key => value pairs or a 3 element array: 0
-     *                          = label, 1 = value, 2 = default check status
+     * @param string $sColumn  The name of the column to filter on, leave blank if you do not wish to use Nails's automatic filtering
+     * @param string $sLabel   The label to give the filter group
+     * @param array  $aOptions An array of options for the dropdown, either key => value pairs or a 3 element array: 0 = label, 1 = value, 2 = default check status
      *
-     * @return \stdClass
      * @throws FactoryException
      * @deprecated
      */
-    public static function searchFilterObject($sColumn, $sLabel, $aOptions)
+    public static function searchFilterObject(string $sColumn, string $sLabel, array $aOptions): IndexFilter
     {
-        //  @todo (Pablo - 2018-04-10) - DonRemove this helper and use factories directly
+        //  @todo (Pablo - 2018-04-10) - Remove this helper and use factories directly
         /** @var IndexFilter $oFilter */
         $oFilter = Factory::factory('IndexFilter', Constants::MODULE_SLUG);
         $oFilter
@@ -303,8 +300,8 @@ class Helper
         foreach ($aOptions as $sIndex => $mOption) {
 
             if (is_array($mOption)) {
-                $sLabel   = getFromArray(0, $mOption, null);
-                $mValue   = getFromArray(1, $mOption, null);
+                $sLabel   = getFromArray(0, $mOption);
+                $mValue   = getFromArray(1, $mOption);
                 $bChecked = getFromArray(2, $mOption, false);
                 $bQuery   = getFromArray(3, $mOption, false);
             } else {
@@ -325,15 +322,14 @@ class Helper
     /**
      * Creates a standard object which is an option for self::searchFilterObject()
      *
-     * @param string  $sLabel   The label to give the option
-     * @param string  $sValue   The value to give the option (filters self::searchFilterObject's $sColumn parameter)
-     * @param boolean $bChecked Whether the value is checked by default
-     * @param bool    $bQuery   Whether the supplied value is an SQL query
+     * @param string $sLabel   The label to give the option
+     * @param string $sValue   The value to give the option (filters self::searchFilterObject's $sColumn parameter)
+     * @param bool   $bChecked Whether the value is checked by default
+     * @param bool   $bQuery   Whether the supplied value is an SQL query
      *
-     * @return \stdClass
      * @deprecated
      */
-    public static function searchFilterObjectOption($sLabel = '', $sValue = '', $bChecked = false, $bQuery = false)
+    public static function searchFilterObjectOption(string $sLabel = '', string $sValue = '', bool $bChecked = false, bool $bQuery = false): stdClass
     {
         return (object) [
             'label'   => $sLabel,
@@ -348,14 +344,14 @@ class Helper
     /**
      * Returns a value from a filter object at a specific key
      *
-     * @param \stdClass $oFilterObj The filter object to search
-     * @param integer   $iKey       The key to inspect
+     * @param stdClass $oFilterObj The filter object to search
+     * @param int      $iKey       The key to inspect
      *
-     * @return mixed                  Mixed on success, null on failure
+     * @return mixed               Mixed on success, null on failure
      */
-    public static function searchFilterGetValueAtKey($oFilterObj, $iKey)
+    public static function searchFilterGetValueAtKey(stdClass $oFilterObj, int $iKey): mixed
     {
-        return isset($oFilterObj->options[$iKey]->value) ? $oFilterObj->options[$iKey]->value : null;
+        return $oFilterObj->options[$iKey]->value ?? null;
     }
 
     // --------------------------------------------------------------------------
@@ -363,18 +359,19 @@ class Helper
     /**
      * Loads the admin "pagination" component
      *
-     * @param \stdClass $oPaginationObject An object as created by self::paginationObject();
-     * @param boolean   $bReturnView       Whether to return the view to the caller, or output to the browser
+     * @param stdClass $oPaginationObject An object as created by self::paginationObject();
+     * @param bool     $bReturnView       Whether to return the view to the caller, or output to the browser
      *
-     * @return mixed                      String when $bReturnView is true, void otherwise
+     * @return string|void                String when $bReturnView is true, void otherwise
      * @throws FactoryException
+     * @throws ViewNotFoundException
      */
-    public static function loadPagination($oPaginationObject, $bReturnView = true)
+    public static function loadPagination(stdClass $oPaginationObject, bool $bReturnView = true)
     {
         $aData = [
-            'page'      => isset($oPaginationObject->page) ? $oPaginationObject->page : null,
-            'perPage'   => isset($oPaginationObject->perPage) ? $oPaginationObject->perPage : null,
-            'totalRows' => isset($oPaginationObject->totalRows) ? $oPaginationObject->totalRows : null,
+            'page'      => $oPaginationObject->page ?? null,
+            'perPage'   => $oPaginationObject->perPage ?? null,
+            'totalRows' => $oPaginationObject->totalRows ?? null,
         ];
 
         //  Not using self::loadInlineView() as this may be called from many contexts
@@ -388,13 +385,11 @@ class Helper
     /**
      * Creates a standard object designed for use with self::loadPagination();
      *
-     * @param integer $iPage      The current page number
-     * @param integer $iPerPage   The number of results per page
-     * @param integer $iTotalRows The total number of results in the result set
-     *
-     * @return \stdClass
+     * @param int $iPage      The current page number
+     * @param int $iPerPage   The number of results per page
+     * @param int $iTotalRows The total number of results in the result set
      */
-    public static function paginationObject($iPage, $iPerPage, $iTotalRows)
+    public static function paginationObject(int $iPage, int $iPerPage, int $iTotalRows): stdClass
     {
         return (object) [
             'page'      => $iPage,
@@ -412,10 +407,9 @@ class Helper
      * @param string $sCellClass      Any classes to add to the cell
      * @param string $sCellAdditional Any additional HTML to add to the cell (after the value)
      *
-     * @return string
      * @throws FactoryException
      */
-    public static function loadCellAuto($mValue, $sCellClass = '', $sCellAdditional = '')
+    public static function loadCellAuto(mixed $mValue, string $sCellClass = '', string $sCellAdditional = ''): string
     {
         //  @todo - handle more field types
         if ($mValue instanceof Auth\Resource\User) {
@@ -441,12 +435,13 @@ class Helper
     /**
      * Load the admin "user" table cell component
      *
-     * @param mixed $mUser The user object or the User's ID/email/username
+     * @param Auth\Resource\User|int|string $mUser The user object or the User's ID/email/username
      *
-     * @return string
      * @throws FactoryException
+     * @throws ViewNotFoundException
+     * @throws ModelException
      */
-    public static function loadUserCell($mUser)
+    public static function loadUserCell(Auth\Resource\User|int|string $mUser): string
     {
         if ($mUser instanceof Auth\Resource\User) {
             $oUser = $mUser;
@@ -495,13 +490,13 @@ class Helper
     /**
      * Load the admin "date" table cell component
      *
-     * @param string $sDate   The date to render
-     * @param string $sNoData What to render if the date is invalid or empty
+     * @param string|null $sDate   The date to render
+     * @param string      $sNoData What to render if the date is invalid or empty
      *
-     * @return string
      * @throws FactoryException
+     * @throws ViewNotFoundException
      */
-    public static function loadDateCell($sDate, $sNoData = '&mdash;')
+    public static function loadDateCell(?string $sDate, string $sNoData = '&mdash;'): string
     {
         /** @var View $oView */
         $oView = Factory::service('View');
@@ -520,13 +515,13 @@ class Helper
     /**
      * Load the admin "dateTime" table cell component
      *
-     * @param string $sDateTime The dateTime to render
-     * @param string $sNoData   What to render if the datetime is invalid or empty
+     * @param string|null $sDateTime The dateTime to render
+     * @param string      $sNoData   What to render if the datetime is invalid or empty
      *
-     * @return string
      * @throws FactoryException
+     * @throws ViewNotFoundException
      */
-    public static function loadDateTimeCell($sDateTime, $sNoData = '&mdash;')
+    public static function loadDateTimeCell(?string $sDateTime, string $sNoData = '&mdash;'): string
     {
         /** @var View $oView */
         $oView = Factory::service('View');
@@ -545,13 +540,14 @@ class Helper
     /**
      * Load the admin "boolean" table cell component
      *
-     * @param string $value     The value to 'truthy' test
-     * @param string $sDateTime A datetime to show (for truthy values only)
+     * @param mixed       $value     The value to 'truthy' test
+     * @param string|null $sDateTime A datetime to show (for truthy values only)
      *
      * @return string
      * @throws FactoryException
+     * @throws ViewNotFoundException
      */
-    public static function loadBoolCell($value, $sDateTime = null)
+    public static function loadBoolCell(mixed $value, ?string $sDateTime = null): string
     {
         /** @var View $oView */
         $oView = Factory::service('View');
@@ -572,17 +568,19 @@ class Helper
      *
      * @param string[]|string $mUrl          The button's URL
      * @param string          $sLabel        The button's label
-     * @param string          $sContext      The button's context
-     * @param string          $sConfirmTitle If a confirmation is required, the title to use
-     * @param string          $sConfirmBody  If a confirmation is required, the body to use
+     * @param string|null     $sContext      The button's context
+     * @param string|null     $sConfirmTitle If a confirmation is required, the title to use
+     * @param string|null     $sConfirmBody  If a confirmation is required, the body to use
+     * @param string|null     $sTarget       The button's target attribute
      */
     public static function addHeaderButton(
-        $mUrl,
-        $sLabel,
-        $sContext = null,
-        $sConfirmTitle = null,
-        $sConfirmBody = null
-    ) {
+        array|string $mUrl,
+        string $sLabel,
+        ?string $sContext = null,
+        ?string $sConfirmTitle = null,
+        ?string $sConfirmBody = null,
+        ?string $sTarget = null
+    ): void {
         $sContext = empty($sContext) ? 'primary' : $sContext;
 
         self::$aHeaderButtons[] = [
@@ -591,6 +589,7 @@ class Helper
             'context'      => $sContext,
             'confirmTitle' => $sConfirmTitle,
             'confirmBody'  => $sConfirmBody,
+            'target'       => $sTarget,
         ];
     }
 
@@ -599,9 +598,9 @@ class Helper
     /**
      * Returns the admin header buttons
      *
-     * @return array
+     * @return array[]
      */
-    public static function getHeaderButtons()
+    public static function getHeaderButtons(): array
     {
         return self::$aHeaderButtons;
     }
@@ -616,15 +615,15 @@ class Helper
      * @param array  $aData       Data to populate the table with
      * @param bool   $bIsSortable Whether the table is sortable, or not
      *
-     * @return \Nails\Admin\Factory\Helper\DynamicTable
+     * @return DynamicTable
      * @throws FactoryException
      */
     public static function dynamicTable(
-        $sKey = '',
+        string $sKey = '',
         array $aFields = [],
         array $aData = [],
         bool $bIsSortable = true
-    ): \Nails\Admin\Factory\Helper\DynamicTable {
+    ): DynamicTable {
 
         return Factory::factory('HelperDynamicTable', Constants::MODULE_SLUG)
             ->setKey($sKey)
@@ -636,7 +635,7 @@ class Helper
     // --------------------------------------------------------------------------
 
     /**
-     * Convinience method for generating tabbed views
+     * Convenience method for generating tabbed views
      *
      * @param array  $aTabs  The tab config ['label' => '', 'content' => 'string|callable()']
      * @param string $sGroup The group name, useful if more than one tab group appears on a page
@@ -644,7 +643,7 @@ class Helper
      * @return string
      * @throws FactoryException
      */
-    public static function tabs(array $aTabs = [], $sGroup = ''): string
+    public static function tabs(array $aTabs = [], string $sGroup = ''): string
     {
         /** @var Input $oInput */
         $oInput = Factory::service('Input');

@@ -42,6 +42,7 @@ if (!empty($sPageTitle) || !empty($aHeaderButtons)) {
                     'class="' . implode(' ', $aClasses) . '"',
                     $aButton['confirmTitle'] ? 'data-title="' . $aButton['confirmTitle'] . '"' : '',
                     $aButton['confirmBody'] ? 'data-body="' . $aButton['confirmBody'] . '"' : '',
+                    $aButton['target'] ? 'target="' . $aButton['target'] . '"' : '',
                 ]);
 
                 if (is_array($aButton['url'])) {
