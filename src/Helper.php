@@ -435,13 +435,13 @@ class Helper
     /**
      * Load the admin "user" table cell component
      *
-     * @param Auth\Resource\User|int|string $mUser The user object or the User's ID/email/username
+     * @param null|Auth\Resource\User|int|string $mUser The user object or the User's ID/email/username
      *
      * @throws FactoryException
      * @throws ViewNotFoundException
      * @throws ModelException
      */
-    public static function loadUserCell(Auth\Resource\User|int|string $mUser): string
+    public static function loadUserCell(null|Auth\Resource\User|int|string $mUser): string
     {
         if ($mUser instanceof Auth\Resource\User) {
             $oUser = $mUser;
