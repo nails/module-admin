@@ -222,9 +222,6 @@ abstract class Base
             ->load('https://cdn.jsdelivr.net/gh/simontabor/jquery-toggles/css/toggles.css')
             ->load('https://cdn.jsdelivr.net/gh/simontabor/jquery-toggles/css/themes/toggles-modern.css')
 
-            //  jQuery serializeObject
-            ->load('https://cdnjs.cloudflare.com/ajax/libs/jquery-serialize-object/2.5.0/jquery.serialize-object.min.js')
-
             //  jQuery scrollTo
             ->load('https://cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.14/jquery.scrollTo.min.js')
 
