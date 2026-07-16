@@ -35,12 +35,18 @@ class DynamicTable {
         let $template = $table.find('.js-admin-dynamic-table__template');
         let $body = $table.find('.js-admin-dynamic-table__body');
         let data = $table.data('data') || [];
+        let confirmDelete = $table.data('confirm-delete') === true;
 
         $table.data('template', $template.html());
         $table.data('index', 0);
+
+        if (confirmDelete) {
+            $table.data('modal', this.adminController.getInstance('Modal').create());
+        }
+
         $body.empty();
 
-        this.bindEvents($table, $body);
+        this.bindEvents($table, $body, confirmDelete);
 
         for (let i = 0, j = data.length; i < j; i++) {
             this.add($table, $body, data[i], false);
@@ -57,9 +63,10 @@ class DynamicTable {
      * Bind events
      * @param {jQuery} $table The table DOM element
      * @param {jQuery} $body The body DOM element
+     * @param {Boolean} confirmDelete Whether to confirm deletion
      * @return {DynamicTable}
      */
-    bindEvents($table, $body) {
+    bindEvents($table, $body, confirmDelete) {
         $('.js-admin-dynamic-table__add', $table)
             .on('click', () => {
                 this.add($table, $body, {}, true);
@@ -68,7 +75,28 @@ class DynamicTable {
 
         $table
             .on('click', '.js-admin-dynamic-table__remove', (e) => {
-                this.remove($table, $(e.currentTarget).closest('tr'));
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (confirmDelete) {
+
+                    $table.data('modal')
+                        .setTitle('Are you sure?')
+                        .setBody('Remove this item?')
+                        .clearActions()
+                        .addAction('OK', ['btn-primary'], (event, modal) => {
+                            this.remove($table, $(e.currentTarget).closest('tr'));
+                            modal.hide();
+                        })
+                        .addAction('Cancel', ['btn-danger'], (event, modal) => {
+                            modal.hide();
+                        })
+                        .show();
+
+                } else {
+                    this.remove($table, $(e.currentTarget).closest('tr'));
+                }
+
                 return false;
             });
 
