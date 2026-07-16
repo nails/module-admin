@@ -81,8 +81,8 @@ class DynamicTable {
                 if (confirmDelete) {
 
                     $table.data('modal')
-                        .setTitle('Are you sure?')
-                        .setBody('Remove this item?')
+                        .setTitle($table.data('confirm-delete-title') || 'Are you sure?')
+                        .setBody($table.data('confirm-delete-body') || 'Remove this item?')
                         .clearActions()
                         .addAction('OK', ['btn-primary'], (event, modal) => {
                             this.remove($table, $(e.currentTarget).closest('tr'));
