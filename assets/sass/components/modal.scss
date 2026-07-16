@@ -93,5 +93,12 @@
         background-color: #f9f9f9;
         box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
         z-index: 5;
+
+        &.btn {
+            margin-right: 5px;
+            &:last-child {
+                margin-right: 0;
+            }
+        }
     }
 }
