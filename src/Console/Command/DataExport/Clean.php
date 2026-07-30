@@ -2,10 +2,12 @@
 
 namespace Nails\Admin\Console\Command\DataExport;
 
+use DateTime;
 use Nails\Admin\Constants;
 use Nails\Admin\Model\Export;
-use Nails\Admin\Service\DataExport;
 use Nails\Cdn\Service\Cdn;
+use Nails\Common\Exception\FactoryException;
+use Nails\Common\Exception\ModelException;
 use Nails\Common\Exception\NailsException;
 use Nails\Common\Service\Database;
 use Nails\Console\Command\Base;
@@ -39,7 +41,8 @@ class Clean extends Base
      * @param InputInterface  $oInput  The Input Interface provided by Symfony
      * @param OutputInterface $oOutput The Output Interface provided by Symfony
      *
-     * @return int
+     * @throws FactoryException
+     * @throws ModelException
      */
     protected function execute(InputInterface $oInput, OutputInterface $oOutput): int
     {
@@ -49,10 +52,8 @@ class Clean extends Base
 
         /** @var Database $oDb */
         $oDb = Factory::service('Database');
-        /** @var \DateTime $oNow */
+        /** @var DateTime $oNow */
         $oNow = Factory::factory('DateTime');
-        /** @var DataExport $oExportService */
-        $oExportService = Factory::service('DataExport', Constants::MODULE_SLUG);
         /** @var Export $oModel */
         $oModel = Factory::model('Export', Constants::MODULE_SLUG);
         /** @var Cdn $oCdn */
