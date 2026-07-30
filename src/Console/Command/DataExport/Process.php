@@ -2,9 +2,11 @@
 
 namespace Nails\Admin\Console\Command\DataExport;
 
+use Cron\CronExpression;
 use DateTime;
 use Nails\Admin\Admin\Controller\Utilities;
 use Nails\Admin\Constants;
+use Nails\Admin\Exception\DataExport\ScheduleException;
 use Nails\Admin\Factory\Email\DataExport\Fail;
 use Nails\Admin\Factory\Email\DataExport\Success;
 use Nails\Admin\Model\Export;
@@ -28,7 +30,7 @@ class Process extends Base
     {
         $this
             ->setName('admin:dataexport:process')
-            ->setDescription('Processes any pending data export requests');
+            ->setDescription('Processes any pending or scheduled data export requests');
     }
 
     // --------------------------------------------------------------------------
@@ -50,7 +52,9 @@ class Process extends Base
         try {
 
             $this->banner('Data Export: Process');
-            $this->process();
+            $this
+                ->enqueueScheduled()
+                ->process();
 
         } catch (\Exception $e) {
             return $this->abort(
@@ -76,9 +80,109 @@ class Process extends Base
 
     // --------------------------------------------------------------------------
 
-    protected function process()
+    protected function enqueueScheduled(): self
     {
-        $this->oOutput->writeln('Generating exports');
+        $this->oOutput->writeln('<comment>Enqueuing scheduled exports</comment>');
+
+        /** @var DataExport $service */
+        $service = Factory::service('DataExport', Constants::MODULE_SLUG);
+        /** @var DateTime $now */
+        $now = Factory::factory('DateTime');
+        /** @var Export $exportModel */
+        $exportModel = Factory::model('Export', Constants::MODULE_SLUG);
+
+        $numEnqueued = 0;
+
+        foreach ($service->getAllScheduled() as $scheduled) {
+
+            $cronExpression = $scheduled->getCronExpression();
+            $source         = $service->getSourceBySlug($scheduled->getSource());
+            $format         = $service->getFormatBySlug($scheduled->getFormat());
+            $options        = $scheduled->getOptions();
+            $users          = $scheduled->getUsers();
+
+            try {
+
+                if (empty($cronExpression)) {
+                    throw new ScheduleException('Cron expression is empty');
+                }
+
+                $oExpression = new CronExpression($cronExpression);
+                if (!$oExpression->isDue($now)) {
+                    continue;
+
+                }
+
+                $this->oOutput->writeln(
+                    sprintf(
+                        'Scheduled export <info>%s</info> is due to run',
+                        $scheduled::class
+                    )
+                );
+
+                if (empty($source)) {
+                    throw new ScheduleException(sprintf(
+                        '"%s" is not a valid DataExport source',
+                        $scheduled->getSource()
+                    ));
+
+                } elseif (empty($format)) {
+                    throw new ScheduleException(sprintf(
+                        '"%s" is not a valid DataExport format',
+                        $scheduled->getFormat()
+                    ));
+
+                } elseif (empty($users)) {
+                    throw new ScheduleException('No users to receive the report');
+                }
+
+
+                $this->oOutput->writeln(sprintf('↳ Source:  <info>%s</info>', $source->slug));
+                $this->oOutput->writeln(sprintf('↳ Format:  <info>%s</info>', $format->slug));
+                $this->oOutput->writeln(sprintf('↳ Options: <info>%s</info>', json_encode($options)));
+                $this->oOutput->writeln(sprintf('↳ Users  : <info>%s</info>', json_encode(array_column($users, 'id'))));
+
+                foreach ($users as $user) {
+                    $result = $exportModel->create([
+                        'source'     => $source->slug,
+                        'options'    => json_encode($options),
+                        'format'     => $format->slug,
+                        'created_by' => $user->id,
+                    ]);
+
+                    $this->oOutput->writeln(
+                        $result
+                            ? sprintf('↳ Queued successfully for user <info>#%s</info>', $user->id)
+                            : sprintf('↳ <error>Failed to queue for user #%s, %s</error>', $user->id, $exportModel->lastError())
+                    );
+
+                    if ($result) {
+                        $numEnqueued++;
+                    }
+                }
+
+            } catch (\Throwable $e) {
+                $this->oOutput->writeln(
+                    sprintf(
+                        '↳ <error>Error: %s</error>',
+                        $e->getMessage()
+                    )
+                );
+            }
+        }
+
+        $this->oOutput->writeln(sprintf('Queued <info>%s</info> exports', $numEnqueued));
+        $this->oOutput->writeln('');
+
+        return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    protected function process(): self
+    {
+
+        $this->oOutput->writeln('<comment>Generating exports</comment>');
 
         /** @var DateTime $oNow */
         $oNow = Factory::factory('DateTime');
@@ -159,6 +263,8 @@ class Process extends Base
         } else {
             $this->oOutput->writeln('Nothing to do');
         }
+
+        return $this;
     }
 
     // --------------------------------------------------------------------------

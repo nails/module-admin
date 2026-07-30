@@ -72,6 +72,11 @@ class DataExport
     protected array $aFormats = [];
 
     /**
+     * @var Interfaces\DataExport\Schedule[]
+     */
+    protected array $aScheduled = [];
+
+    /**
      * Any generated cache files
      *
      * @var array
@@ -87,8 +92,9 @@ class DataExport
      */
     public function __construct()
     {
-        $this->aSources = [];
-        $this->aFormats = [];
+        $this->aSources   = [];
+        $this->aFormats   = [];
+        $this->aScheduled = [];
 
         foreach (Components::available() as $oComponent) {
 
@@ -120,6 +126,14 @@ class DataExport
                     'description' => $oInstance->getDescription(),
                     'instance'    => $oInstance,
                 ]);
+            }
+
+            $aClasses = $oComponent
+                ->findClasses('Admin\\DataExport\\Schedule')
+                ->whichImplement(Interfaces\DataExport\Schedule::class);
+
+            foreach ($aClasses as $sClass) {
+                $this->aScheduled[] = new $sClass();
             }
         }
 
@@ -214,6 +228,16 @@ class DataExport
         }
 
         return null;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * @return Interfaces\DataExport\Schedule[]
+     */
+    public function getAllScheduled(): array
+    {
+        return $this->aScheduled;
     }
 
     // --------------------------------------------------------------------------
