@@ -2,13 +2,19 @@
 
 namespace Nails\Admin\Factory\Email\DataExport;
 
-use Nails\Email\Factory\Email;
+use Nails\Email\Interfaces;
+use Nails\Email\Traits;
 
-class Success extends Email
+class Success implements Interfaces\Email
 {
-    protected $sType = 'data_export';
+    use Traits\Email;
 
     // --------------------------------------------------------------------------
+
+    public function __construct()
+    {
+        $this->type('data_export');
+    }
 
     /**
      * Returns test data to use when sending test emails
@@ -17,6 +23,16 @@ class Success extends Email
      */
     public function getTestData(): array
     {
-        return [];
+        return [
+            'login_url' => 'https://www.example.com',
+            'source'    => [
+                'label'       => 'The source\'s label',
+                'description' => 'The source\'s description',
+            ],
+            'format'    => [
+                'label'       => 'The format\'s label',
+                'description' => 'The format\'s description',
+            ],
+        ];
     }
 }

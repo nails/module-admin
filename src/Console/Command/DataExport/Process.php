@@ -11,6 +11,8 @@ use Nails\Admin\Factory\Email\DataExport\Fail;
 use Nails\Admin\Factory\Email\DataExport\Success;
 use Nails\Admin\Model\Export;
 use Nails\Admin\Service\DataExport;
+use Nails\Common\Exception\FactoryException;
+use Nails\Common\Exception\ModelException;
 use Nails\Console\Command\Base;
 use Nails\Factory;
 use Symfony\Component\Console\Input\InputInterface;
@@ -180,6 +182,10 @@ class Process extends Base
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @throws FactoryException
+     * @throws ModelException
+     */
     protected function process(): self
     {
 
@@ -192,7 +198,8 @@ class Process extends Base
         /** @var DataExport $oService */
         $oService = Factory::service('DataExport', Constants::MODULE_SLUG);
         /** @var Export $oModel */
-        $oModel    = Factory::model('Export', Constants::MODULE_SLUG);
+        $oModel = Factory::model('Export', Constants::MODULE_SLUG);
+        /** @var \Nails\Admin\Resource\Export[] $aRequests */
         $aRequests = $oModel->getAll(['where' => [['status', $oModel::STATUS_PENDING]]]);
 
         if (!empty($aRequests)) {
@@ -223,9 +230,15 @@ class Process extends Base
 
             /** @var Success $oSuccessEmail */
             $oSuccessEmail = Factory::factory('EmailDataExportSuccess', Constants::MODULE_SLUG);
-            $oSuccessEmail->data(['login_url' => Utilities::url('export')]);
             /** @var Fail $oFailEmail */
             $oFailEmail = Factory::factory('EmailDataExportFail', Constants::MODULE_SLUG);
+
+            /** @var Success|Fail $email */
+            foreach ([$oSuccessEmail, $oFailEmail] as $email) {
+                $email->data([
+                    'login_url' => Utilities::url('export'),
+                ]);
+            }
 
             foreach ($aGroupedRequests as $oRequest) {
                 try {
@@ -243,17 +256,25 @@ class Process extends Base
                     //  Send emails in a different try/catch block so if it fails it doesn't mark the report as failed
                     $this->oOutput->writeln('Sending emails');
 
-                    try {
+                    foreach ($oRequest->recipients as $iRecipient) {
+                        $this->oOutput->writeln('Sending email to user #<info>' . $iRecipient . '</info>');
+                        try {
 
-                        foreach ($oRequest->recipients as $iRecipient) {
-                            $this->oOutput->writeln('Sending email to user #<info>' . $iRecipient . '</info>');
                             $oSuccessEmail
                                 ->to($iRecipient)
+                                ->data('source', [
+                                    'label'       => $oService->getSourceBySlug($oRequest->source)?->label,
+                                    'description' => $oService->getSourceBySlug($oRequest->source)?->description,
+                                ])
+                                ->data('format', [
+                                    'label'       => $oService->getFormatBySlug($oRequest->format)?->label,
+                                    'description' => $oService->getFormatBySlug($oRequest->format)?->description,
+                                ])
                                 ->send();
-                        }
 
-                    } catch (\Exception $e) {
-                        $this->oOutput->writeln('<error>Email failed to send: ' . $e->getMessage() . '</error>');
+                        } catch (\Throwable $e) {
+                            $this->oOutput->writeln('<error>Email failed to send: ' . $e->getMessage() . '</error>');
+                        }
                     }
 
                 } catch (\Exception $e) {
@@ -289,9 +310,7 @@ class Process extends Base
         $oModel->setBatchStatus($oRequest->ids, $oModel::STATUS_FAILED, $oException->getMessage());
 
         $oEmail
-            ->data([
-                'error' => $oException->getMessage(),
-            ]);
+            ->data('error', $oException->getMessage());
 
         foreach ($oRequest->recipients as $iRecipient) {
             $oEmail->to($iRecipient)->send();
