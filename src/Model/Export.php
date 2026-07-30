@@ -41,6 +41,12 @@ class Export extends Base
     const RESOURCE_PROVIDER = Constants::MODULE_SLUG;
 
     /**
+     * The various methods
+     */
+    const METHOD_MANUAL   = 'MANUAL';
+    const METHOD_SCHEDULE = 'SCHEDULE';
+
+    /**
      * The various statuses
      */
     const STATUS_PENDING  = 'PENDING';

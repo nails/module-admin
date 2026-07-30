@@ -45,5 +45,11 @@ class Migration15 implements Interfaces\Database\Migration
                 ADD FOREIGN KEY (`user_id`) REFERENCES `{{NAILS_DB_PREFIX}}user` (`id`) ON DELETE CASCADE;
             EOT
         );
+        $this->query(
+            <<<EOT
+            ALTER TABLE `{{NAILS_DB_PREFIX}}admin_export`
+                ADD COLUMN `method` enum('MANUAL','SCHEDULE') NOT NULL DEFAULT 'MANUAL' AFTER `user_id`;
+            EOT
+        );
     }
 }

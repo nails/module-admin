@@ -2,8 +2,11 @@
 
 namespace Nails\Admin\Resource;
 
+use Nails\Admin\Enum\DataExport\Method;
 use Nails\Auth\Resource\User;
+use Nails\Common\Model\Base;
 use Nails\Common\Resource\Entity;
+use stdClass;
 
 /**
  * Class Export
@@ -14,6 +17,7 @@ class Export extends Entity
 {
     public ?User   $user;
     public ?int    $user_id;
+    public ?string $method;
     public ?string $source;
     public ?string $options;
     public ?string $format;

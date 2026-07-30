@@ -130,6 +130,7 @@ class Export extends Api\Controller\CrudController
 
         return (object) [
             'id'       => $oObj->id,
+            'method'   => $oObj->method,
             'source'   => $source ? [
                 'slug'        => $source->slug,
                 'label'       => $source->label,

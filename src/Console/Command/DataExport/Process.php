@@ -136,7 +136,6 @@ class Process extends Base
                     throw new ScheduleException('No users to receive the report');
                 }
 
-
                 $this->oOutput->writeln(sprintf('↳ Source:  <info>%s</info>', $source->slug));
                 $this->oOutput->writeln(sprintf('↳ Format:  <info>%s</info>', $format->slug));
                 $this->oOutput->writeln(sprintf('↳ Options: <info>%s</info>', json_encode($options)));
@@ -144,10 +143,11 @@ class Process extends Base
 
                 foreach ($users as $user) {
                     $result = $exportModel->create([
-                        'source'     => $source->slug,
-                        'options'    => json_encode($options),
-                        'format'     => $format->slug,
                         'user_id' => $user->id,
+                        'method'  => $exportModel::METHOD_SCHEDULE,
+                        'source'  => $source->slug,
+                        'options' => json_encode($options),
+                        'format'  => $format->slug,
                     ]);
 
                     $this->oOutput->writeln(
