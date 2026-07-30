@@ -147,7 +147,7 @@ class Process extends Base
                         'source'     => $source->slug,
                         'options'    => json_encode($options),
                         'format'     => $format->slug,
-                        'created_by' => $user->id,
+                        'user_id' => $user->id,
                     ]);
 
                     $this->oOutput->writeln(
@@ -207,14 +207,14 @@ class Process extends Base
                 $aHash = [$oRequest->source, $oRequest->format, $oRequest->options];
                 $sHash = md5(json_encode($aHash));
                 if (array_key_exists($sHash, $aGroupedRequests)) {
-                    $aGroupedRequests[$sHash]->recipients[] = $oRequest->created_by;
+                    $aGroupedRequests[$sHash]->recipients[] = $oRequest->user_id;
                     $aGroupedRequests[$sHash]->ids[]        = $oRequest->id;
                 } else {
                     $aGroupedRequests[$sHash] = (object) [
                         'source'     => $oRequest->source,
                         'format'     => $oRequest->format,
                         'options'    => json_decode($oRequest->options, JSON_OBJECT_AS_ARRAY),
-                        'recipients' => [$oRequest->created_by],
+                        'recipients' => [$oRequest->user_id],
                         'ids'        => [$oRequest->id],
                     ];
                 }

@@ -2,6 +2,7 @@
 
 namespace Nails\Admin\Resource;
 
+use Nails\Auth\Resource\User;
 use Nails\Common\Resource\Entity;
 
 /**
@@ -11,6 +12,8 @@ use Nails\Common\Resource\Entity;
  */
 class Export extends Entity
 {
+    public ?User   $user;
+    public ?int    $user_id;
     public ?string $source;
     public ?string $options;
     public ?string $format;

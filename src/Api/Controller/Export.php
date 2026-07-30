@@ -67,8 +67,8 @@ class Export extends Api\Controller\CrudController
         return array_merge(
             parent::getLookupData($sMode, $aData),
             [
-                new Expand('created_by'),
-                new Where('created_by', activeUser('id')),
+                new Expand('user'),
+                new Where('user_id', activeUser('id')),
                 new Sort('created', Sort::DESC),
             ]
         );
@@ -129,31 +129,31 @@ class Export extends Api\Controller\CrudController
         $format = $this->exportService->getFormatBySlug($oObj->format);
 
         return (object) [
-            'id'         => $oObj->id,
-            'source'     => $source ? [
+            'id'       => $oObj->id,
+            'source'   => $source ? [
                 'slug'        => $source->slug,
                 'label'       => $source->label,
                 'description' => $source->description,
             ] : null,
-            'options'    => json_decode($oObj->options),
-            'format'     => $format ? [
+            'options'  => json_decode($oObj->options),
+            'format'   => $format ? [
                 'slug'        => $format->slug,
                 'label'       => $format->label,
                 'description' => $format->description,
             ] : null,
-            'status'     => $oObj->status,
-            'error'      => $oObj->error,
-            'download'   => $oObj->download_id ? [
+            'status'   => $oObj->status,
+            'error'    => $oObj->error,
+            'download' => $oObj->download_id ? [
                 'id'  => $oObj->download_id,
                 'url' => cdnServe($oObj->download_id, true),
             ] : null,
-            'created'    => $oObj->created,
-            'created_by' => $oObj->created_by ? [
-                'id'    => $oObj->created_by->id,
-                'name'  => $oObj->created_by->name,
-                'email' => $oObj->created_by->email,
+            'created'  => $oObj->created,
+            'user'     => $oObj->user ? [
+                'id'    => $oObj->user->id,
+                'name'  => $oObj->user->name,
+                'email' => $oObj->user->email,
             ] : null,
-            'modified'   => $oObj->modified,
+            'modified' => $oObj->modified,
         ];
     }
 }

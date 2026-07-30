@@ -57,7 +57,7 @@ class Export extends Base
     {
         parent::__construct();
         $this
-            ->hasOne('created_by', 'User', \Nails\Auth\Constants::MODULE_SLUG, 'created_by');
+            ->hasOne('user', 'User', \Nails\Auth\Constants::MODULE_SLUG);
     }
 
     // --------------------------------------------------------------------------
