@@ -7,12 +7,10 @@
 
 namespace Nails\Admin\Database\Migration;
 
-use Nails\Admin\Admin\Permission;
-use Nails\Admin\Constants;
 use Nails\Admin\Service\DataExport;
 use Nails\Common\Traits;
 use Nails\Common\Interfaces;
-use Nails\Factory;
+use Nails\Config;
 
 class Migration16 implements Interfaces\Database\Migration
 {
@@ -34,9 +32,7 @@ class Migration16 implements Interfaces\Database\Migration
         );
 
         //  Set according to default retention rules
-        /** @var DataExport $service */
-        $service = Factory::service('DataExport', Constants::MODULE_SLUG);
-        $ttl     = $service->getRetentionPeriod();
+        $ttl = Config::get('ADMIN_DATA_EXPORT_RETENTION', DataExport::RETENTION_PERIOD);
 
         $this->query(
             <<<EOT
