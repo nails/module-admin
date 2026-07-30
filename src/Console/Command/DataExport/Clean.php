@@ -64,54 +64,44 @@ class Clean extends Base
 
             $this->banner('Data Export: Clean');
 
-            $iRetention = $oExportService->getRetentionPeriod();
-            if ($iRetention) {
+            $oOutput->writeln('Time now is <comment>' . $oNow->format('Y-m-d H:i:s') . '</comment>');
 
-                $oOutput->writeln('Retention policy: <info>' . $iRetention . ' seconds</info>');
-                $oOutput->writeln('Time now is <comment>' . $oNow->format('Y-m-d H:i:s') . '</comment>');
-                $oNow->sub(new \DateInterval('PT' . $iRetention . 'S'));
-                $oOutput->writeln('Cleaning items older than <comment>' . $oNow->format('Y-m-d H:i:s') . '</comment>');
+            $aToClean = $oModel->getAll([
+                'where' => [
+                    ['expires <', $oNow->format('Y-m-d H:i:s')],
+                ],
+            ]);
 
-                $aToClean = $oModel->getAll([
-                    'where' => [
-                        [$oModel->getColumnModified() . ' <', $oNow->format('Y-m-d H:i:s')],
-                    ],
-                ]);
+            if (!empty($aToClean)) {
 
-                if (!empty($aToClean)) {
+                $oOutput->writeln('Cleaning <info>' . count($aToClean) . '</info> items');
+                foreach ($aToClean as $oExport) {
+                    try {
 
-                    $oOutput->writeln('Cleaning <info>' . count($aToClean) . '</info> items');
-                    foreach ($aToClean as $oExport) {
-                        try {
+                        $oDb->transaction()->start();
+                        $oOutput->write('Cleaning export <info>#' . $oExport->id . '</info>... ');
 
-                            $oDb->transaction()->start();
-                            $oOutput->write('Cleaning export <info>#' . $oExport->id . '</info>... ');
+                        $oModel->delete($oExport->id);
 
-                            $oModel->delete($oExport->id);
-
-                            if (!empty($oExport->download_id)) {
-                                if (!$oCdn->objectDestroy($oExport->download_id)) {
-                                    throw new NailsException(
-                                        'Failed to delete object. ' . $oCdn->lastError()
-                                    );
-                                }
+                        if (!empty($oExport->download_id)) {
+                            if (!$oCdn->objectDestroy($oExport->download_id)) {
+                                throw new NailsException(
+                                    'Failed to delete object. ' . $oCdn->lastError()
+                                );
                             }
-
-                            $oDb->transaction()->commit();
-                            $oOutput->writeln('<info>done</info>');
-
-                        } catch (\Exception $e) {
-                            $oDb->transaction()->rollback();
-                            $oOutput->writeln('<error>' . $e->getMessage() . '</error>');
                         }
-                    }
 
-                } else {
-                    $oOutput->writeln('Nothing to clean');
+                        $oDb->transaction()->commit();
+                        $oOutput->writeln('<info>done</info>');
+
+                    } catch (\Exception $e) {
+                        $oDb->transaction()->rollback();
+                        $oOutput->writeln('<error>' . $e->getMessage() . '</error>');
+                    }
                 }
 
             } else {
-                $oOutput->writeln('Data Export cleanup disabled');
+                $oOutput->writeln('Nothing to clean');
             }
 
         } catch (ConsoleException $e) {

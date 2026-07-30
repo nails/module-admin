@@ -23,4 +23,6 @@ interface Schedule
      * @return User[]
      */
     public function getUsers(): array;
+
+    public function getTTL(): int;
 }

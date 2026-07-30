@@ -123,15 +123,6 @@ use Nails\Admin\Resource\Export;
     <div id="export-recent-container" class="hidden">
         <hr>
         <h2>Recent exports</h2>
-        <?php
-        if ($iRetentionPeriod) {
-            ?>
-            <p class="alert alert-info">
-                Reports are automatically removed after <?=floor($iRetentionPeriod / 60)?> minutes.
-            </p>
-            <?php
-        }
-        ?>
         <table class="table table-striped table-hover table-bordered table-responsive">
             <thead class="table-dark">
                 <tr>
@@ -140,6 +131,7 @@ use Nails\Admin\Resource\Export;
                     <th class="export-format">Format</th>
                     <th class="export-status">Status</th>
                     <th class="export-requested">Requested</th>
+                    <th class="export-expires">Expires</th>
                     <th class="export-generated">Generated</th>
                     <th class="export-actions actions">Actions</th>
                 </tr>

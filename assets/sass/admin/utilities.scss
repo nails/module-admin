@@ -33,8 +33,9 @@
 
         th, td {
             &.export-format,
-            &.export-generated,
-            &.export-requested {
+            &.export-requested,
+            &.export-expires,
+            &.export-generated {
                 text-align: center;
             }
         }

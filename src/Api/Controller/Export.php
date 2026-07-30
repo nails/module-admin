@@ -2,6 +2,9 @@
 
 namespace Nails\Admin\Api\Controller;
 
+use DateInterval;
+use DateMalformedIntervalStringException;
+use DateTime;
 use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Service\DataExport;
@@ -62,13 +65,20 @@ class Export extends Api\Controller\CrudController
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @throws FactoryException
+     */
     protected function getLookupData(string $sMode, array $aData): array
     {
+        /** @var DateTime $now */
+        $now = Factory::factory('DateTime');
+
         return array_merge(
             parent::getLookupData($sMode, $aData),
             [
                 new Expand('user'),
                 new Where('user_id', activeUser('id')),
+                new Where('expires >', $now->format('Y-m-d H:i:s')),
                 new Sort('created', Sort::DESC),
             ]
         );
@@ -76,12 +86,25 @@ class Export extends Api\Controller\CrudController
 
     // --------------------------------------------------------------------------
 
+    /**
+     * @throws ValidationException
+     * @throws FactoryException
+     * @throws DateMalformedIntervalStringException
+     */
     protected function validateUserInput($aData, ?Resource\Entity $oItem = null)
     {
+        /** @var DataExport $service */
+        $service = Factory::service('DataExport', Constants::MODULE_SLUG);
+        /** @var DateTime $expires */
+        $expires = Factory::factory('DateTime');
+        $expires->add(new DateInterval('PT' . $service->getRetentionPeriod() . 'S'));
+
         $out = [
+            'user_id' => activeUser('id'),
             'format'  => $aData['format'] ?? null,
             'source'  => $aData['source'] ?? null,
             'options' => $aData['options'] ?? '{}', // Expects a JSON string
+            'expires' => $expires->format('Y-m-d H:i:s'),
         ];
 
         /** @var FormValidation $formValidation */
@@ -148,6 +171,7 @@ class Export extends Api\Controller\CrudController
                 'id'  => $oObj->download_id,
                 'url' => cdnServe($oObj->download_id, true),
             ] : null,
+            'expires'  => $oObj->expires,
             'created'  => $oObj->created,
             'user'     => $oObj->user ? [
                 'id'    => $oObj->user->id,

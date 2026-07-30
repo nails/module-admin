@@ -107,8 +107,8 @@ class Process extends Base
                     throw new ScheduleException('Cron expression is empty');
                 }
 
-                $oExpression = new CronExpression($cronExpression);
-                if (!$oExpression->isDue($now)) {
+                $expression = new CronExpression($cronExpression);
+                if (!$expression->isDue($now)) {
                     continue;
 
                 }
@@ -148,6 +148,7 @@ class Process extends Base
                         'source'  => $source->slug,
                         'options' => json_encode($options),
                         'format'  => $format->slug,
+                        'expires' => (clone $now)->add(new \DateInterval('PT' . $scheduled->getTTL() . 'S'))->format('Y-m-d H:i:s'),
                     ]);
 
                     $this->oOutput->writeln(

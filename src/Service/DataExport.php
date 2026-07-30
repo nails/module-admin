@@ -355,7 +355,7 @@ class DataExport
     // --------------------------------------------------------------------------
 
     /**
-     * Returns how long the expiring URL for a generated report should be, in seconds
+     * Returns how long generated reports should be retained, in seconds
      *
      * @return int
      */

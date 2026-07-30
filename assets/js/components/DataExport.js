@@ -240,6 +240,10 @@ class DataExport {
             'value': item.created.formatted
         }));
         tr.appendChild(this.createCell({
+            'class': 'export-expires',
+            'value': item.expires.formatted
+        }));
+        tr.appendChild(this.createCell({
             'class': 'export-generated',
             'value': this.getGeneratedCellHtml(item)
         }));
