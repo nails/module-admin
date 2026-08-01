@@ -38,7 +38,7 @@
         "vue-sweetalert2": "^5.0",
         "webpack": "^5.70",
         "webpack-cli": "^7.0",
-        "webpack-dev-server": "^5.2"
+        "webpack-dev-server": "^6.0"
     },
     "devDependencies": {
         "@babel/core": "^7.12",
