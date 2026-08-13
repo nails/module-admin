@@ -9,6 +9,11 @@
 // fieldset > legend        Header band; spans the full width of the card
 // fieldset fieldset        A nested group; inset so it reads as part of its
 //                          parent rather than as a card of its own
+// .fieldset--collapsible   A card whose contents fold away; see Collapsible
+// .fieldset--collapsed     …currently folded away
+// .fieldset__toggle        The button filling the band, added by the JS
+// .fieldset__toggle-label  The legend's original contents, inside that button
+// .fieldset__toggle-chevron  The affordance, at the far end of the band
 //
 // The legend fills the width of the card rather than straddling the top border
 // the way a browser default legend does. Two things make that work, and both
@@ -57,6 +62,17 @@ $fieldset-content-margin-x: $fieldset-legend-padding-x;
 
 //  Headings stick below the fixed topbar; see layouts/_topbar.scss
 $fieldset-heading-sticky-top: 62px;
+
+//  Collapsible — the band becomes a button, so it needs the states a button has
+$fieldset-toggle-bg-hover: $light-slate;
+$fieldset-toggle-bg-active: $soft-slate;
+$fieldset-toggle-ring-width: 3px;
+$fieldset-toggle-ring: rgba($slate, 0.35);
+$fieldset-toggle-chevron-color: $slate;
+$fieldset-toggle-chevron-size: 0.75rem;
+$fieldset-toggle-transition: background-color 0.15s ease-in-out,
+box-shadow 0.15s ease-in-out;
+$fieldset-toggle-chevron-transition: transform 0.15s ease-in-out;
 
 // Base
 // ----
@@ -131,5 +147,106 @@ fieldset {
         position: sticky;
         top: $fieldset-heading-sticky-top;
         margin: 0;
+    }
+}
+
+// Collapsible
+// -----------
+// Opt-in, and entirely the work of the CollapsibleFieldsets plugin
+// (assets/js/components/admin-ui/CollapsibleFieldsets.js): it marks the card,
+// moves the legend's contents into a button and adds the chevron. A fieldset
+// which the plugin never reaches keeps the styles above and stays open, which
+// is the point — nothing here hides content the script cannot bring back.
+//
+// The whole band is the hit area rather than just the chevron, so the button
+// takes over the legend's padding: the legend gives its own up, and everything
+// else about the band the button inherits.
+//
+// Selectors are child-scoped throughout. Fieldsets nest, and a collapsible
+// parent has no business styling — or hiding half of — a child's band.
+fieldset.fieldset--collapsible {
+
+    > legend {
+        padding: 0; //  Passed to the button, so its hit area fills the band
+    }
+
+    > legend > .fieldset__toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: $fieldset-legend-padding-x;
+        width: 100%;
+        margin: 0;
+        padding: $fieldset-legend-padding-y $fieldset-legend-padding-x;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        letter-spacing: inherit;
+        text-align: left;
+        text-transform: inherit;
+        cursor: pointer;
+        appearance: none;
+        transition: $fieldset-toggle-transition;
+
+        &:hover {
+            background-color: $fieldset-toggle-bg-hover;
+        }
+
+        &:active {
+            background-color: $fieldset-toggle-bg-active;
+        }
+
+        //  Declared last so the ring beats the pressed state. `:focus-visible`
+        //  keeps it off mouse clicks, matching how the buttons behave.
+        &:focus {
+            outline: 0;
+        }
+
+        &:focus-visible {
+            outline: 0;
+            //  Inset: the card clips its overflow, so an outset ring would
+            //  lose the two edges which sit against the border
+            box-shadow: inset 0 0 0 $fieldset-toggle-ring-width $fieldset-toggle-ring;
+        }
+    }
+
+    //  Points down at the content it reveals, and turns to point back at the
+    //  band once that content is on screen
+    > legend > .fieldset__toggle > .fieldset__toggle-chevron {
+        flex-shrink: 0;
+        color: $fieldset-toggle-chevron-color;
+        font-size: $fieldset-toggle-chevron-size;
+        transition: $fieldset-toggle-chevron-transition;
+    }
+
+    &:not(.fieldset--collapsed) > legend > .fieldset__toggle > .fieldset__toggle-chevron {
+        transform: rotate(180deg);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        > legend > .fieldset__toggle,
+        > legend > .fieldset__toggle > .fieldset__toggle-chevron {
+            transition: none;
+        }
+    }
+
+    // States
+    // ------
+    //  Collapsed, the band is the whole card: it gives up the border which
+    //  separated it from the content, rounds off its bottom corners to match
+    //  the card's, and drops the gap the `:has()` rule above opens beneath it
+    //  for loose content — there is no content left below to hold off.
+    &.fieldset--collapsed {
+
+        > *:not(legend) {
+            display: none;
+        }
+
+        > legend {
+            margin-bottom: 0;
+            border-bottom: 0;
+            border-radius: $fieldset-radius;
+        }
     }
 }

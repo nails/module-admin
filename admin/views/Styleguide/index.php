@@ -310,6 +310,31 @@
                     </p>
                 </fieldset>
             </fieldset>
+            <p>
+                A fieldset opts into being collapsible with a <code>data-collapse</code>
+                attribute; its value sets the initial state. A fieldset containing a field
+                error is always opened, whatever the attribute asks for.
+            </p>
+            <fieldset data-collapse="open">
+                <legend>Collapsible, initially open</legend>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+            </fieldset>
+            <fieldset data-collapse="closed">
+                <legend>Collapsible, initially closed</legend>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+            </fieldset>
+            <fieldset data-collapse="closed">
+                <legend>Collapsible, contains errors</legend>
+                <p class="alert alert-danger">
+                    This fieldset should be open by default, despite requesting closed state.
+                </p>
+            </fieldset>
         </div>
     </section>
     <!-- /Fieldsets -->
