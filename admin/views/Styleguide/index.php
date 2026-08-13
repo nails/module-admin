@@ -193,8 +193,8 @@
             Tables
         </div>
         <div class="body">
-            <table>
-                <thead>
+            <table class="table table-striped">
+                <thead class="table-dark">
                     <tr>
                         <th>Column 1</th>
                         <th>Column 2</th>
@@ -236,8 +236,8 @@
                     Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                     tempor incididunt ut labore et dolore magna aliqua.
                 </p>
-                <table>
-                    <thead>
+                <table class="table table-striped">
+                    <thead class="table-dark">
                         <tr>
                             <th>Column 1</th>
                             <th>Column 2</th>
@@ -280,8 +280,8 @@
                         Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                         tempor incididunt ut labore et dolore magna aliqua.
                     </p>
-                    <table>
-                        <thead>
+                    <table class="table table-striped">
+                        <thead class="table-dark">
                             <tr>
                                 <th>Column 1</th>
                                 <th>Column 2</th>
