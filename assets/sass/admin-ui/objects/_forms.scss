@@ -47,7 +47,7 @@ div.field {
         &.label {
             display: block;
             float: left;
-            width: 130px;
+            width: 220px;
             font-weight: bold;
             margin-right: 20px;
             text-align: right;
@@ -64,7 +64,7 @@ div.field {
         &.input {
             border: 1px dashed transparent; //  Don't ask me why this is required, but it is. - Pablo.
             display: block;
-            margin-left: 149px;
+            margin-left: 240px;
             position: relative;
 
             &.is-disabled {
@@ -115,7 +115,7 @@ div.field {
                 & + input[type=time],
                 & + textarea,
                 & + select,
-                & + .select2
+                & + .select2,
                 & + .select2-container {
                     margin-top: 0.5rem;
                 }
@@ -402,9 +402,9 @@ input[type='number'],
 input[type='color'],
 textarea {
     border: 1px solid #cccccc;
-    padding: 6px 4px;
+    padding: 8px 6px;
     outline: none;
-    border-radius: 2px;
+    border-radius: 0.4rem;
     //font: 13px Helvetica, Arial, sans-serif;
     color: #444444;
     margin: 0;
