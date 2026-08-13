@@ -1,37 +1,125 @@
-fieldset {
-    height: auto;
-    border: 1px solid #cccccc;
-    border-radius: 3px 3px 0 0;
-    padding: 0;
-    position: relative;
-    background: #ffffff;
-    box-sizing: border-box;
-    margin: 0;
-    margin-bottom: 1em;
+// Objects: Fieldset
+// =================
+// The card which groups a form's fields: a soft-bordered, rounded panel with
+// its legend rendered as a full-width header band across the top.
+//
+// Structure
+// ---------
+// fieldset                 The card
+// fieldset > legend        Header band; spans the full width of the card
+// fieldset fieldset        A nested group; inset so it reads as part of its
+//                          parent rather than as a card of its own
+//
+// The legend fills the width of the card rather than straddling the top border
+// the way a browser default legend does. Two things make that work, and both
+// have consequences for everything below it:
+//
+//  1. The card carries no padding of its own, so the band can sit flush in the
+//     corners. Content spacing is therefore applied per child (see Content).
+//  2. Bootstrap's Reboot gives `legend` `float: left; width: 100%`, which is
+//     what makes it behave like a block at all. It also clears the element
+//     which follows (`legend + * { clear: left }`) — and clearance swallows
+//     that element's top margin, so the space beneath the band cannot come
+//     from the content. It comes from the legend's own bottom margin instead.
+//
+// Colours come from the slate family in variables/_palette.scss, the same
+// greys the alerts and badges use for their neutral variant.
 
-    fieldset {
-        margin: 1em;
+// Tokens
+// ------
+$fieldset-radius: 0.5rem;
+$fieldset-border-width: 1px;
+$fieldset-border-color: $light-slate;
+$fieldset-bg: $white;
+$fieldset-margin-bottom: 1rem;
+
+//  Legend — small, uppercase and letter-spaced, so the band reads as chrome
+//  rather than as a heading competing with the field labels beneath it
+$fieldset-legend-bg: $pale-slate;
+$fieldset-legend-color: $dark-slate;
+$fieldset-legend-padding-y: 0.85rem;
+$fieldset-legend-padding-x: 1.1rem;
+$fieldset-legend-font-size: 0.8125rem;
+$fieldset-legend-font-weight: 600;
+$fieldset-legend-letter-spacing: 0.02em;
+
+//  Spacing applied to loose content sat directly in the card, and to nested
+//  fieldsets. The card has no padding of its own, so these margins are the
+//  only thing holding content off its edges.
+//
+//  The horizontal value is the legend's, so a paragraph's first character
+//  lines up with the legend text above it. The vertical value is larger than
+//  it looks like it needs to be: content sits directly beneath a filled band
+//  whose own padding reads as part of the band, not as separation, so an
+//  even 1em leaves the first line looking wedged under the header.
+$fieldset-content-margin-y: 1.5rem;
+$fieldset-content-margin-x: $fieldset-legend-padding-x;
+
+//  Headings stick below the fixed topbar; see layouts/_topbar.scss
+$fieldset-heading-sticky-top: 62px;
+
+// Base
+// ----
+fieldset {
+    position: relative;
+    height: auto;
+    margin: 0 0 $fieldset-margin-bottom;
+    padding: 0;
+    border: $fieldset-border-width solid $fieldset-border-color;
+    border-radius: $fieldset-radius;
+    background: $fieldset-bg;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    // Elements
+    // --------
+    //  A full-bleed header band: zeroed margins and `box-sizing` keep it flush
+    //  inside the border, and the top corners are rounded to match the card
+    > legend {
+        float: left; //  Reboot's, restated — the layout below depends on it
+        width: 100%;
+        margin: 0;
+        padding: $fieldset-legend-padding-y $fieldset-legend-padding-x;
+        border: 0;
+        border-bottom: $fieldset-border-width solid $fieldset-border-color;
+        border-radius: $fieldset-radius $fieldset-radius 0 0;
+        background: $fieldset-legend-bg;
+        color: $fieldset-legend-color;
+        font-size: $fieldset-legend-font-size;
+        font-weight: $fieldset-legend-font-weight;
+        letter-spacing: $fieldset-legend-letter-spacing;
+        text-transform: uppercase;
+        box-sizing: border-box;
     }
 
-    legend {
-        background: #efefef;
-        border: 1px solid #cccccc;
-        padding: 3px 10px;
-        margin: 0;
-        margin-bottom: -1px;
-        width: calc(100% + 2px);
-        font-weight: bold;
-        font-size: 1rem;
-        position: relative;
-        left: -1px;
-        top: -1px;
-
-        & + p,
-        & + .alert,
-        & + ul,
-        & + ol {
-            margin-top: 3em !important;
+    //  Space beneath the band has to be the legend's bottom margin: the float
+    //  it sits in is what the next element clears, and clearance eats that
+    //  element's own margin-top (see the note at the top of this file).
+    //
+    //  Only loose content asks for the gap — field rows are meant to butt up
+    //  against the band, so the margin is scoped to what actually follows the
+    //  legend. Where `:has()` is unsupported the content simply sits flush,
+    //  which is what it did before this rule existed.
+    &:has(> legend + :is(p, ul, ol, .alert, fieldset)) {
+        > legend {
+            margin-bottom: $fieldset-content-margin-y;
         }
+    }
+
+    //  A nested group is already sat on a card; the inset is what separates it
+    fieldset {
+        margin: $fieldset-content-margin-y $fieldset-content-margin-x;
+    }
+
+    // Content
+    // -------
+    //  Loose content dropped straight into the card — the fieldset itself has
+    //  no padding, so each child buys its own breathing room
+    > p,
+    > .alert,
+    > ul,
+    > ol {
+        margin: $fieldset-content-margin-y $fieldset-content-margin-x;
     }
 
     h1,
@@ -41,14 +129,7 @@ fieldset {
     h5,
     h6 {
         position: sticky;
-        top: 62px;
+        top: $fieldset-heading-sticky-top;
         margin: 0;
-    }
-
-    > p,
-    > .alert,
-    > ul,
-    > ol {
-        margin: 1em;
     }
 }
