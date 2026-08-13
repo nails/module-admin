@@ -55,6 +55,18 @@ class Nav implements \JsonSerializable
     // --------------------------------------------------------------------------
 
     /**
+     * Returns a generated key
+     *
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return hash('md5', $this->sLabel);
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
      * Set the label
      *
      * @param string $sLabel
@@ -242,6 +254,7 @@ class Nav implements \JsonSerializable
     public function jsonSerialize(): mixed
     {
         return (object) [
+            'key'      => $this->getKey(),
             'label'    => $this->getLabel(),
             'icon'     => $this->getIcon(),
             'actions'  => $this->getActions(),

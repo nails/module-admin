@@ -2,7 +2,7 @@
     <div class="sidebar">
         <div class="sidenav">
             <vue-nestable
-                keyProp="label"
+                keyProp="key"
                 v-model="sidebarItems"
                 v-bind:max-depth="1"
                 v-bind:children-prop="'children'"
