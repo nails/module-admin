@@ -3,7 +3,7 @@
         @todo: Complete a style guide for admin showing all the components and how the current admin stylesheet/theme
         renders them.
     </p>
-    <hr/>
+    <hr />
 
     <!-- Typography -->
     <section class="typography">
@@ -21,6 +21,14 @@
             <h4>This is a &lt;h4&gt; heading</h4>
             <h5>This is a &lt;h5&gt; heading</h5>
             <h6>This is a &lt;h6&gt; heading</h6>
+            <p>
+                This is some body text. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
             <p>
                 This is some body text. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
@@ -60,11 +68,13 @@
         <div class="body">
             <?php
 
-            $aSizes = ['btn-xs', 'btn-sm', '', 'btn-lg'];
+            $aSizes = ['btn-xs', 'btn-sm', 'btn-md', '', 'btn-lg'];
             $aTypes = [
-                'btn-default',
+                '',
                 'btn-primary',
                 'btn-secondary',
+                'btn-brand-primary',
+                'btn-brand-secondary',
                 'btn-success',
                 'btn-danger',
                 'btn-info',
@@ -73,14 +83,65 @@
             ];
 
             foreach ($aSizes as $sSize) {
+                echo '<p>';
+                echo 'Size: <code>' . ($sSize ?: 'undefined') . '</code>';
+                echo '</p>';
+                echo '<p>';
                 foreach ($aTypes as $sType) {
                     ?>
                     <button class="btn <?=$sType?> <?=$sSize?>">
-                        Button
+                        <?php
+
+                        echo '.';
+                        echo implode('.', array_filter([
+                            'btn',
+                            $sType,
+                        ]));
+
+                        ?>
                     </button>
                     <?php
                 }
                 echo '</p>';
+            }
+
+            ?>
+        </div>
+    </section>
+    <!-- /Buttons -->
+
+    <!-- Badges -->
+    <section class="alerts">
+        <div class="title">
+            Badges
+        </div>
+        <div class="body">
+            <?php
+
+            $aTypes = [
+                '',
+                'badge-primary',
+                'badge-secondary',
+                'badge-success',
+                'badge-danger',
+                'badge-info',
+                'badge-warning',
+            ];
+
+            foreach ($aTypes as $sType) {
+                ?>
+                <span class="badge <?=$sType?>">
+                    <?php
+
+                    echo '.';
+                    echo implode('.', array_filter([
+                        'badge',
+                        $sType,
+                    ]));
+
+                    ?>
+                </span>
+                <?php
             }
 
             ?>
@@ -94,18 +155,34 @@
             Alerts
         </div>
         <div class="body">
-            <p class="alert alert-success">
-                This is a <strong>success</strong> alert.
-            </p>
-            <p class="alert alert-danger">
-                This is a <strong>danger</strong> alert.
-            </p>
-            <p class="alert alert-info">
-                This is an <strong>info</strong> alert.
-            </p>
-            <p class="alert alert-warning">
-                This is a <strong>warning</strong> alert.
-            </p>
+            <?php
+
+            $aTypes = [
+                '',
+                'alert-success',
+                'alert-danger',
+                'alert-info',
+                'alert-warning',
+            ];
+
+            foreach ($aTypes as $sType) {
+                ?>
+                <p class="alert <?=$sType?>">
+                    <span class="alert__close">&times;</span>
+                    <?php
+
+                    echo '.';
+                    echo implode('.', array_filter([
+                        'alert',
+                        $sType,
+                    ]));
+
+                    ?>
+                </p>
+                <?php
+            }
+
+            ?>
         </div>
     </section>
     <!-- /Alerts -->
@@ -426,7 +503,7 @@
             <p>
                 The following tab group defaults to the second tab:
             </p>
-            <input type="hidden" data-tabgroup="tab-group-one" value="tab-two"/>
+            <input type="hidden" data-tabgroup="tab-group-one" value="tab-two" />
             <ul class="tabs" data-tabgroup="tab-group-one" data-active-tab-input="#tab-group-one">
                 <li class="tab">
                     <a href="#" data-tab="tab-one">

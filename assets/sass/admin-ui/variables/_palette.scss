@@ -1,11 +1,24 @@
 // Variables: Palette
 // ==================
+// Raw colours only. Nothing in here should know what a button, a badge or an
+// alert is — components map these onto their own states.
+//
+// The hue families below run light to dark: pale → light → soft → mid → deep →
+// dark, with the unprefixed name being the fully saturated base.
+//
+// Careful with names here: this file is imported before Bootstrap, so anything
+// sharing a name with one of its `!default` variables silently overrides it.
+// `$blue` and `$cyan` are Bootstrap's, hence `$steel-blue` and `$bright-cyan`.
+// (`$red` and `$orange` below already shadow Bootstrap's — long-standing, and
+// left alone rather than renamed out from under existing usages.)
+
 $brand-color-primary: var(--brand-color-primary);
 $brand-color-secondary: var(--brand-color-secondary);
 $brand-color-highlight: var(--brand-color-highlight);
 
 //
 $white: #FFFFFF;
+$off-white: #F9F9F9;
 $black: #000000;
 $grey: #C4C4C4;
 $dark-grey: #D7D7D7;
@@ -17,7 +30,64 @@ $mud-blue: #376080;
 $orange: #FF7A00;
 $red: #FF0000;
 
+// Slate — the cool, faintly blue greys
+$slate: #6C757D;
+$pale-slate: #F4F5F7;
+$light-slate: #E9EBEE;
+$soft-slate: #C4C8CB;
+$mid-slate: #AEB7C0;
+$deep-slate: #99A4AF;
+$dark-slate: #2B2F32;
+
+// Blue
+$pale-blue: #D6E4F1;
+$soft-blue: #ADCAE2;
+$steel-blue: #337ab7;
+$deep-blue: #2E6DA4;
+$dark-blue: #285E8E;
+$darker-blue: #204D75;
+$navy: #143149;
+
+// Green
+$grass-green: #5cb85c;
+$pale-green: #DEF1DE;
+$light-green: #CEEACE;
+$soft-green: #BEE3BE;
+$mid-green: #A8D8A8;
+$deep-green: #92CD92;
+$dark-green: #254A25;
+
+// Red
+$brick-red: #d9534f;
+$pale-red: #F7DDDC;
+$light-red: #F4CBCB;
+$soft-red: #F0BAB9;
+$mid-red: #E8A2A1;
+$deep-red: #DF8A89;
+$rust-red: #D43F3A;
+$crimson: #C9302C;
+$maroon: #AC2925;
+$dark-red: #572120;
+
+// Cyan
+$bright-cyan: #0dcaf0;
+$pale-cyan: #CFF4FC;
+$light-cyan: #B6EFFA;
+$soft-cyan: #9EEAF9;
+$mid-cyan: #7FE0F2;
+$deep-cyan: #61D6EB;
+$dark-cyan: #055160;
+
+// Amber
+$amber: #FFC107;
+$pale-amber: #FFF3CD;
+$light-amber: #FFEDB5;
+$soft-amber: #FFE69C;
+$mid-amber: #FFDC7A;
+$deep-amber: #FFD25A;
+$dark-amber: #664D03;
+
 // Bootstrap variables
-$primary: #337ab7;
-$danger: #d9534f;
-$success: #5cb85c;
+$primary: $steel-blue;
+$danger: $brick-red;
+$success: $grass-green;

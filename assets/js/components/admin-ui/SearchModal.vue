@@ -20,7 +20,7 @@
                     </div>
                     <button
                         v-if="query"
-                        class="btn btn__secondary u-ml15"
+                        class="btn btn-brand-secondary u-ml15"
                         v-on:click="closeModal"
                     >
                         <i class="fa fa-times-circle" />
@@ -97,7 +97,7 @@
                                 v-bind:key="index"
                                 v-bind:href="btn.url"
                                 v-bind:target="btn.new_tab ? '_blank' : ''"
-                                class="btn btn-primary u-ml5 u-md-ml10"
+                                class="btn btn-brand-primary u-ml5 u-md-ml10"
                             >
                                 <i
                                     v-if="btn.icon['class']"

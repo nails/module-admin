@@ -14,7 +14,7 @@
                         {{ header }}
                     </h3>
                     <button
-                        class="btn btn__secondary u-ml15"
+                        class="btn btn-brand-secondary u-ml15"
                         v-on:click="closeModal"
                     >
                         <i class="fa fa-times-circle" />
@@ -47,7 +47,7 @@
                             </div>
                             <a
                                 v-bind:href="item.url"
-                                class="btn btn__primary"
+                                class="btn btn-brand-primary"
                             >
                                 <i class="fa fa-plus-circle" />
                                 <span class="btn__label">Create</span>

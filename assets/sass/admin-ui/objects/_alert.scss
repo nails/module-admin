@@ -1,6 +1,122 @@
-.alert {
-    position: relative;
+// Objects: Alert
+// ==============
+// A complete, self-contained alert implementation. Bootstrap's alert styles are
+// deliberately *not* imported (see vendor/_bootstrap.scss), so this file is the
+// single source of truth for how an alert looks.
+//
+// Structure
+// ---------
+// .alert                   The base alert; neutral slate by default
+// .alert-{variant}         Contextual colour: primary, secondary, success,
+//                          danger, info, warning
+// .alert__close            Dismiss control, wired up by components/Alerts.js
+// .alert-icon              Inline icon sitting alongside a heading
+// .alert-heading           Title element
+// .alert-link              Inline link, inherits the alert's colour
+//
+// Theming is driven by custom properties (`--alert-*`) declared on `.alert`, so
+// a variant only needs to redeclare colours.
+//
+// Unlike buttons there are no `--`/`__` colour flavours here: nothing uses them,
+// and `.alert--dashboard` already means something else (a layout hook, styled in
+// admin/dashboard.scss).
 
+// Tokens
+// ------
+$alert-radius: 0.25rem;
+$alert-border-width: 1px;
+$alert-padding-y: 0.75rem;
+$alert-padding-x: 1rem;
+$alert-margin-bottom: 1rem;
+$alert-close-inset: 0.4rem 0.6rem;
+$alert-close-opacity: 0.5;
+
+// Palette
+// -------
+// Maps the hue families from variables/_palette.scss onto alert roles: the pale
+// tint fills, the soft tone draws the border, the dark shade carries the text.
+// Badges use the same three steps, and so do the tinted buttons — though note
+// that `.btn-primary` and `.btn-danger` are deliberately solid, so those two do
+// not match their alert counterparts.
+//
+// Every foreground clears WCAG AA (4.5:1) against its fill — comfortably, since
+// alerts carry body copy rather than a single word.
+
+//  Default — neutral; also used by `.alert-secondary`
+$alert-default-bg: $light-slate;
+$alert-default-border: $soft-slate;
+$alert-default-color: $dark-slate; // 11.3:1
+
+//  Primary
+$alert-primary-bg: $pale-blue;
+$alert-primary-border: $soft-blue;
+$alert-primary-color: $navy; // 10.4:1
+
+//  Success
+$alert-success-bg: $pale-green;
+$alert-success-border: $soft-green;
+$alert-success-color: $dark-green; // 8.5:1
+
+//  Danger
+$alert-danger-bg: $pale-red;
+$alert-danger-border: $soft-red;
+$alert-danger-color: $dark-red; // 9.9:1
+
+//  Info
+$alert-info-bg: $pale-cyan;
+$alert-info-border: $soft-cyan;
+$alert-info-color: $dark-cyan; // 7.7:1
+
+//  Warning
+$alert-warning-bg: $pale-amber;
+$alert-warning-border: $soft-amber;
+$alert-warning-color: $dark-amber; // 7.2:1
+
+// Mixins
+// ------
+
+///
+/// Declares the custom properties which colour an alert.
+///
+@mixin alert-variant($bg, $border, $color) {
+    --alert-bg: #{$bg};
+    --alert-border: #{$border};
+    --alert-color: #{$color};
+}
+
+// Base
+// ----
+.alert {
+    //  Default theme; overridden by the modifiers further down
+    @include alert-variant(
+        $alert-default-bg,
+        $alert-default-border,
+        $alert-default-color
+    );
+
+    position: relative;
+    margin-bottom: $alert-margin-bottom;
+    padding: $alert-padding-y $alert-padding-x;
+    border: $alert-border-width solid var(--alert-border);
+    border-radius: $alert-radius;
+    background-color: var(--alert-bg);
+    color: var(--alert-color);
+
+    //  Reserve room for the dismiss control so copy cannot run underneath it.
+    //  `.alert-dismissible` is Bootstrap's spelling; `:has()` covers this
+    //  project's markup, which drops in an `.alert__close` without the flag.
+    //  Kept as two rules, not one selector list — an unsupported `:has()`
+    //  invalidates the whole list it appears in, taking the other half with it.
+    &-dismissible {
+        padding-right: $alert-padding-x + 1.25rem;
+    }
+
+    &:has(> .alert__close) {
+        padding-right: $alert-padding-x + 1.25rem;
+    }
+
+    // Content
+    // -------
     > *:last-child {
         margin-bottom: 0;
     }
@@ -22,16 +138,104 @@
         }
     }
 
-    &__close {
-        position: absolute;
-        right: 0.5rem;
-        top: 0.2rem;
-        cursor: pointer;
-    }
-
+    //  Links take the alert's colour rather than the global link colour, which
+    //  would not be legible against most of these tints
     a {
         &:not(.btn) {
+            color: inherit;
             text-decoration: underline;
         }
+    }
+
+    // Elements
+    // --------
+    &__close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: $alert-close-inset;
+        color: inherit;
+        font-size: 1.25rem;
+        line-height: 1;
+        cursor: pointer;
+        opacity: $alert-close-opacity;
+        transition: opacity 0.15s ease-in-out;
+        user-select: none;
+
+        &:hover,
+        &:focus-visible {
+            opacity: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
+    }
+
+    &-heading {
+        margin-bottom: 0.25rem;
+        color: inherit;
+        font-family: $font-heading-regular;
+        font-size: 1rem;
+    }
+
+    &-icon {
+        margin-right: 0.35rem;
+    }
+
+    &-link {
+        color: inherit;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    // Variants
+    // --------
+    &-secondary {
+        @include alert-variant(
+            $alert-default-bg,
+            $alert-default-border,
+            $alert-default-color
+        );
+    }
+
+    &-primary {
+        @include alert-variant(
+            $alert-primary-bg,
+            $alert-primary-border,
+            $alert-primary-color
+        );
+    }
+
+    &-success {
+        @include alert-variant(
+            $alert-success-bg,
+            $alert-success-border,
+            $alert-success-color
+        );
+    }
+
+    &-danger {
+        @include alert-variant(
+            $alert-danger-bg,
+            $alert-danger-border,
+            $alert-danger-color
+        );
+    }
+
+    &-info {
+        @include alert-variant(
+            $alert-info-bg,
+            $alert-info-border,
+            $alert-info-color
+        );
+    }
+
+    &-warning {
+        @include alert-variant(
+            $alert-warning-bg,
+            $alert-warning-border,
+            $alert-warning-color
+        );
     }
 }

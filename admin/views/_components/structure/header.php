@@ -114,19 +114,19 @@ if (empty($isModal)) {
             <div class="topbar__nav">
                 <modal-button
                     modal-name="create"
-                    class="btn btn__primary u-md-mr5 u-mr15"
+                    class="btn btn-brand-primary u-md-mr5 u-mr15"
                 >
                     <i class="fa fa-plus-circle"></i>
                     <span class="btn__label">Create</span>
                 </modal-button>
                 <modal-button
                     modal-name="search"
-                    class="btn btn__primary u-md-mr5 u-mr15"
+                    class="btn btn-brand-primary u-md-mr5 u-mr15"
                 >
                     <i class="fa fa-search"></i>
                     <span class="btn__label">Search</span>
                 </modal-button>
-                <a href="<?=siteUrl()?>" class="btn btn__primary" target="_blank">
+                <a href="<?=siteUrl()?>" class="btn btn-brand-primary" target="_blank">
                     <i class="fa fa-external-link-alt"></i>
                     <span class="btn__label">View Site</span>
                 </a>
@@ -138,7 +138,7 @@ if (empty($isModal)) {
                 <h3 class="topbar__name heading--sm color--white bold  u-md-ml5 u-ml15 u-mb0 d-none d-md-inline">
                     <?=activeUser('name')?>
                 </h3>
-                <a href="<?=siteUrl(\Nails\Auth\Admin\Controller\Accounts::url('edit/' . activeUser('id')))?>" class="btn btn__secondary u-md-ml5 u-ml15">
+                <a href="<?=siteUrl(\Nails\Auth\Admin\Controller\Accounts::url('edit/' . activeUser('id')))?>" class="btn btn-brand-secondary u-md-ml5 u-ml15">
                     <i class="fa fa-cog"></i>
                     <span class="btn__label">Edit</span>
                 </a>
@@ -147,7 +147,7 @@ if (empty($isModal)) {
                 if (wasAdmin()) {
                     $adminRecovery = getAdminRecoveryData();
                     ?>
-                    <a href="<?=$adminRecovery->loginUrl?>" class="btn btn__secondary u-md-ml5 u-ml15">
+                    <a href="<?=$adminRecovery->loginUrl?>" class="btn btn-brand-secondary u-md-ml5 u-ml15">
                         <i class="fa fa-sign-out-alt"></i>
                         Log back in as <?=$adminRecovery->name?>
                     </a>
@@ -155,7 +155,7 @@ if (empty($isModal)) {
                 }
 
                 ?>
-                <a href="<?=siteUrl('auth/logout')?>" class="btn btn__secondary u-md-ml5 u-ml15">
+                <a href="<?=siteUrl('auth/logout')?>" class="btn btn-brand-secondary u-md-ml5 u-ml15">
                     <i class="fa fa-user-times"></i>
                     Logout
                 </a>

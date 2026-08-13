@@ -1,0 +1,172 @@
+// Objects: Badge
+// ==============
+// A complete, self-contained badge implementation. Bootstrap's badge styles are
+// deliberately *not* imported (see vendor/_bootstrap.scss), so this file is the
+// single source of truth for how a badge looks.
+//
+// Structure
+// ---------
+// .badge                   The base badge; neutral slate by default
+// .badge-{variant}         Contextual colour: primary, secondary, success,
+//                          danger, info, warning
+//
+// Theming is driven by custom properties (`--badge-*`) declared on `.badge`, so
+// a variant only needs to redeclare colours.
+//
+// Bootstrap's `.rounded-pill` utility still applies if you want a pill rather
+// than the default rounded rectangle — the utilities API is still imported.
+
+// Tokens
+// ------
+$badge-radius: 1rem;
+$badge-border-width: 1px;
+$badge-padding-y: 0.5em;
+$badge-padding-x: 0.85em;
+$badge-font-size: 0.65rem;
+$badge-font-weight: 500;
+$badge-letter-spacing: 0.02em;
+
+// Palette
+// -------
+// The same three roles the alerts use — pale tint fills, soft tone borders, dark
+// shade text — so a `.badge-warning` and an `.alert-warning` read as the same
+// thing. The tinted buttons match too; `.btn-primary` and `.btn-danger` are
+// deliberately solid and so stand apart from their badge counterparts.
+//
+// Badge copy is 12px, which puts it in WCAG's "normal text" bracket at 4.5:1
+// rather than the relaxed large-text threshold. Every foreground below clears
+// that with room to spare.
+
+//  Default — neutral; also used by `.badge-secondary`
+$badge-default-bg: $light-slate;
+$badge-default-border: $soft-slate;
+$badge-default-color: $dark-slate; // 11.3:1
+
+//  Primary
+$badge-primary-bg: $pale-blue;
+$badge-primary-border: $soft-blue;
+$badge-primary-color: $navy; // 10.4:1
+
+//  Success
+$badge-success-bg: $pale-green;
+$badge-success-border: $soft-green;
+$badge-success-color: $dark-green; // 8.5:1
+
+//  Danger
+$badge-danger-bg: $pale-red;
+$badge-danger-border: $soft-red;
+$badge-danger-color: $dark-red; // 9.9:1
+
+//  Info
+$badge-info-bg: $pale-cyan;
+$badge-info-border: $soft-cyan;
+$badge-info-color: $dark-cyan; // 7.7:1
+
+//  Warning
+$badge-warning-bg: $pale-amber;
+$badge-warning-border: $soft-amber;
+$badge-warning-color: $dark-amber; // 7.2:1
+
+// Mixins
+// ------
+
+///
+/// Declares the custom properties which colour a badge.
+///
+@mixin badge-variant($bg, $border, $color) {
+    --badge-bg: #{$bg};
+    --badge-border: #{$border};
+    --badge-color: #{$color};
+}
+
+// Base
+// ----
+.badge {
+    //  Default theme; overridden by the modifiers further down
+    @include badge-variant(
+        $badge-default-bg,
+        $badge-default-border,
+        $badge-default-color
+    );
+
+    display: inline-block;
+    padding: $badge-padding-y $badge-padding-x;
+    border: $badge-border-width solid var(--badge-border);
+    border-radius: $badge-radius;
+    background-color: var(--badge-bg);
+    color: var(--badge-color);
+    font-size: $badge-font-size;
+    font-weight: $badge-font-weight;
+    letter-spacing: $badge-letter-spacing;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+
+    //  An empty badge should take up no room at all
+    &:empty {
+        display: none;
+    }
+
+    // Variants
+    // --------
+    &-secondary {
+        @include badge-variant(
+            $badge-default-bg,
+            $badge-default-border,
+            $badge-default-color
+        );
+    }
+
+    &-primary {
+        @include badge-variant(
+            $badge-primary-bg,
+            $badge-primary-border,
+            $badge-primary-color
+        );
+    }
+
+    &-success {
+        @include badge-variant(
+            $badge-success-bg,
+            $badge-success-border,
+            $badge-success-color
+        );
+    }
+
+    &-danger {
+        @include badge-variant(
+            $badge-danger-bg,
+            $badge-danger-border,
+            $badge-danger-color
+        );
+    }
+
+    &-info {
+        @include badge-variant(
+            $badge-info-bg,
+            $badge-info-border,
+            $badge-info-color
+        );
+    }
+
+    &-warning {
+        @include badge-variant(
+            $badge-warning-bg,
+            $badge-warning-border,
+            $badge-warning-color
+        );
+    }
+}
+
+//  Badges are frequently links (a filter chip, a tag). Keep them from picking up
+//  the global link colour and underline.
+a.badge {
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+        color: var(--badge-color);
+        text-decoration: none;
+    }
+}

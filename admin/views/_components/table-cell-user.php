@@ -46,12 +46,12 @@ $sNoDataClass = isset($id) && $id ? '' : 'text-muted';
         }
 
         if ($id == activeUser('id')) {
-            echo '<span class="badge rounded-pill bg-primary me-1">This is you</span>';
+            echo '<span class="badge badge-primary rounded-pill me-1">This is you</span>';
         }
 
         if (!empty($group)) {
             echo sprintf(
-                '<span class="badge rounded-pill bg-secondary">%s</span>',
+                '<span class="badge badge-secondary rounded-pill">%s</span>',
                 $group
             );
         }

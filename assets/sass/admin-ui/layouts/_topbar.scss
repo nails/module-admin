@@ -1,5 +1,5 @@
 .topbar {
-    background-color: rgb($brand-color-secondary);
+    background-color: rgb(var(--brand-color-secondary));
     height: 63px;
     display: flex;
     align-items: center;
@@ -20,21 +20,46 @@
     &__nav {
         display: flex;
         align-items: center;
+
+        //  Use a brand primary style of button
+        //.btn {
+        //    border-radius: 10rem;
+        //    background-color: rgb(var(--brand-color-highlight));
+        //    border-color: transparent;
+        //
+        //    &:hover {
+        //        background-color: rgb(var(--brand-color-secondary));
+        //        border-color: $white;
+        //    }
+        //}
     }
 
     &__account {
         height: 100%;
-        background: rgb($brand-color-primary);
+        background: rgb(var(--brand-color-primary));
         display: flex;
         padding: 0 14px;
         align-items: center;
+
+        //  Use a brand secondary style of button
+        //.btn {
+        //    border-radius: 10rem;
+        //    background-color: rgb(var(--brand-color-secondary));
+        //    border-color: transparent;
+        //    color: $white;
+        //
+        //    &:hover {
+        //        background-color: rgb(var(--brand-color-secondary));
+        //        border-color: $white;
+        //    }
+        //}
     }
 
     &__avatar {
         width: 36px;
         height: 36px;
         background-position: center;
-        border: 4px solid rgb($brand-color-highlight);
+        border: 4px solid rgb(var(--brand-color-highlight));
         border-radius: 100%;
         margin-left: 5px;
         background-size: cover;

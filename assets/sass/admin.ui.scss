@@ -11,7 +11,7 @@
 @import 'admin-ui/variables/misc';
 
 // Vendor
-@import "~bootstrap/scss/bootstrap";
+@import "admin-ui/vendor/bootstrap";
 @import "~vue-select/dist/vue-select";
 @import '~vue-simple-scrollbar/dist/vue-simple-scrollbar';
 @import '~sweetalert2/dist/sweetalert2';
@@ -24,6 +24,7 @@
 // Objects
 @import 'admin-ui/objects/alert';
 @import 'admin-ui/objects/btn';
+@import 'admin-ui/objects/badge';
 @import 'admin-ui/objects/checkbox';
 @import 'admin-ui/objects/create-item';
 @import 'admin-ui/objects/fieldset';
