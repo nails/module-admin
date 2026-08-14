@@ -12265,34 +12265,43 @@ a.badge:hover, a.badge:focus-visible {
 }
 
 fieldset {
-  height: auto;
-  border: 1px solid #cccccc;
-  border-radius: 3px 3px 0 0;
-  padding: 0;
   position: relative;
-  background: #ffffff;
+  height: auto;
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 1px solid #E9EBEE;
+  border-radius: 0.5rem;
+  background: #FFFFFF;
   box-sizing: border-box;
+  overflow: hidden;
+}
+fieldset > legend {
+  float: left;
+  width: 100%;
   margin: 0;
-  margin-bottom: 1em;
+  padding: 0.85rem 1.1rem;
+  border: 0;
+  border-bottom: 1px solid #E9EBEE;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background: #F4F5F7;
+  color: #2B2F32;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  box-sizing: border-box;
+}
+fieldset:has(> legend + :is(p, ul, ol, .alert, fieldset)) > legend {
+  margin-bottom: 1.5rem;
 }
 fieldset fieldset {
-  margin: 1em;
+  margin: 1.5rem 1.1rem;
 }
-fieldset legend {
-  background: #efefef;
-  border: 1px solid #cccccc;
-  padding: 3px 10px;
-  margin: 0;
-  margin-bottom: -1px;
-  width: calc(100% + 2px);
-  font-weight: bold;
-  font-size: 1rem;
-  position: relative;
-  left: -1px;
-  top: -1px;
-}
-fieldset legend + p, fieldset legend + .alert, fieldset legend + ul, fieldset legend + ol {
-  margin-top: 3em !important;
+fieldset > p,
+fieldset > .alert,
+fieldset > ul,
+fieldset > ol {
+  margin: 1.5rem 1.1rem;
 }
 fieldset h1, fieldset .h1,
 fieldset h2,
@@ -12309,11 +12318,66 @@ fieldset .h6 {
   top: 62px;
   margin: 0;
 }
-fieldset > p,
-fieldset > .alert,
-fieldset > ul,
-fieldset > ol {
-  margin: 1em;
+
+fieldset.fieldset--collapsible > legend {
+  padding: 0;
+}
+fieldset.fieldset--collapsible > legend > .fieldset__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.1rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.85rem 1.1rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  text-transform: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  transition: background-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+fieldset.fieldset--collapsible > legend > .fieldset__toggle:hover {
+  background-color: #E9EBEE;
+}
+fieldset.fieldset--collapsible > legend > .fieldset__toggle:active {
+  background-color: #C4C8CB;
+}
+fieldset.fieldset--collapsible > legend > .fieldset__toggle:focus {
+  outline: 0;
+}
+fieldset.fieldset--collapsible > legend > .fieldset__toggle:focus-visible {
+  outline: 0;
+  box-shadow: inset 0 0 0 3px rgba(108, 117, 125, 0.35);
+}
+fieldset.fieldset--collapsible > legend > .fieldset__toggle > .fieldset__toggle-chevron {
+  flex-shrink: 0;
+  color: #6C757D;
+  font-size: 0.75rem;
+  transition: transform 0.15s ease-in-out;
+}
+fieldset.fieldset--collapsible:not(.fieldset--collapsed) > legend > .fieldset__toggle > .fieldset__toggle-chevron {
+  transform: rotate(180deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  fieldset.fieldset--collapsible > legend > .fieldset__toggle,
+  fieldset.fieldset--collapsible > legend > .fieldset__toggle > .fieldset__toggle-chevron {
+    transition: none;
+  }
+}
+fieldset.fieldset--collapsible.fieldset--collapsed > *:not(legend) {
+  display: none;
+}
+fieldset.fieldset--collapsible.fieldset--collapsed > legend {
+  margin-bottom: 0;
+  border-bottom: 0;
+  border-radius: 0.5rem;
 }
 
 /* --------------------------------------------------------------
@@ -12365,7 +12429,7 @@ div.field .tip {
 div.field span.label {
   display: block;
   float: left;
-  width: 130px;
+  width: 220px;
   font-weight: bold;
   margin-right: 20px;
   text-align: right;
@@ -12380,7 +12444,7 @@ div.field span.label small, div.field span.label .small {
 div.field span.input {
   border: 1px dashed transparent;
   display: block;
-  margin-left: 149px;
+  margin-left: 240px;
   position: relative;
 }
 div.field span.input.is-disabled {
@@ -12417,7 +12481,7 @@ div.field span.input select {
   width: 100%;
   margin: 0;
 }
-div.field span.input input[type=text] + input[type=text], div.field span.input input[type=text] + input[type=password], div.field span.input input[type=text] + input[type=email], div.field span.input input[type=text] + input[type=number], div.field span.input input[type=text] + input[type=url], div.field span.input input[type=text] + input[type=color], div.field span.input input[type=text] + input[type=file], div.field span.input input[type=text] + input[type=time], div.field span.input input[type=text] + textarea, div.field span.input input[type=text] + select, div.field span.input input[type=text] + .select2 div.field span.input input[type=text] + .select2-container,
+div.field span.input input[type=text] + input[type=text], div.field span.input input[type=text] + input[type=password], div.field span.input input[type=text] + input[type=email], div.field span.input input[type=text] + input[type=number], div.field span.input input[type=text] + input[type=url], div.field span.input input[type=text] + input[type=color], div.field span.input input[type=text] + input[type=file], div.field span.input input[type=text] + input[type=time], div.field span.input input[type=text] + textarea, div.field span.input input[type=text] + select, div.field span.input input[type=text] + .select2, div.field span.input input[type=text] + .select2-container,
 div.field span.input input[type=password] + input[type=text],
 div.field span.input input[type=password] + input[type=password],
 div.field span.input input[type=password] + input[type=email],
@@ -12428,7 +12492,8 @@ div.field span.input input[type=password] + input[type=file],
 div.field span.input input[type=password] + input[type=time],
 div.field span.input input[type=password] + textarea,
 div.field span.input input[type=password] + select,
-div.field span.input input[type=text] + .select2 div.field span.input input[type=password] + .select2-container,
+div.field span.input input[type=password] + .select2,
+div.field span.input input[type=password] + .select2-container,
 div.field span.input input[type=email] + input[type=text],
 div.field span.input input[type=email] + input[type=password],
 div.field span.input input[type=email] + input[type=email],
@@ -12439,7 +12504,8 @@ div.field span.input input[type=email] + input[type=file],
 div.field span.input input[type=email] + input[type=time],
 div.field span.input input[type=email] + textarea,
 div.field span.input input[type=email] + select,
-div.field span.input input[type=text] + .select2 div.field span.input input[type=email] + .select2-container,
+div.field span.input input[type=email] + .select2,
+div.field span.input input[type=email] + .select2-container,
 div.field span.input input[type=number] + input[type=text],
 div.field span.input input[type=number] + input[type=password],
 div.field span.input input[type=number] + input[type=email],
@@ -12450,7 +12516,8 @@ div.field span.input input[type=number] + input[type=file],
 div.field span.input input[type=number] + input[type=time],
 div.field span.input input[type=number] + textarea,
 div.field span.input input[type=number] + select,
-div.field span.input input[type=text] + .select2 div.field span.input input[type=number] + .select2-container,
+div.field span.input input[type=number] + .select2,
+div.field span.input input[type=number] + .select2-container,
 div.field span.input input[type=url] + input[type=text],
 div.field span.input input[type=url] + input[type=password],
 div.field span.input input[type=url] + input[type=email],
@@ -12461,7 +12528,8 @@ div.field span.input input[type=url] + input[type=file],
 div.field span.input input[type=url] + input[type=time],
 div.field span.input input[type=url] + textarea,
 div.field span.input input[type=url] + select,
-div.field span.input input[type=text] + .select2 div.field span.input input[type=url] + .select2-container,
+div.field span.input input[type=url] + .select2,
+div.field span.input input[type=url] + .select2-container,
 div.field span.input input[type=color] + input[type=text],
 div.field span.input input[type=color] + input[type=password],
 div.field span.input input[type=color] + input[type=email],
@@ -12472,7 +12540,8 @@ div.field span.input input[type=color] + input[type=file],
 div.field span.input input[type=color] + input[type=time],
 div.field span.input input[type=color] + textarea,
 div.field span.input input[type=color] + select,
-div.field span.input input[type=text] + .select2 div.field span.input input[type=color] + .select2-container,
+div.field span.input input[type=color] + .select2,
+div.field span.input input[type=color] + .select2-container,
 div.field span.input input[type=file] + input[type=text],
 div.field span.input input[type=file] + input[type=password],
 div.field span.input input[type=file] + input[type=email],
@@ -12483,7 +12552,8 @@ div.field span.input input[type=file] + input[type=file],
 div.field span.input input[type=file] + input[type=time],
 div.field span.input input[type=file] + textarea,
 div.field span.input input[type=file] + select,
-div.field span.input input[type=text] + .select2 div.field span.input input[type=file] + .select2-container,
+div.field span.input input[type=file] + .select2,
+div.field span.input input[type=file] + .select2-container,
 div.field span.input input[type=time] + input[type=text],
 div.field span.input input[type=time] + input[type=password],
 div.field span.input input[type=time] + input[type=email],
@@ -12494,7 +12564,8 @@ div.field span.input input[type=time] + input[type=file],
 div.field span.input input[type=time] + input[type=time],
 div.field span.input input[type=time] + textarea,
 div.field span.input input[type=time] + select,
-div.field span.input input[type=text] + .select2 div.field span.input input[type=time] + .select2-container,
+div.field span.input input[type=time] + .select2,
+div.field span.input input[type=time] + .select2-container,
 div.field span.input textarea + input[type=text],
 div.field span.input textarea + input[type=password],
 div.field span.input textarea + input[type=email],
@@ -12505,7 +12576,8 @@ div.field span.input textarea + input[type=file],
 div.field span.input textarea + input[type=time],
 div.field span.input textarea + textarea,
 div.field span.input textarea + select,
-div.field span.input input[type=text] + .select2 div.field span.input textarea + .select2-container,
+div.field span.input textarea + .select2,
+div.field span.input textarea + .select2-container,
 div.field span.input select + input[type=text],
 div.field span.input select + input[type=password],
 div.field span.input select + input[type=email],
@@ -12516,97 +12588,8 @@ div.field span.input select + input[type=file],
 div.field span.input select + input[type=time],
 div.field span.input select + textarea,
 div.field span.input select + select,
-div.field span.input input[type=text] + .select2 div.field span.input select + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input input[type=text] + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input input[type=password] + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input input[type=email] + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input input[type=number] + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input input[type=url] + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input input[type=color] + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input input[type=file] + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input input[type=time] + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input textarea + .select2-container,
-div.field span.input input[type=password] + .select2 div.field span.input select + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input input[type=text] + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input input[type=password] + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input input[type=email] + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input input[type=number] + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input input[type=url] + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input input[type=color] + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input input[type=file] + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input input[type=time] + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input textarea + .select2-container,
-div.field span.input input[type=email] + .select2 div.field span.input select + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input input[type=text] + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input input[type=password] + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input input[type=email] + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input input[type=number] + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input input[type=url] + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input input[type=color] + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input input[type=file] + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input input[type=time] + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input textarea + .select2-container,
-div.field span.input input[type=number] + .select2 div.field span.input select + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input input[type=text] + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input input[type=password] + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input input[type=email] + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input input[type=number] + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input input[type=url] + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input input[type=color] + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input input[type=file] + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input input[type=time] + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input textarea + .select2-container,
-div.field span.input input[type=url] + .select2 div.field span.input select + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input input[type=text] + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input input[type=password] + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input input[type=email] + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input input[type=number] + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input input[type=url] + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input input[type=color] + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input input[type=file] + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input input[type=time] + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input textarea + .select2-container,
-div.field span.input input[type=color] + .select2 div.field span.input select + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input input[type=text] + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input input[type=password] + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input input[type=email] + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input input[type=number] + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input input[type=url] + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input input[type=color] + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input input[type=file] + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input input[type=time] + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input textarea + .select2-container,
-div.field span.input input[type=file] + .select2 div.field span.input select + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input input[type=text] + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input input[type=password] + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input input[type=email] + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input input[type=number] + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input input[type=url] + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input input[type=color] + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input input[type=file] + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input input[type=time] + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input textarea + .select2-container,
-div.field span.input input[type=time] + .select2 div.field span.input select + .select2-container,
-div.field span.input textarea + .select2 div.field span.input input[type=text] + .select2-container,
-div.field span.input textarea + .select2 div.field span.input input[type=password] + .select2-container,
-div.field span.input textarea + .select2 div.field span.input input[type=email] + .select2-container,
-div.field span.input textarea + .select2 div.field span.input input[type=number] + .select2-container,
-div.field span.input textarea + .select2 div.field span.input input[type=url] + .select2-container,
-div.field span.input textarea + .select2 div.field span.input input[type=color] + .select2-container,
-div.field span.input textarea + .select2 div.field span.input input[type=file] + .select2-container,
-div.field span.input textarea + .select2 div.field span.input input[type=time] + .select2-container,
-div.field span.input textarea + .select2 div.field span.input textarea + .select2-container,
-div.field span.input textarea + .select2 div.field span.input select + .select2-container,
-div.field span.input select + .select2 div.field span.input input[type=text] + .select2-container,
-div.field span.input select + .select2 div.field span.input input[type=password] + .select2-container,
-div.field span.input select + .select2 div.field span.input input[type=email] + .select2-container,
-div.field span.input select + .select2 div.field span.input input[type=number] + .select2-container,
-div.field span.input select + .select2 div.field span.input input[type=url] + .select2-container,
-div.field span.input select + .select2 div.field span.input input[type=color] + .select2-container,
-div.field span.input select + .select2 div.field span.input input[type=file] + .select2-container,
-div.field span.input select + .select2 div.field span.input input[type=time] + .select2-container,
-div.field span.input select + .select2 div.field span.input textarea + .select2-container,
-div.field span.input select + .select2 div.field span.input select + .select2-container {
+div.field span.input select + .select2,
+div.field span.input select + .select2-container {
   margin-top: 0.5rem;
 }
 div.field span.input small.info2, div.field span.input .info2.small {
@@ -12813,9 +12796,9 @@ input[type=number],
 input[type=color],
 textarea {
   border: 1px solid #cccccc;
-  padding: 6px 4px;
+  padding: 8px 6px;
   outline: none;
-  border-radius: 2px;
+  border-radius: 0.4rem;
   color: #444444;
   margin: 0;
   width: 210px;
