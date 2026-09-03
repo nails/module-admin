@@ -42,6 +42,21 @@ class Modal {
 
         return this;
     }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Creates a new modal instance
+     * @returns {Instance}
+     */
+    create() {
+
+        let instance = new Instance(this.adminController);
+
+        this.modals.push(instance);
+
+        return instance;
+    }
 }
 
 export default Modal;
