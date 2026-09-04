@@ -152,7 +152,7 @@ abstract class Base
     protected function loadLanguages(): self
     {
         //  @todo (Pablo - 2018-09-24) - Remove this
-        get_instance()->lang->load('admin/admin_generic');
+        Factory::service('Translation')->load('admin_generic');
 
         return $this;
     }
