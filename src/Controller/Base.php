@@ -85,7 +85,8 @@ abstract class Base implements Controller
 
         $this
             ->loadConfigs()
-            ->loadHelpers();
+            ->loadHelpers()
+            ->loadLanguages();
 
         // --------------------------------------------------------------------------
 
@@ -188,6 +189,16 @@ abstract class Base implements Controller
      * @throws \Nails\Common\Exception\AssetException
      * @throws FactoryException
      */
+    protected function loadLanguages(): self
+    {
+        //  @todo (Pablo - 2018-09-24) - Remove this
+        Factory::service('Translation')->load('admin_generic');
+
+        return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
     protected function loadCss(): self
     {
         /** @var Asset $oAsset */
