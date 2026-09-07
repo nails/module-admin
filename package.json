@@ -41,7 +41,7 @@
         "webpack-dev-server": "^6.0"
     },
     "devDependencies": {
-        "@babel/core": "^7.12",
+        "@babel/core": "^8.0",
         "@babel/eslint-parser": "^8.0",
         "eslint": "^10.0",
         "eslint-plugin-vue": "^10.3",
