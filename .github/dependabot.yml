@@ -20,3 +20,9 @@ updates:
       - "dependencies"
       - "npm"
       - "automerge"
+    ignore:
+      # @vue/cli-plugin-babel (used by babel.config.js) is Babel 7-only.
+      # A Babel 8 bump of @babel/core alone breaks `yarn build`.
+      # Revisit when migrating off @vue/cli-plugin-babel / Vue CLI babel preset.
+      - dependency-name: "@babel/core"
+        update-types: ["version-update:semver-major"]
