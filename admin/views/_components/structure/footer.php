@@ -55,8 +55,6 @@ foreach (Helper::getModals() as $oModal) {
         <create-modal header="What would you like to create?"></create-modal>
         <!--  Search Modal -->
         <search-modal></search-modal>
-        <!--  Filter Modal -->
-        <filter-modal header="Sort & Filter"></filter-modal>
     </div>
 
 <?php

@@ -10,13 +10,11 @@ import '../sass/admin.ui.scss';
 import {createApp} from 'vue';
 import mitt from 'mitt';
 import CreateModal from './components/admin-ui/CreateModal.vue';
-import FilterModal from './components/admin-ui/FilterModal.vue';
 import MenuCollapse from './components/admin-ui/MenuCollapse.vue';
 import MenuToggle from './components/admin-ui/MenuToggle.vue';
 import ModalButton from './components/admin-ui/ModalButton.vue';
 import SearchModal from './components/admin-ui/SearchModal.vue';
 import SideNav from './components/admin-ui/SideNav.vue';
-import vSelect from 'vue-select';
 import VueSweetalert2 from 'vue-sweetalert2';
 
 const emitter = mitt();
@@ -27,9 +25,7 @@ const $bus = {
 };
 
 const components = {
-    'v-select': vSelect,
     CreateModal,
-    FilterModal,
     MenuCollapse,
     MenuToggle,
     ModalButton,
