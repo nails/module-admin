@@ -135,6 +135,7 @@ export default {
             index: 0,
             defaultWidth: 4,
             defaultHeight: 3,
+            layoutReady: false,
             classes: {
                 container: 'dashboard-widgets',
                 empty: 'dashboard-widgets__empty',
@@ -162,6 +163,10 @@ export default {
 
         this.userWidgets.map((widget) => {
             this.addItem(widget)
+        });
+
+        this.$nextTick(() => {
+            this.layoutReady = true;
         });
     },
 
@@ -416,8 +421,7 @@ export default {
         },
 
         saveLayout() {
-            if (!this.first_layout_event_has_happened) {
-                this.first_layout_event_has_happened = true;
+            if (!this.layoutReady) {
                 return;
             }
             this.saveGrid();
