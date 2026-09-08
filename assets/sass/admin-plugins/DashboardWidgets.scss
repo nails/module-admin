@@ -136,6 +136,10 @@
         &__controls {
             float: right;
             position: relative;
+
+            .btn {
+                margin-left: 0.5rem;
+            }
         }
     }
 
