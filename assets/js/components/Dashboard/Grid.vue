@@ -28,7 +28,7 @@
             v-bind:class="classes.grid"
         >
             <grid-layout
-                :layout.sync="grid"
+                v-model:layout="grid"
                 :col-num="colNum"
                 :row-height="rowHeight"
                 :is-draggable="draggable"
@@ -98,7 +98,7 @@
 
 import API from '../API'
 import services from '../Services'
-import VueGridLayout from 'vue-grid-layout';
+import {GridLayout, GridItem} from 'grid-layout-plus';
 import Instance from '../Modal/Instance'
 
 let vm;
@@ -108,8 +108,8 @@ export default {
     name: 'DashboardGrid',
 
     components: {
-        GridLayout: VueGridLayout.GridLayout,
-        GridItem: VueGridLayout.GridItem
+        GridLayout,
+        GridItem
     },
 
     props: {

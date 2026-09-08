@@ -3,14 +3,13 @@
         <div class="sidenav">
             <vue-nestable
                 keyProp="key"
-                v-model="sidebarItems"
+                v-bind:value="sidebarItems"
+                v-on:input="sidebarItems = $event"
                 v-bind:max-depth="1"
                 v-bind:children-prop="'children'"
                 v-on:change="changeOrder"
             >
-                <template
-                    slot-scope="{ item }"
-                >
+                <template v-slot="{ item }">
                     <menu-collapse
                         v-if="item.actions && item.actions.length"
                         v-bind:title="item.label"
@@ -19,7 +18,7 @@
                         v-on:change="changeOrder"
                         v-on:toggle="toggleMenuItem(item)"
                     >
-                        <template slot="handler">
+                        <template v-slot:handler>
                             <VueNestableHandle
                                 v-bind:item="item"
                             >
@@ -122,14 +121,13 @@
         >
             <vue-nestable
                 keyProp="label"
-                v-model="sidebarItems"
+                v-bind:value="sidebarItems"
+                v-on:input="sidebarItems = $event"
                 v-bind:max-depth="1"
                 v-bind:children-prop="'children'"
                 v-on:change="changeOrder"
             >
-                <template
-                    slot-scope="{ item }"
-                >
+                <template v-slot="{ item }">
                     <menu-collapse
                         v-if="item.actions && item.actions.length"
                         v-bind:title="item.label"
@@ -138,7 +136,7 @@
                         v-on:change="changeOrder"
                         v-on:toggle="toggleMenuItem(item)"
                     >
-                        <template slot="handler">
+                        <template v-slot:handler>
                             <VueNestableHandle
                                 v-bind:item="item"
                             >
@@ -235,13 +233,11 @@
 </template>
 <script>
 import axios from 'axios';
-import { VueNestable, VueNestableHandle } from 'vue-nestable';
-import VueSimpleScrollbar from 'vue-simple-scrollbar';
+import {VueNestable, VueNestableHandle} from 'vue3-nestable';
 export default {
     components: {
         VueNestable,
-        VueNestableHandle,
-        VueSimpleScrollbar
+        VueNestableHandle
     },
     props: {
         menuItems: {
@@ -267,10 +263,14 @@ export default {
         }
     },
     mounted() {
-        this.$bus.$on('toggle-mobile-menu', (value) => {
+        this.onToggleMobileMenu = (value) => {
             document.body.style.overflow = value ? 'hidden' : 'auto';
             this.isMobileMenuOpen = value;
-        });
+        };
+        this.$bus.$on('toggle-mobile-menu', this.onToggleMobileMenu);
+    },
+    beforeUnmount() {
+        this.$bus.$off('toggle-mobile-menu', this.onToggleMobileMenu);
     },
     created() {
         this.items = [...this.menuItems];

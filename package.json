@@ -23,19 +23,18 @@
         "cross-env": "^10.0",
         "css-loader": "^7.1",
         "debounce": "^3.0",
+        "grid-layout-plus": "^1.1.0",
         "mini-css-extract-plugin": "^2.6",
+        "mitt": "^3.0.1",
         "mustache": "^4.0",
         "postcss-loader": "^8.1",
         "sass": "^1.51",
         "sass-loader": "^17.0",
-        "vue": "^2.6",
-        "vue-grid-layout": "^2.3",
-        "vue-loader": "^15.9",
-        "vue-nestable": "^2.6",
-        "vue-select": "^3.18",
-        "vue-simple-scrollbar": "^0.1",
-        "vue-svg-loader": "^0.16",
+        "vue": "^3.5.24",
+        "vue-loader": "^17.4.2",
+        "vue-select": "4.0.0-beta.6",
         "vue-sweetalert2": "^5.0",
+        "vue3-nestable": "^3.0.3",
         "webpack": "^5.70",
         "webpack-cli": "^7.0",
         "webpack-dev-server": "^6.0"
@@ -44,7 +43,6 @@
         "@babel/core": "^8.0",
         "@babel/eslint-parser": "^8.0",
         "eslint": "^10.0",
-        "eslint-plugin-vue": "^10.3",
-        "vue-template-compiler": "^2.6"
+        "eslint-plugin-vue": "^10.3"
     }
 }

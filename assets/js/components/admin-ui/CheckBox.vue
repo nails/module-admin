@@ -14,17 +14,14 @@
 
 <script>
 export default {
-    model: {
-        prop: 'modelValue',
-        event: 'change'
-    },
     props: {
         value: {type: String, default: ''},
-        modelValue: {type: String, default: ''},
+        modelValue: {type: [String, Array, Boolean], default: ''},
         label: {type: String, required: true},
         trueValue: {type: Boolean, default: true},
         falseValue: {type: Boolean, default: false}
     },
+    emits: ['update:modelValue'],
     computed: {
         isChecked() {
             if (this.modelValue instanceof Array) {
@@ -47,9 +44,9 @@ export default {
                     newValue.splice(newValue.indexOf(this.value), 1);
                 }
 
-                this.$emit('change', newValue);
+                this.$emit('update:modelValue', newValue);
             } else {
-                this.$emit('change', isChecked ? this.trueValue : this.falseValue);
+                this.$emit('update:modelValue', isChecked ? this.trueValue : this.falseValue);
             }
         }
     }

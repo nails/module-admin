@@ -7,6 +7,8 @@
  * Source Imports 🛠
  */
 import '../sass/admin.ui.scss';
+import {createApp} from 'vue';
+import mitt from 'mitt';
 import CreateModal from './components/admin-ui/CreateModal.vue';
 import FilterModal from './components/admin-ui/FilterModal.vue';
 import MenuCollapse from './components/admin-ui/MenuCollapse.vue';
@@ -14,34 +16,42 @@ import MenuToggle from './components/admin-ui/MenuToggle.vue';
 import ModalButton from './components/admin-ui/ModalButton.vue';
 import SearchModal from './components/admin-ui/SearchModal.vue';
 import SideNav from './components/admin-ui/SideNav.vue';
-import Vue from 'vue/dist/vue.esm';
 import vSelect from 'vue-select';
 import VueSweetalert2 from 'vue-sweetalert2';
 
-Vue.component('v-select', vSelect);
-Vue.use(VueSweetalert2);
+const emitter = mitt();
+const $bus = {
+    $on: (...args) => emitter.on(...args),
+    $off: (...args) => emitter.off(...args),
+    $emit: (...args) => emitter.emit(...args),
+};
 
-/**
- * Component Imports 🏗
- */
-Vue.component('CreateModal', CreateModal);
-Vue.component('FilterModal', FilterModal);
-Vue.component('MenuCollapse', MenuCollapse);
-Vue.component('MenuToggle', MenuToggle);
-Vue.component('ModalButton', ModalButton);
-Vue.component('SearchModal', SearchModal);
-Vue.component('SideNav', SideNav);
-
-/**
- * Bus 🚌
- */
-Vue.prototype.$bus = new Vue();
+const components = {
+    'v-select': vSelect,
+    CreateModal,
+    FilterModal,
+    MenuCollapse,
+    MenuToggle,
+    ModalButton,
+    SearchModal,
+    SideNav,
+};
 
 /**
  * App kickoff 🚀
+ *
+ * Each .admin-vue-app island is a separate createApp() so PHP in-DOM
+ * templates (header, sidenav, footer) compile independently, while
+ * sharing one event bus and the same component / plugin registrations.
  */
 for (let el of document.getElementsByClassName('admin-vue-app')) {
-    new Vue({
-        el: el
+    const app = createApp({});
+
+    Object.entries(components).forEach(([name, component]) => {
+        app.component(name, component);
     });
+
+    app.use(VueSweetalert2);
+    app.config.globalProperties.$bus = $bus;
+    app.mount(el);
 }

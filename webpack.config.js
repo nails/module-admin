@@ -1,6 +1,7 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const {VueLoaderPlugin} = require('vue-loader');
 const path = require('path');
+const webpack = require('webpack');
 
 const mode = process.env.NODE_ENV || 'development';
 
@@ -17,6 +18,11 @@ module.exports = {
         filename: '[name].min.js',
         path: path.resolve(__dirname, 'assets/js/'),
         publicPath: '/assets/js/'
+    },
+    resolve: {
+        alias: {
+            vue: path.resolve(__dirname, 'node_modules/vue/dist/vue.esm-bundler.js')
+        }
     },
     module: {
         rules: [
@@ -38,17 +44,18 @@ module.exports = {
                 test: /\.vue$/,
                 loader: 'vue-loader'
             },
-            {
-                test: /\.svg$/,
-                use: ['babel-loader', 'vue-svg-loader'],
-            },
         ]
     },
     plugins: [
         new MiniCssExtractPlugin({
             filename: '../css/[name].min.css'
         }),
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        new webpack.DefinePlugin({
+            __VUE_OPTIONS_API__: JSON.stringify(true),
+            __VUE_PROD_DEVTOOLS__: JSON.stringify(false),
+            __VUE_PROD_HYDRATE_MISMATCH_DETAILS__: JSON.stringify(false)
+        })
     ],
     devServer: {
         port: 9000,
