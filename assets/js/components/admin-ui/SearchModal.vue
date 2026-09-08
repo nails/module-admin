@@ -63,7 +63,36 @@
                     <div
                         v-if="loading"
                         class="u-modal__body u-modal__body--empty">
-                        <Loader />
+                        <svg width="58" height="58" viewBox="0 0 58 58" xmlns="http://www.w3.org/2000/svg">
+                            <g fill="none" fill-rule="evenodd">
+                                <g transform="translate(2 1)" stroke="#FFF" stroke-width="1.5">
+                                    <circle cx="42.601" cy="11.462" r="5" fill-opacity="1" fill="#1d1d1d">
+                                        <animate attributeName="fill-opacity" begin="0s" dur="0.8s" values="1;0.5;0.5;0.5;0.5;0.5;0.5;0.5" calcMode="linear" repeatCount="indefinite" />
+                                    </circle>
+                                    <circle cx="49.063" cy="27.063" r="5" fill-opacity="0.5" fill="#1d1d1d">
+                                        <animate attributeName="fill-opacity" begin="0s" dur="0.8s" values="0.5;1;0.5;0.5;0.5;0.5;0.5;0.5" calcMode="linear" repeatCount="indefinite" />
+                                    </circle>
+                                    <circle cx="42.601" cy="42.663" r="5" fill-opacity="0.5" fill="#1d1d1d">
+                                        <animate attributeName="fill-opacity" begin="0s" dur="0.8s" values="0.5;0.5;1;0.5;0.5;0.5;0.5;0.5" calcMode="linear" repeatCount="indefinite" />
+                                    </circle>
+                                    <circle cx="27" cy="49.125" r="5" fill-opacity="0.5" fill="#1d1d1d">
+                                        <animate attributeName="fill-opacity" begin="0s" dur="0.8s" values="0.5;0.5;0.5;1;0.5;0.5;0.5;0.5" calcMode="linear" repeatCount="indefinite" />
+                                    </circle>
+                                    <circle cx="11.399" cy="42.663" r="5" fill-opacity="0.5" fill="#1d1d1d">
+                                        <animate attributeName="fill-opacity" begin="0s" dur="0.8s" values="0.5;0.5;0.5;0.5;1;0.5;0.5;0.5" calcMode="linear" repeatCount="indefinite" />
+                                    </circle>
+                                    <circle cx="4.938" cy="27.063" r="5" fill-opacity="0.5" fill="#1d1d1d">
+                                        <animate attributeName="fill-opacity" begin="0s" dur="0.8s" values="0.5;0.5;0.5;0.5;0.5;1;0.5;0.5" calcMode="linear" repeatCount="indefinite" />
+                                    </circle>
+                                    <circle cx="11.399" cy="11.462" r="5" fill-opacity="0.5" fill="#1d1d1d">
+                                        <animate attributeName="fill-opacity" begin="0s" dur="0.8s" values="0.5;0.5;0.5;0.5;0.5;0.5;1;0.5" calcMode="linear" repeatCount="indefinite" />
+                                    </circle>
+                                    <circle cx="27" cy="5" r="5" fill-opacity="0.5" fill="#1d1d1d">
+                                        <animate attributeName="fill-opacity" begin="0s" dur="0.8s" values="0.5;0.5;0.5;0.5;0.5;0.5;0.5;1" calcMode="linear" repeatCount="indefinite" />
+                                    </circle>
+                                </g>
+                            </g>
+                        </svg>
                     </div>
                     <ul
                         v-else-if="filteredItems"
@@ -129,8 +158,6 @@ import API from '../API';
 import services from '../Services'
 import debounce from 'debounce'
 
-import Loader from '../../../svg/spinning-circles.svg';
-
 const COMMAND_KEYS = ['k', 'Escape']
 
 export default {
@@ -140,9 +167,6 @@ export default {
             required: false,
             default: 'Begin typing to search...'
         }
-    },
-    components: {
-        Loader
     },
     data() {
         return {
@@ -172,13 +196,14 @@ export default {
     mounted() {
 
         // Add open listener
-        this.$bus.$on('open-search-modal', () => {
+        this.onOpenSearchModal = () => {
             document.body.style.overflow = 'hidden';
             this.open = true;
             this.$nextTick(() => {
                 this.$refs.input.focus();
             });
-        });
+        };
+        this.$bus.$on('open-search-modal', this.onOpenSearchModal);
 
         //Keydown listener
         this.listener = (e) => this.keysTrigger(e);
@@ -186,7 +211,8 @@ export default {
     },
 
 
-    beforeDestroy() {
+    beforeUnmount() {
+        this.$bus.$off('open-search-modal', this.onOpenSearchModal);
         window.removeEventListener('keydown', this.listener);
     },
 

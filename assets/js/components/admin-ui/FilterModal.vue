@@ -104,6 +104,7 @@
     </transition>
 </template>
 <script>
+import {h} from 'vue';
 import CheckBox from './CheckBox.vue';
 
 export default {
@@ -126,20 +127,22 @@ export default {
             sort: 'Descending',
             lang: null,
             OpenIndicator: {
-                render: createElement => createElement('span', ''),
+                render: () => h('span', ''),
             },
         };
     },
     mounted() {
-        this.$bus.$on('open-filter-modal', () => {
+        this.onOpenFilterModal = () => {
             document.body.style.overflow = 'hidden';
             this.open = true;
-        });
+        };
+        this.$bus.$on('open-filter-modal', this.onOpenFilterModal);
         //Keydown listener
         this.listener = (e) => this.keysTrigger(e.key);
         window.addEventListener('keydown', this.listener);
     },
-    beforeDestroy() {
+    beforeUnmount() {
+        this.$bus.$off('open-filter-modal', this.onOpenFilterModal);
         window.removeEventListener('keydown', this.listener);
     },
     methods: {

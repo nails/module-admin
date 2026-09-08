@@ -79,10 +79,11 @@ export default {
         };
     },
     mounted() {
-        this.$bus.$on('open-create-modal', () => {
+        this.onOpenCreateModal = () => {
             document.body.style.overflow = 'hidden';
             this.open = true;
-        });
+        };
+        this.$bus.$on('open-create-modal', this.onOpenCreateModal);
         //Keydown listener
         this.listener = (e) => this.keysTrigger(e.key);
         window.addEventListener('keydown', this.listener);
@@ -100,7 +101,8 @@ export default {
             });
 
     },
-    beforeDestroy() {
+    beforeUnmount() {
+        this.$bus.$off('open-create-modal', this.onOpenCreateModal);
         window.removeEventListener('keydown', this.listener);
     },
     methods: {

@@ -139,26 +139,23 @@
         }
     }
 
-    .vue-grid {
+    .vgl-layout {
+        margin-left: -10px;
+        margin-right: -10px;
+    }
 
-        &-layout {
-            margin-left: -10px;
-            margin-right: -10px;
-        }
+    .vgl-item {
+        > fieldset {
+            height: 100%;
+            overflow: hidden;
 
-        &-item {
-            > fieldset {
+            > div {
+                overflow: auto;
                 height: 100%;
-                overflow: hidden;
-
-                > div {
-                    overflow: auto;
-                    height: 100%;
-                }
             }
         }
 
-        &-placeholder {
+        &--placeholder {
             background-color: #fff !important;
             opacity: 1 !important;
             border: 1px dashed #ccc;

@@ -1,5 +1,5 @@
 import Grid from './Dashboard/Grid.vue';
-import Vue from 'vue/dist/vue.esm';
+import {createApp, h} from 'vue';
 
 class DashboardWidgets {
 
@@ -42,15 +42,13 @@ class Instance {
         let userWidgets = JSON.parse(this.el.getAttribute('user-widgets')) || [];
 
         //  Initialise Vue
-        this.vue = new Vue({
-            el: this.el,
-            render: h => h(Grid, {
-                props: {
-                    adminController: adminController,
-                    userWidgets: userWidgets,
-                }
+        this.app = createApp({
+            render: () => h(Grid, {
+                adminController: adminController,
+                userWidgets: userWidgets,
             }),
         });
+        this.vue = this.app.mount(this.el);
     }
 }
 
