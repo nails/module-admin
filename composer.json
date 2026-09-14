@@ -44,7 +44,8 @@
     },
     "scripts": {
         "test": "./vendor/bin/phpunit",
-        "analyse": "./vendor/bin/phpstan analyse -c .phpstan/config.neon"
+        "analyse": "./vendor/bin/phpstan analyse -c .phpstan/config.neon",
+        "check-migrations": "php vendor/nails/common/scripts/check-migration-numbering.php"
     },
     "autoload": {
         "psr-4": {
@@ -59,6 +60,16 @@
     "extra": {
         "nails": {
             "moduleName": "admin",
+            "migrations": {
+                "grandfathered": {
+                    "10": "differs",
+                    "11": "absent",
+                    "13": "absent",
+                    "14": "absent",
+                    "15": "absent",
+                    "16": "absent"
+                }
+            },
             "type": "module",
             "namespace": "Nails\\Admin\\",
             "autoload": {
