@@ -22,6 +22,11 @@ class Migration13 implements Interfaces\Database\Migration
      */
     public function execute(): void
     {
+        //  Already renamed by migration 10 on `feature/pre-new-admin`
+        if (!$this->columnExists('{{NAILS_DB_PREFIX}}admin_note', 'model')) {
+            return;
+        }
+
         $this->query('ALTER TABLE `{{NAILS_DB_PREFIX}}admin_note` CHANGE `model` `item_model` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT \'\';');
     }
 }

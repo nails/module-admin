@@ -22,7 +22,14 @@ class Migration14 implements Interfaces\Database\Migration
      */
     public function execute(): void
     {
-        $this->query('ALTER TABLE `{{NAILS_DB_PREFIX}}admin_changelog` DROP `article`;');
+        if ($this->columnExists('{{NAILS_DB_PREFIX}}admin_changelog', 'article')) {
+            $this->query('ALTER TABLE `{{NAILS_DB_PREFIX}}admin_changelog` DROP `article`;');
+        }
+
+        if (!$this->columnExists('{{NAILS_DB_PREFIX}}admin_changelog', 'verb')) {
+            return;
+        }
+
         $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `verb` = "CREATE" WHERE `verb` = "created";');
         $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `verb` = "DELETE" WHERE `verb` = "deleted";');
         $this->query('UPDATE `{{NAILS_DB_PREFIX}}admin_changelog` SET `verb` = "RESTORE" WHERE `verb` = "restore";');

@@ -23,6 +23,10 @@ class Migration16 implements Interfaces\Database\Migration
      */
     public function execute(): void
     {
+        if ($this->columnExists('{{NAILS_DB_PREFIX}}admin_export', 'expires')) {
+            return;
+        }
+
         //  Explicit expiry column
         $this->query(
             <<<EOT
