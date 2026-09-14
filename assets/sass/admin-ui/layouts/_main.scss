@@ -25,6 +25,18 @@
         }
     }
 
+    a {
+        color: inherit;
+        font-weight: inherit;
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            color: inherit;
+            text-decoration: underline;
+        }
+    }
+
     i {
         @include font-size(10px);
     }

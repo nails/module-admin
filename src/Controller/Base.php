@@ -13,10 +13,12 @@
 
 namespace Nails\Admin\Controller;
 
+use Nails\Admin\Admin\Controller\Dashboard;
 use Nails\Admin\Constants;
 use Nails\Admin\Events;
 use Nails\Admin\Helper;
 use Nails\Admin\Interfaces\Controller;
+use Nails\Admin\Service\Breadcrumb;
 use Nails\Common\Exception\AssetException;
 use Nails\Common\Exception\FactoryException;
 use Nails\Common\Exception\NailsException;
@@ -388,6 +390,102 @@ abstract class Base implements Controller
                     $aTitles
                 )
             );
+        return $this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Append a crumb to the admin breadcrumb trail
+     *
+     * On the first crumb, Admin (linked to the dashboard) is prepended automatically.
+     *
+     * @param string      $sLabel The label shown in the trail
+     * @param string|null $sUrl   Optional URL; null means the crumb is not a link
+     *
+     * @return $this
+     * @throws FactoryException
+     */
+    protected function addBreadcrumb(string $sLabel, ?string $sUrl = null): self
+    {
+        $oBreadcrumbs = $this->getBreadcrumbService();
+        $bWasEmpty    = $oBreadcrumbs->isEmpty();
+
+        $oBreadcrumbs->add($sLabel, $sUrl);
+
+        if ($bWasEmpty) {
+            $oBreadcrumbs->prepend('Admin', Dashboard::url());
+        }
+
+        return $this->syncTitlesFromBreadcrumbs();
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Insert a crumb at the start of the trail (after the Admin root crumb)
+     *
+     * @param string      $sLabel The label shown in the trail
+     * @param string|null $sUrl   Optional URL; null means the crumb is not a link
+     *
+     * @return $this
+     * @throws FactoryException
+     */
+    protected function prependBreadcrumb(string $sLabel, ?string $sUrl = null): self
+    {
+        $oBreadcrumbs = $this->getBreadcrumbService();
+
+        if ($oBreadcrumbs->isEmpty()) {
+            return $this->addBreadcrumb($sLabel, $sUrl);
+        }
+
+        $aItems = $oBreadcrumbs->getItems();
+        $oBreadcrumbs->reset();
+
+        $oFirst = array_shift($aItems);
+        if ($oFirst !== null && $oFirst->getLabel() === 'Admin') {
+            $oBreadcrumbs->add($oFirst);
+            $oBreadcrumbs->add($sLabel, $sUrl);
+        } else {
+            $oBreadcrumbs->add($sLabel, $sUrl);
+            if ($oFirst !== null) {
+                $oBreadcrumbs->add($oFirst);
+            }
+        }
+
+        foreach ($aItems as $oCrumb) {
+            $oBreadcrumbs->add($oCrumb);
+        }
+
+        return $this->syncTitlesFromBreadcrumbs();
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Returns the request-scoped breadcrumb trail
+     *
+     * @return Breadcrumb
+     * @throws FactoryException
+     */
+    protected function getBreadcrumbService(): Breadcrumb
+    {
+        return Factory::service('Breadcrumb', Constants::MODULE_SLUG);
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Keep document titles in sync with breadcrumb labels
+     *
+     * @return $this
+     * @throws FactoryException
+     */
+    protected function syncTitlesFromBreadcrumbs(): self
+    {
+        $this->data['oMetaData']
+            ->setTitles($this->getBreadcrumbService()->getLabels());
+
         return $this;
     }
 

@@ -696,7 +696,7 @@ abstract class DefaultController extends Base
         // --------------------------------------------------------------------------
 
         $this
-            ->setTitles([static::CONFIG_SIDEBAR_GROUP, $aConfig['TITLE_PLURAL'], 'Manage'])
+            ->setBreadcrumbTrail()
             ->loadView('index');
     }
 
@@ -865,7 +865,7 @@ abstract class DefaultController extends Base
         // --------------------------------------------------------------------------
 
         $this
-            ->setTitles([static::CONFIG_SIDEBAR_GROUP, $aConfig['TITLE_SINGLE'], 'Create'])
+            ->setBreadcrumbTrail('Create', static::url('create'))
             ->loadView('edit');
     }
 
@@ -1034,7 +1034,7 @@ abstract class DefaultController extends Base
         // --------------------------------------------------------------------------
 
         $this
-            ->setTitles([static::CONFIG_SIDEBAR_GROUP, $aConfig['TITLE_SINGLE'], 'Edit'])
+            ->setBreadcrumbTrail('Edit', static::url('edit/' . $oItem->id))
             ->loadView('edit');
     }
 
@@ -1280,7 +1280,7 @@ abstract class DefaultController extends Base
         $aSections = $this->sortItemsIntoSections($aItems);
 
         $this
-            ->setTitles([$aConfig['TITLE_PLURAL'], 'Sort'])
+            ->setBreadcrumbTrail('Sort', static::url('sort'))
             ->setData('aSections', $aSections)
             ->loadView('order');
     }
@@ -1806,6 +1806,41 @@ abstract class DefaultController extends Base
     {
         Factory::helper('inflector');
         return static::CONFIG_TITLE_PLURAL ?: pluralise(2, static::getTitleSingle());
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Returns the label for the index crumb (the tip of the DefaultController trail)
+     *
+     * @return string
+     * @throws FactoryException
+     */
+    protected function getIndexBreadcrumbLabel(): string
+    {
+        return $this->getConfig()['TITLE_PLURAL'];
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Seed the trail with Admin › {index label}, optionally pushing a further tip
+     *
+     * @param string|null $sTipLabel Extra crumb after the index (e.g. Create, Edit)
+     * @param string|null $sTipUrl   Optional URL for the extra crumb
+     *
+     * @return $this
+     * @throws FactoryException
+     */
+    protected function setBreadcrumbTrail(?string $sTipLabel = null, ?string $sTipUrl = null): self
+    {
+        $this->addBreadcrumb($this->getIndexBreadcrumbLabel(), static::url());
+
+        if ($sTipLabel !== null) {
+            $this->addBreadcrumb($sTipLabel, $sTipUrl);
+        }
+
+        return $this;
     }
 
     // --------------------------------------------------------------------------
