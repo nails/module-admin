@@ -51,6 +51,11 @@
             "Nails\\Admin\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "extra": {
         "nails": {
             "moduleName": "admin",

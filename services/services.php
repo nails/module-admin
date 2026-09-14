@@ -8,6 +8,13 @@ use Nails\Common\Factory\Component;
 
 return [
     'services'  => [
+        'Breadcrumb'      => function (): Service\Breadcrumb {
+            if (class_exists('\App\Admin\Service\Breadcrumb')) {
+                return new \App\Admin\Service\Breadcrumb();
+            } else {
+                return new Service\Breadcrumb();
+            }
+        },
         'Controller'      => function (): Service\Controller {
             if (class_exists('\App\Admin\Service\Controller')) {
                 return new \App\Admin\Service\Controller();
@@ -150,6 +157,13 @@ return [
         },
     ],
     'factories' => [
+        'Breadcrumb'                       => function (string $sLabel = '', ?string $sUrl = null): Factory\Breadcrumb {
+            if (class_exists('\App\Admin\Factory\Breadcrumb')) {
+                return new \App\Admin\Factory\Breadcrumb($sLabel, $sUrl);
+            } else {
+                return new Factory\Breadcrumb($sLabel, $sUrl);
+            }
+        },
         'DefaultControllerSortSection'     => function (string $sLabel = '', array $aItems = []): Factory\DefaultController\Sort\Section {
             if (class_exists('\App\Admin\Factory\Nav')) {
                 return new \App\Admin\Factory\DefaultController\Sort\Section($sLabel, $aItems);
