@@ -2,23 +2,16 @@
 
 namespace Nails\Admin\Console\Command\Session;
 
-use Nails\Admin\Constants;
-use Nails\Admin\Model\Export;
-use Nails\Admin\Model\Session;
-use Nails\Admin\Service\DataExport;
-use Nails\Cdn\Service\Cdn;
-use Nails\Common\Exception\NailsException;
-use Nails\Common\Service\Database;
+use Nails\Admin\Housekeeping\Sessions;
+use Nails\Components;
 use Nails\Console\Command\Base;
-use Nails\Console\Exception\ConsoleException;
 use Nails\Factory;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Class Clean
- *
- * @package Nails\Admin\Console\Command\Session
+ * @deprecated Use housekeeping:run --routine=Nails\Admin\Housekeeping\Sessions
  */
 class Clean extends Base
 {
@@ -29,10 +22,14 @@ class Clean extends Base
     {
         $this
             ->setName('admin:session:clean')
-            ->setDescription('Cleans old admin sessions');
+            ->setDescription('[DEPRECATED] Cleans old admin sessions')
+            ->addOption(
+                'dry-run',
+                null,
+                InputOption::VALUE_NONE,
+                'Log what would be deleted without deleting'
+            );
     }
-
-    // --------------------------------------------------------------------------
 
     /**
      * Executes the app
@@ -46,36 +43,25 @@ class Clean extends Base
     {
         parent::execute($oInput, $oOutput);
 
-        // --------------------------------------------------------------------------
+        $this->banner('Admin Session: Clean (deprecated)');
 
-        /** @var Database $oDb */
-        $oDb = Factory::service('Database');
-        /** @var Session $oModel */
-        $oModel = Factory::model('Session', Constants::MODULE_SLUG);
+        if (!Components::exists('nails/module-housekeeping')) {
+            $oOutput->writeln('<error>This command now requires nails/module-housekeeping.</error>');
+            $oOutput->writeln('Install it with <comment>composer require nails/module-housekeeping</comment>');
+            $oOutput->writeln('then run <comment>nails housekeeping:run --routine=' . Sessions::class . '</comment>');
 
-        // --------------------------------------------------------------------------
-
-        try {
-
-            $this->banner('Admin Session: Clean');
-
-            $oDb->query(sprintf(
-                'DELETE FROM `%s` WHERE heartbeat < DATE_SUB(NOW(), INTERVAL 1 HOUR)',
-                $oModel->getTableName()
-            ));
-
-        } catch (ConsoleException $e) {
-            return $this->abort(
-                self::EXIT_CODE_FAILURE,
-                [$e->getMessage()]
-            );
+            return static::EXIT_CODE_FAILURE;
         }
 
-        // --------------------------------------------------------------------------
+        /** @var \Nails\Housekeeping\Service\Orchestrator $oOrchestrator */
+        $oOrchestrator = Factory::service('Orchestrator', 'nails/module-housekeeping');
+        $oResult       = $oOrchestrator->runRoutine(
+            Sessions::class,
+            (bool) $oInput->getOption('dry-run'),
+            true,
+            $oOutput
+        );
 
-        //  And we're done
-        $oOutput->writeln('Complete!');
-
-        return self::EXIT_CODE_SUCCESS;
+        return $oResult->isSuccess() ? static::EXIT_CODE_SUCCESS : static::EXIT_CODE_FAILURE;
     }
 }
