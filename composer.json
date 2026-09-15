@@ -36,6 +36,7 @@
         "nails/module-cdn": "dev-develop",
         "nails/module-console": "dev-develop",
         "nails/module-cron": "dev-develop",
+        "nails/module-housekeeping": "dev-develop",
         "dragonmantank/cron-expression": "^3.0"
     },
     "require-dev": {
