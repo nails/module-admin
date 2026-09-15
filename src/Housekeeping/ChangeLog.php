@@ -21,11 +21,6 @@ class ChangeLog extends Base
     const DESCRIPTION     = 'Deletes admin changelog rows older than ADMIN_CHANGELOG_RETENTION_DAYS';
     const CRON_EXPRESSION = '@daily';
 
-    /**
-     * Default retention in days. 0 disables deletion.
-     */
-    const DEFAULT_RETENTION_DAYS = 730;
-
     protected function model(): ModelBase
     {
         return Factory::model('ChangeLog', Constants::MODULE_SLUG);
@@ -81,6 +76,6 @@ class ChangeLog extends Base
 
     protected function retentionDays(): int
     {
-        return (int) Config::get('ADMIN_CHANGELOG_RETENTION_DAYS', static::DEFAULT_RETENTION_DAYS);
+        return (int) Config::get('ADMIN_CHANGELOG_RETENTION_DAYS', 0);
     }
 }
