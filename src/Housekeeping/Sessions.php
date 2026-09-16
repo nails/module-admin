@@ -16,8 +16,8 @@ class Sessions extends Base
     const LABEL            = 'Admin sessions';
     const DESCRIPTION      = 'Deletes admin sessions whose heartbeat is older than ADMIN_SESSION_RETENTION seconds';
     const CRON_EXPRESSION  = '*/5 * * * *';
-    const CONFIG_RETENTION = 'ADMIN_SESSION_RETENTION';
-    const RETENTION        = 3600;
+    const CONFIG_RETENTION  = 'ADMIN_SESSION_RETENTION';
+    const DEFAULT_RETENTION = 3600;
 
     protected function model(): ModelBase
     {
@@ -29,7 +29,7 @@ class Sessions extends Base
      */
     protected function where(): array
     {
-        $iSeconds = (int) Config::get(static::CONFIG_RETENTION, static::RETENTION) ?: static::RETENTION;
+        $iSeconds = (int) Config::get(static::CONFIG_RETENTION, static::DEFAULT_RETENTION) ?: static::DEFAULT_RETENTION;
 
         /** @var \DateTime $oNow */
         $oNow = Factory::factory('DateTime');
