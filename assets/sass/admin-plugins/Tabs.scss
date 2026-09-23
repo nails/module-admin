@@ -1,115 +1,169 @@
+// Plugins: Tabs
+// =============
+// Underline tab bar joined to a white card panel. The JS contract is unchanged:
+//
+//     ul.tabs > li.tab > a[data-tab]     Controls; .active on the <li>
+//     section.tabs > div.tab-page        Panels; .active on the matching page
+//     a.error                            Control whose panel contains a field error
+//
+// A `tabs--segmented` modifier on the <ul> (and, if it is not the next sibling,
+// on the <section>) draws a pill switcher instead, with panels that carry no
+// card of their own. Use that when a second, heavier tab row sits above these.
+//
+// Colours come from the slate family and the runtime brand highlight token.
+
+@import '../admin-ui/variables/palette';
+
+$tabs-radius: 0.5rem;
+$tabs-border-width: 1px;
+$tabs-border-color: $light-slate;
+$tabs-bg: $white;
+$tabs-sticky-top: 63px; // .topbar height; see layouts/_topbar.scss
+$tabs-sticky-z: 500; // below .topbar (1000)
+$tabs-bar-shadow: 0 1px 2px rgba($dark-slate, 0.08);
+$tabs-underline-width: 2px;
+
+$tabs-tab-color: $slate;
+$tabs-tab-color-hover: $dark-slate;
+$tabs-tab-color-active: rgb($brand-color-highlight);
+$tabs-tab-color-disabled: $soft-slate;
+$tabs-tab-font-size: 0.875rem;
+$tabs-tab-font-weight: 600;
+$tabs-tab-padding-y: 0.65rem;
+$tabs-tab-padding-x: 1rem;
+
+$tabs-error-dot-size: 7px;
+$tabs-error-dot-color: $brick-red;
+
+$tabs-heading-sticky-top: calc(#{$tabs-sticky-top} + 2.75rem);
+
+$tabs-segmented-track: $pale-slate;
+$tabs-segmented-border: $light-slate;
+$tabs-segmented-active-bg: $dark-slate;
+$tabs-segmented-active-color: $white;
+$tabs-segmented-height: 36px;
+
+// Bar
+// ---
 ul.tabs {
-    border-bottom: 1px solid #cecece;
-    margin-bottom: 0;
-    padding-left: 0;
-    position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.15rem;
+    align-items: flex-end;
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0.5rem 0;
+    position: sticky;
+    top: $tabs-sticky-top;
+    z-index: $tabs-sticky-z;
+    background: $tabs-bg;
+    border: $tabs-border-width solid $tabs-border-color;
+    border-bottom: $tabs-underline-width solid $tabs-border-color;
+    border-radius: $tabs-radius $tabs-radius 0 0;
+    // Shadow lives on the panel so the bar and page read as one card
+    box-shadow: none;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scroll-padding-inline: 2.5rem;
 
     li.tab {
-        margin-bottom: 0;
-        margin-left: 5px;
-        display: inline-block;
+        display: block;
+        flex: 0 0 auto;
+        margin: 0;
 
         a {
-            padding: 2px 7px;
-            display: block;
-            border: 1px solid #cecece;
-            background: #efefef;
-            position: relative;
-            left: 13px;
-            margin-top: 7px;
-            top: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: $tabs-tab-padding-y $tabs-tab-padding-x;
+            margin: 0 0 (-$tabs-underline-width);
+            border: 0;
+            border-bottom: $tabs-underline-width solid transparent;
+            background: transparent;
+            color: $tabs-tab-color;
+            font-size: $tabs-tab-font-size;
+            font-weight: $tabs-tab-font-weight;
+            line-height: 1.2;
             text-decoration: none;
-            text-align: center;
-            border-top-right-radius: 3px;
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
-            border-top-left-radius: 3px;
-            min-height: 24px;
+            white-space: nowrap;
             box-sizing: border-box;
+            cursor: pointer;
+            transition: color 0.15s ease, border-color 0.15s ease;
 
-            &.disabled {
-                background: #fafafa;
-                color: #c2c2c2;
-                cursor: default;
-                border-color: #f0f0f0;
-                border-bottom-color: #cecece;
+            &:hover {
+                color: $tabs-tab-color-hover;
             }
 
-            &.error {
-                padding-left: 30px !important;
+            &:focus-visible {
+                outline: 2px solid $tabs-tab-color-active;
+                outline-offset: -2px;
+                border-radius: 4px;
+            }
 
-                &:before {
-                    font-family: "Font Awesome 6 Free";
-                    content: '\f057';
-                    display: block;
-                    position: absolute;
-                    left: 7px;
-                    top: 3px;
-                    color: #b52130;
-                }
+            &.disabled {
+                color: $tabs-tab-color-disabled;
+                cursor: default;
+            }
+
+            &.error::after {
+                content: "";
+                display: inline-block;
+                width: $tabs-error-dot-size;
+                height: $tabs-error-dot-size;
+                border-radius: 50%;
+                background: $tabs-error-dot-color;
+                flex-shrink: 0;
             }
         }
 
-        &.active {
-            a {
-                background: #ffffff;
-                border-bottom: 1px solid #ffffff;
-                font-weight: bold;
-                margin-top: 2px;
-                padding-top: 6px;
+        &.active a {
+            color: $tabs-tab-color-active;
+            border-bottom-color: currentColor;
 
-                &.disabled {
-                    color: #000000;
-                    border-color: #cecece;
-                    border-bottom-color: #ffffff;
-                }
-
-                &.error {
-                    &:before {
-                        top: 6px;
-                    }
-                }
+            &.disabled {
+                color: $tabs-tab-color-hover;
             }
         }
     }
 }
 
+// Panels
+// ------
 section.tabs {
     position: relative;
-    top: -1px;
-    margin-bottom: 1em;
+    margin: 0 0 1.1rem;
 
-    div.tab-page {
-        border: 1px solid #cecece;
-        border-top-color: transparent;
+    > div.tab-page {
         display: none;
-        background: #ffffff;
-        background-clip: content-box;
+        background: $tabs-bg;
+        border: $tabs-border-width solid $tabs-border-color;
+        border-top: 0;
+        border-radius: 0 0 $tabs-radius $tabs-radius;
+        // Padding, not child margins: a 0-width top border does not stop
+        // margin collapse, which opened a gap between the bar and the page.
+        padding: 1.1rem;
+        box-shadow: $tabs-bar-shadow;
 
         > p,
-        > .alert,
         > .alert,
         > .padded,
         > fieldset,
         > form,
         > ul:not(.tabs) {
-            margin: 1em;
+            margin: 0 0 1.1rem;
 
-            & + & {
-                margin-top: 0;
+            &:last-child {
+                margin-bottom: 0;
             }
         }
 
-        > ul.tabs {
-            margin-left: 1em;
-            margin-right: 1em;
-            margin-top: 1em;
-        }
-
+        > ul.tabs,
+        > .tabs-scroller,
         > section.tabs {
-            margin-left: 1em;
-            margin-right: 1em;
-            margin-bottom: 1em;
+            margin: 0;
         }
 
         > h1,
@@ -118,54 +172,18 @@ section.tabs {
         > h4,
         > h5,
         > h6 {
-            background: #f5f5f5;
+            background: $pale-slate;
             border: none;
-            border-bottom: 1px solid #e5e5e5;
-            padding: 0.75rem;
-            margin: 0;
+            border-bottom: 1px solid $light-slate;
+            padding: 0.75rem 1.1rem;
+            margin: -1.1rem -1.1rem 1.1rem;
             position: sticky;
-            top: 45px;
-            z-index: 999;
+            top: $tabs-heading-sticky-top;
+            z-index: $tabs-sticky-z - 1;
         }
 
         table {
             margin: 0;
-        }
-
-        //  Tabs within tabs should be slightly smaller.
-        ul.tabs {
-            li.tab {
-                a {
-                    margin-top: 0;
-                    padding: 2px 7px;
-
-                    &.error {
-                        background-position: 2px 2px !important;
-                        padding-left: 25px !important;
-
-                        &:before {
-                            top: 3px;
-                            left: 5px;
-                        }
-                    }
-                }
-
-                &.active {
-                    a {
-                        margin-top: -2px;
-                        padding-top: 4px;
-
-                        &.error {
-                            background-position: 2px 2px !important;
-                            padding-left: 25px !important;
-
-                            &:before {
-                                top: 5px;
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         &.active {
@@ -174,10 +192,103 @@ section.tabs {
     }
 }
 
-fieldset {
-    > ul.tabs {
+// Segmented
+// ---------
+// Pill track. Panels drop the card so a nested underline group can be the
+// surface. The section is targeted as the next sibling, or by sharing the
+// modifier when markup sits between the two.
+ul.tabs.tabs--segmented {
+    display: flex;
+    flex-wrap: nowrap;
+    width: max-content;
+    max-width: 100%;
+    gap: 0.25rem;
+    align-items: center;
+    position: static;
+    z-index: auto;
+    background: $tabs-segmented-track;
+    border: 1px solid $tabs-segmented-border;
+    border-radius: 999px;
+    box-shadow: none;
+    margin: 0 0 0.85rem;
+    padding: 0.3rem;
+
+    li.tab a {
         margin: 0;
-        background-color: #e8e8e8;
+        padding: 0 1.3rem;
+        height: $tabs-segmented-height;
+        border: 0;
+        border-radius: 999px;
+        color: $tabs-tab-color;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover {
+            background: rgba($white, 0.75);
+            color: $tabs-tab-color-hover;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $tabs-tab-color-active;
+            outline-offset: -2px;
+        }
+
+        img {
+            height: 14px;
+            width: auto;
+            margin: 0;
+            vertical-align: middle;
+        }
+    }
+
+    li.tab.active a {
+        background: $tabs-segmented-active-bg;
+        color: $tabs-segmented-active-color;
+        border-bottom-color: transparent;
+        box-shadow: 0 2px 6px rgba($dark-slate, 0.25);
+
+        &.disabled {
+            color: $tabs-segmented-active-color;
+        }
+    }
+}
+
+ul.tabs.tabs--segmented + section.tabs,
+.tabs-scroller:has(> ul.tabs.tabs--segmented) + section.tabs,
+section.tabs.tabs--segmented {
+    margin-bottom: 0;
+
+    > div.tab-page {
+        background: transparent;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+
+        > .padded {
+            margin: 0.25rem 0 1rem;
+        }
+    }
+}
+
+// Fieldsets
+// ---------
+// Tabs inside a fieldset already sit in a card, so the panel drops its own
+// chrome. The bar is not sticky; the fieldset header is.
+fieldset {
+    > ul.tabs,
+    > .tabs-scroller {
+        margin: 0;
+        position: static;
+        width: 100%;
+    }
+
+    > ul.tabs,
+    > .tabs-scroller > ul.tabs {
+        border-radius: 0;
+        box-shadow: none;
+        position: static;
     }
 
     > section.tabs {
@@ -188,12 +299,15 @@ fieldset {
         > .tab-page {
             border: 0;
             margin: 0;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
 
             > form {
                 margin: 0;
 
                 > p {
-                    margin: 1em;
+                    margin: 1.1rem;
                 }
             }
         }

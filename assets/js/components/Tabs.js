@@ -1,4 +1,7 @@
 /* export Tabs */
+
+import {scrollTabIntoView} from './TabScroller.js';
+
 class Tabs {
 
     /**
@@ -76,7 +79,7 @@ class Tabs {
                 this.groups[group] = new Group(group, this.adminController);
             }
 
-            childNodes = nodes[i].querySelectorAll('li.tab');
+            childNodes = nodes[i].querySelectorAll(':scope > li.tab');
             for (j = 0; j < childNodes.length; j++) {
                 this.groups[group].addControl(
                     new Control(this.groups[group], childNodes[j])
@@ -90,7 +93,7 @@ class Tabs {
         for (i = 0; i < nodes.length; i++) {
 
             group = nodes[i].dataset.tabgroup;
-            childNodes = nodes[i].querySelectorAll('div.tab-page');
+            childNodes = nodes[i].querySelectorAll(':scope > div.tab-page');
             for (j = 0; j < childNodes.length; j++) {
                 this.groups[group].addPanel(
                     new Panel(this.groups[group], childNodes[j])
@@ -291,6 +294,7 @@ class Control {
      */
     setActive() {
         this.element.classList.add('active');
+        scrollTabIntoView(this.element);
         return this;
     }
 
