@@ -26,12 +26,6 @@ div.field {
         }
     }
 
-    &.boolean.toggled {
-        .input {
-            padding-left: 0;
-        }
-    }
-
     label {
         display: block;
         width: 100%;
@@ -264,24 +258,41 @@ div.field {
     }
 
     &.boolean {
-        .toggle {
-            //  width and height set via JS, so that if plugin isnt loaded
-            //  or otherwise unavailable, it falls back to a normal checkbox
-
-            text-align: center;
-            display: inline-block;
-        }
-
         span.input {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem 1rem;
+            padding-left: 0;
+
             .tip {
                 top: -9px;
                 left: 10px;
                 position: relative;
             }
 
+            //  Sit beside the switch (the old 100px toggle did this with
+            //  margin-top: 0). Width auto so it does not drop onto its own
+            //  row; flex-basis lets a long line wrap underneath with the gap.
             small.info {
+                float: none;
+                display: block;
+                width: auto;
+                flex: 1 1 14rem;
                 margin-top: 0;
+                color: $slate;
+                line-height: 1.4;
             }
+        }
+
+        .admin-toggle {
+            flex-shrink: 0;
+        }
+    }
+
+    &.boolean.readonly {
+        .input:before {
+            display: none;
         }
     }
 
@@ -309,14 +320,6 @@ div.field {
                 left: 9px;
                 top: 4px;
                 color: #aaaaaa;
-            }
-        }
-
-        .toggle {
-            opacity: 0.5;
-
-            * {
-                cursor: not-allowed;
             }
         }
     }

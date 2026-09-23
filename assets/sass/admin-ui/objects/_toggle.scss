@@ -1,0 +1,209 @@
+// Objects: Toggle
+// ===============
+// An iOS-style switch painted over a checkbox. The checkbox is still the form
+// control; this is only the thing the user sees and clicks. The JS in
+// assets/js/components/admin-ui/Toggles.js fills an empty `.form-bool` and
+// hides the checkbox that follows it.
+//
+// Structure
+// ---------
+// .admin-toggle                 The switch; compact unlabeled pill by default
+// .admin-toggle--labeled        Custom data-text-on / data-text-off, so the
+//                               track is wide enough to hold those words
+// .admin-toggle--on             The checkbox is checked
+// .admin-toggle--readonly       Painted, but not interactive
+// .admin-toggle__label          The on/off words; stacked so the wider one
+//                               sizes the labeled track
+// .admin-toggle__thumb          The white knob
+// .admin-toggle__input          The real checkbox, visually hidden once ready
+//
+// Compact size matches the 42×24 pill from the original admin-ui pass. Custom
+// labels keep their authored casing. Colours come from the slate and green
+// families in variables/_palette.scss.
+
+// Tokens
+// ------
+$toggle-height: 24px;
+$toggle-pad: 2px;
+$toggle-compact-width: 42px;
+$toggle-labeled-height: 28px;
+$toggle-labeled-min-width: 6.25rem;
+$toggle-thumb: $toggle-height - ($toggle-pad * 2);
+
+$toggle-off-bg: $soft-slate;
+$toggle-off-border: rgba($dark-slate, 0.12);
+$toggle-on-bg: $grass-green;
+$toggle-on-border: rgba($grass-green, 0.35);
+$toggle-on-color: $dark-green;
+$toggle-off-color: $dark-slate;
+$toggle-thumb-bg: $white;
+$toggle-thumb-shadow: 0 1px 3px rgba($dark-slate, 0.28);
+$toggle-ring-width: 3px;
+$toggle-ring: rgba($slate, 0.35);
+$toggle-label-size: 0.75rem;
+$toggle-label-weight: 600;
+$toggle-transition: background-color 0.15s ease, box-shadow 0.15s ease;
+$toggle-thumb-transition: left 0.15s ease;
+$toggle-label-transition: opacity 0.15s ease;
+
+// Base
+// ----
+.admin-toggle {
+    --admin-toggle-height: #{$toggle-height};
+    --admin-toggle-pad: #{$toggle-pad};
+    --admin-toggle-thumb: calc(var(--admin-toggle-height) - (2 * var(--admin-toggle-pad)));
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: var(--admin-toggle-width, #{$toggle-compact-width});
+    height: var(--admin-toggle-height);
+    margin: 0;
+    padding: var(--admin-toggle-pad);
+    overflow: hidden;
+    border: 0;
+    border-radius: 999px;
+    background-color: $toggle-off-bg;
+    box-shadow: inset 0 0 0 1px $toggle-off-border;
+    vertical-align: middle;
+    cursor: pointer;
+    user-select: none;
+    transition: $toggle-transition;
+
+    &:focus {
+        outline: 0;
+    }
+
+    &:focus-visible {
+        box-shadow: inset 0 0 0 1px $toggle-off-border,
+        0 0 0 $toggle-ring-width $toggle-ring;
+    }
+}
+
+.admin-toggle--on {
+    background-color: $toggle-on-bg;
+    box-shadow: inset 0 0 0 1px $toggle-on-border;
+
+    &:focus-visible {
+        box-shadow: inset 0 0 0 1px $toggle-on-border,
+        0 0 0 $toggle-ring-width $toggle-ring;
+    }
+}
+
+// Labels
+// ------
+// Compact switches hide the words: the default ON/OFF is chrome, not a label
+// the author chose. Labeled switches stack both words in the same grid cell
+// so a longer on/off pair does not jump the width when toggled.
+.admin-toggle__label {
+    position: relative;
+    z-index: 1;
+    display: none;
+    font-size: $toggle-label-size;
+    font-weight: $toggle-label-weight;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: $toggle-label-transition;
+}
+
+//  Both words occupy one grid cell so the wider one wins the width
+.admin-toggle--labeled {
+    --admin-toggle-height: #{$toggle-labeled-height};
+
+    display: inline-grid;
+    grid-template-areas: "stack";
+    align-items: center;
+    justify-items: center;
+    width: var(--admin-toggle-width, auto);
+    min-width: $toggle-labeled-min-width;
+    padding-right: calc(var(--admin-toggle-thumb) + var(--admin-toggle-pad) + 0.7rem);
+    padding-left: calc(var(--admin-toggle-thumb) + var(--admin-toggle-pad) + 0.7rem);
+
+    .admin-toggle__label {
+        display: block;
+        grid-area: stack;
+        text-align: center;
+    }
+
+    .admin-toggle__label--on {
+        color: $toggle-on-color;
+        opacity: 0;
+    }
+
+    .admin-toggle__label--off {
+        color: $toggle-off-color;
+        opacity: 1;
+    }
+}
+
+.admin-toggle--labeled.admin-toggle--on {
+    .admin-toggle__label--on {
+        opacity: 1;
+    }
+
+    .admin-toggle__label--off {
+        opacity: 0;
+    }
+}
+
+// Thumb
+// -----
+.admin-toggle__thumb {
+    position: absolute;
+    top: var(--admin-toggle-pad);
+    left: var(--admin-toggle-pad);
+    z-index: 2;
+    width: var(--admin-toggle-thumb);
+    height: var(--admin-toggle-thumb);
+    border-radius: 50%;
+    background: $toggle-thumb-bg;
+    box-shadow: $toggle-thumb-shadow;
+    pointer-events: none;
+    transition: $toggle-thumb-transition;
+}
+
+//  `left` is relative to the track, so this is correct for compact and
+//  labeled widths, and for switches that were `display: none` when JS ran
+.admin-toggle--on .admin-toggle__thumb {
+    left: calc(100% - var(--admin-toggle-thumb) - var(--admin-toggle-pad));
+}
+
+// Readonly
+// --------
+.admin-toggle--readonly {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+// Checkbox
+// --------
+// Hidden once the switch is ready, so a missing or failed JS init still
+// leaves a usable checkbox. Kept in the tree (not display:none) so the form
+// still submits it.
+.admin-toggle + input[type="checkbox"].admin-toggle__input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.admin-toggle--no-animate,
+.admin-toggle--no-animate .admin-toggle__thumb,
+.admin-toggle--no-animate .admin-toggle__label {
+    transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-toggle,
+    .admin-toggle__thumb,
+    .admin-toggle__label {
+        transition: none;
+    }
+}
