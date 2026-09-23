@@ -264,11 +264,6 @@ abstract class Base implements Controller
             ->load('https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/js/jquery.fancybox.min.js')
             ->load('https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.7/css/jquery.fancybox.min.css')
 
-            //  jQuery Toggles
-            ->load('https://cdn.jsdelivr.net/gh/simontabor/jquery-toggles/toggles.min.js')
-            ->load('https://cdn.jsdelivr.net/gh/simontabor/jquery-toggles/css/toggles.css')
-            ->load('https://cdn.jsdelivr.net/gh/simontabor/jquery-toggles/css/themes/toggles-modern.css')
-
             //  jQuery scrollTo
             ->load('https://cdnjs.cloudflare.com/ajax/libs/jquery-scrollTo/1.4.14/jquery.scrollTo.min.js')
 

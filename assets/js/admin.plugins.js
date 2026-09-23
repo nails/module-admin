@@ -41,7 +41,7 @@ import Styleguide from './components/Styleguide.js';
 import Tabs from './components/Tabs.js';
 import TabScroller from './components/TabScroller.js';
 import TimeCode from './components/TimeCode.js';
-import Toggles from './components/Toggles.js';
+import Toggles from './components/admin-ui/Toggles.js';
 import Wysiwyg from './components/Wysiwyg.js';
 
 /**
