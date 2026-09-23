@@ -198,7 +198,7 @@ $aSections = [
             <?php
             styleguideSectionHeader(
                 'Fieldsets',
-                'The card that groups fields on an edit form. Nested fieldsets inset so they read as part of the parent. <code>data-collapse</code> turns the legend into a toggle; a fieldset that contains errors opens even if it was asked to start closed.'
+                'The card that groups fields on an edit form. Nested fieldsets inset so they read as part of the parent. <code>data-collapse</code> on the fieldset is the default state (closed values hide the body in CSS before JS adds the toggle); a fieldset that contains errors opens even if it was asked to start closed.'
             );
             ?>
             <?php
