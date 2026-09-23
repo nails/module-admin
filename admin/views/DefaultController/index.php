@@ -13,7 +13,7 @@ $oMustache = Factory::service('Mustache');
     <?=$CONFIG['INDEX_HTML_HEADER']?>
     <?=Helper::loadSearch($search)?>
     <?=Helper::loadPagination($pagination)?>
-    <table class="table table-striped table-hover table-bordered table-responsive">
+    <table class="table table-striped table-hover table-responsive">
         <thead class="table-dark">
             <tr>
                 <?php

@@ -91,3 +91,23 @@
         }
     }
 }
+
+//  `.table-bordered` is leftover Bootstrap grid chrome. Index tables, dynamic
+//  tables, and un-updated markup all drop the cell grid and keep stripe/hover.
+.table-bordered {
+    border: 0;
+
+    > :not(caption) > *,
+    > :not(caption) > * > * {
+        border-width: 0;
+    }
+
+    > thead > tr > th,
+    > tbody > tr > th,
+    > tfoot > tr > th,
+    > thead > tr > td,
+    > tbody > tr > td,
+    > tfoot > tr > td {
+        border: 0;
+    }
+}

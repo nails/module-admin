@@ -76,7 +76,7 @@ class ChangeLog extends Entity
     // --------------------------------------------------------------------------
 
     public function getChangesAsTable(
-        $sTableClass = 'table table-striped table-hover table-bordered table-responsive',
+        $sTableClass = 'table table-striped table-hover table-responsive',
         $sTableHeadClass = 'table-dark',
         $sTablebodyClass = ''
     ): string {
