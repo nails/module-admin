@@ -36,7 +36,10 @@ import Select from './components/Select.js';
 import Session from './components/Session.js';
 import Sortable from './components/Sortable.js';
 import Stripes from './components/Stripes.js';
+import ScreenTabs from './components/ScreenTabs.js';
+import Styleguide from './components/Styleguide.js';
 import Tabs from './components/Tabs.js';
+import TabScroller from './components/TabScroller.js';
 import TimeCode from './components/TimeCode.js';
 import Toggles from './components/Toggles.js';
 import Wysiwyg from './components/Wysiwyg.js';
@@ -319,7 +322,10 @@ window
     .registerPlugin(namespace, 'Session', (controller) => new Session(controller))
     .registerPlugin(namespace, 'Sortable', (controller) => new Sortable(controller))
     .registerPlugin(namespace, 'Stripes', (controller) => new Stripes(controller))
+    .registerPlugin(namespace, 'ScreenTabs', (controller) => new ScreenTabs(controller))
+    .registerPlugin(namespace, 'Styleguide', (controller) => new Styleguide(controller))
     .registerPlugin(namespace, 'Tabs', (controller) => new Tabs(controller))
+    .registerPlugin(namespace, 'TabScroller', (controller) => new TabScroller(controller))
     .registerPlugin(namespace, 'TimeCode', (controller) => new TimeCode(controller))
     .registerPlugin(namespace, 'Toggles', (controller) => new Toggles(controller))
     .registerPlugin(namespace, 'Wysiwyg', (controller) => new Wysiwyg(controller));
