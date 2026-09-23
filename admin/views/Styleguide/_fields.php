@@ -44,6 +44,27 @@ styleguideExample(null, static function () {
             'label'   => 'Featured',
             'default' => false,
         ]);
+        echo form_field_boolean([
+            'key'      => 'sg-forms-alignment',
+            'label'    => 'Alignment',
+            'default'  => true,
+            'text_on'  => 'Wide',
+            'text_off' => 'Narrow',
+        ]);
+        echo form_field_boolean([
+            'key'      => 'sg-forms-published',
+            'label'    => 'Published',
+            'default'  => true,
+            'readonly' => true,
+        ]);
+        echo form_field_boolean([
+            'key'      => 'sg-forms-temp-password',
+            'label'    => 'Temporary password',
+            'default'  => false,
+            'text_on'  => 'Yes',
+            'text_off' => 'No',
+            'info'     => 'Require password update on next log in',
+        ]);
         echo form_field_checkbox([
             'key'     => 'sg-forms-notify[]',
             'label'   => 'Notify',
