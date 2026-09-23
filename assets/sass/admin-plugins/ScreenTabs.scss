@@ -1,0 +1,117 @@
+// Plugins: Screen Tabs
+// ====================
+// Top-level workspaces on an edit screen (e.g. Details | Related). A segmented
+// pill row, visually heavier than `ul.tabs.tabs--segmented`, whose panels are
+// shown and hidden in place rather than joined to the controls as a card.
+//
+//     nav.screen-tabs.js-screen-tabs
+//       button.screen-tabs__tab.js-screen-tab[data-screen]
+//         span.screen-tabs__count          Optional badge
+//     div.screen-tabs__panel.js-screen-panel[data-screen]
+//     div.screen-tabs__panel--no-save      Hides .admin-floating-controls
+//
+// `.is-active` marks the current tab and panel; `.has-error` is the error dot.
+
+@import '../admin-ui/variables/palette';
+
+$screen-tabs-track: $light-slate;
+$screen-tabs-border: $soft-slate;
+$screen-tabs-radius: 999px;
+$screen-tabs-height: 36px;
+$screen-tabs-color: $slate;
+$screen-tabs-color-hover: $dark-slate;
+$screen-tabs-active-bg: $dark-slate;
+$screen-tabs-active-color: $white;
+$screen-tabs-focus: rgb($brand-color-highlight);
+$screen-tabs-error-dot-size: 7px;
+$screen-tabs-error-dot-color: $brick-red;
+
+.screen-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    width: max-content;
+    max-width: 100%;
+    min-width: 0;
+    gap: 0.25rem;
+    background: $screen-tabs-track;
+    border: 1px solid $screen-tabs-border;
+    border-radius: $screen-tabs-radius;
+    padding: 0.3rem;
+    margin: 0 0 0.85rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scroll-padding-inline: 2.5rem;
+
+    &__tab {
+        appearance: none;
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        gap: 0.5rem;
+        border: 0;
+        border-radius: $screen-tabs-radius;
+        background: transparent;
+        padding: 0 1.3rem;
+        height: $screen-tabs-height;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 650;
+        line-height: 1.2;
+        color: $screen-tabs-color;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+
+        &:hover {
+            color: $screen-tabs-color-hover;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $screen-tabs-focus;
+            outline-offset: -2px;
+        }
+
+        &.is-active {
+            background: $screen-tabs-active-bg;
+            color: $screen-tabs-active-color;
+            box-shadow: 0 2px 6px rgba($dark-slate, 0.25);
+        }
+
+        &.has-error::after {
+            content: "";
+            display: inline-block;
+            width: $screen-tabs-error-dot-size;
+            height: $screen-tabs-error-dot-size;
+            border-radius: 50%;
+            background: $screen-tabs-error-dot-color;
+            flex-shrink: 0;
+        }
+    }
+
+    &__count {
+        display: inline-block;
+        min-width: 1.5em;
+        padding: 0.05rem 0.45rem;
+        border-radius: $screen-tabs-radius;
+        background: rgba($dark-slate, 0.12);
+        color: inherit;
+        font-size: 0.78rem;
+        font-weight: 700;
+        line-height: 1.4;
+        text-align: center;
+    }
+
+    &__tab.is-active &__count {
+        background: rgba($white, 0.22);
+    }
+
+    &__panel {
+        display: none;
+
+        &.is-active {
+            display: block;
+        }
+    }
+}
