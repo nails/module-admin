@@ -152,11 +152,15 @@ fieldset {
 
 // Collapsible
 // -----------
-// Opt-in, and entirely the work of the CollapsibleFieldsets plugin
-// (assets/js/components/admin-ui/CollapsibleFieldsets.js): it marks the card,
-// moves the legend's contents into a button and adds the chevron. A fieldset
-// which the plugin never reaches keeps the styles above and stays open, which
-// is the point — nothing here hides content the script cannot bring back.
+// Opt in with `data-collapse` on the fieldset. The attribute is the source of
+// truth for the default state: closed values hide the body in CSS, so the
+// card does not flash open before CollapsibleFieldsets.js adds the toggle.
+// Once the plugin has run it marks the card `.fieldset--collapsible` and this
+// pre-JS rule steps aside — that is what lets a fieldset which contains an
+// error open even when the markup asked for closed.
+//
+// Closed attribute values match the plugin: closed, collapsed, close, false, 0.
+// Anything else (including a bare `data-collapse`) starts open.
 //
 // The whole band is the hit area rather than just the chevron, so the button
 // takes over the legend's padding: the legend gives its own up, and everything
@@ -164,6 +168,25 @@ fieldset {
 //
 // Selectors are child-scoped throughout. Fieldsets nest, and a collapsible
 // parent has no business styling — or hiding half of — a child's band.
+
+$fieldset-collapse-closed: 'closed', 'collapsed', 'close', 'false', '0';
+
+fieldset[data-collapse]:not(.fieldset--collapsible):not(.fieldset--collapse-ignored) {
+    @each $value in $fieldset-collapse-closed {
+        &[data-collapse='#{$value}']:not(:has(div.field.error, .system-alert.error, .alert.alert-danger, .error.show-in-tabs)) {
+            > *:not(legend) {
+                display: none;
+            }
+
+            > legend {
+                margin-bottom: 0;
+                border-bottom: 0;
+                border-radius: $fieldset-radius;
+            }
+        }
+    }
+}
+
 fieldset.fieldset--collapsible {
 
     > legend {

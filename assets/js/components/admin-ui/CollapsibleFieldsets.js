@@ -11,11 +11,10 @@
  *     <fieldset data-collapse="open">   — collapsible, open
  *     <fieldset data-collapse="closed"> — collapsible, closed
  *
- * A fieldset which contains a field error always starts open, whatever the
- * attribute asks for: an error the user cannot see is an error they cannot fix.
- *
- * The markup is only rewritten once this runs, so a fieldset renders exactly as
- * it always did — open, with no chevron — if the JS never gets there.
+ * The closed default is applied in CSS from the attribute so the body is
+ * hidden before this plugin runs. A fieldset which contains a field error
+ * always starts open, whatever the attribute asks for: an error the user
+ * cannot see is an error they cannot fix.
  *
  * The styling which goes with this lives in assets/sass/admin-ui/objects/_fieldset.scss.
  */
