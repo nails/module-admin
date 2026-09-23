@@ -1,21 +1,204 @@
-.group-admin-styleguide {
-    > section {
-        margin-bottom: 3em;
+@import '../admin-ui/variables/palette';
 
-        > .title {
-            font-weight: bold;
-            font-size: 1.2em;
-            margin-bottom: 1em;
+// Nested under .group-admin-styleguide so these beat `.main .content h2`
+// (admin.ui) without !important.
+
+.main .content .group-admin-styleguide {
+    display: grid;
+    grid-template-columns: 12rem minmax(0, 1fr);
+    gap: 2rem;
+    align-items: start;
+
+    @media (max-width: 991px) {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+
+    .styleguide-nav {
+        position: sticky;
+        top: 79px;
+        z-index: 400;
+
+        @media (max-width: 991px) {
+            top: 63px;
+            overflow-x: auto;
+            background: $light-grey;
+            margin: 0 -16px;
+            padding: 0.65rem 16px;
+            border-bottom: 1px solid $light-slate;
+            scrollbar-width: thin;
+        }
+    }
+
+    .styleguide-nav__list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        @media (max-width: 991px) {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 0.25rem;
+        }
+    }
+
+    .styleguide-nav__link {
+        display: block;
+        padding: 0.4rem 0.65rem;
+        border-radius: 0.4rem;
+        color: $dark-slate;
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.3;
+        text-decoration: none;
+        white-space: nowrap;
+
+        &:hover,
+        &:focus-visible {
+            background: $white;
+            color: $dark-slate;
+            text-decoration: none;
         }
 
-        > .description {
-            margin-bottom: 1em;
+        &:focus-visible {
+            outline: 2px solid rgb($brand-color-highlight);
+            outline-offset: 1px;
         }
 
-        > .body {
-            border-top: 2px dashed #cccccc;
-            border-bottom: 2px dashed #cccccc;
-            padding: 2em 0;
+        &.is-active {
+            background: $white;
+            color: rgb($brand-color-highlight);
+            box-shadow: 0 1px 2px rgba($dark-slate, 0.08);
+        }
+    }
+
+    .styleguide-main {
+        min-width: 0;
+    }
+
+    .styleguide-section {
+        scroll-margin-top: 63px;
+        margin: 0 0 2.5rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 991px) {
+            scroll-margin-top: 120px;
+        }
+    }
+
+    .styleguide-section__header {
+        position: sticky;
+        top: 63px;
+        z-index: 350;
+        margin: 0 0 1rem;
+        padding: 0.75rem 0 0.75rem;
+        background: $light-grey;
+        border-bottom: 1px solid $light-slate;
+
+        @media (max-width: 991px) {
+            top: 120px;
+        }
+    }
+
+    h2.styleguide-section__title {
+        margin: 0;
+        padding: 0;
+        background: none;
+        border: none;
+        color: $dark-slate;
+        font-size: 1.15rem;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .styleguide-section__lede {
+        margin: 0.4rem 0 0;
+        max-width: 46rem;
+        color: $slate;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1.45;
+
+        code {
+            font-size: 0.85em;
+        }
+    }
+
+    .styleguide-example {
+        display: block;
+        width: 100%;
+        margin: 0 0 1.5rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .styleguide-example__caption {
+        display: block;
+        width: 100%;
+        max-width: none;
+        margin: 0 0 0.45rem;
+        color: $slate;
+        font-size: 0.8rem;
+        font-weight: 600;
+        line-height: 1.3;
+        white-space: nowrap;
+    }
+
+    .styleguide-example__canvas {
+        background: $white;
+        border: 1px solid $light-slate;
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+
+        > :last-child {
+            margin-bottom: 0;
+        }
+
+        &--flush {
+            padding: 0;
+            background: $light-grey;
+            overflow: hidden;
+
+            > form > fieldset,
+            > fieldset {
+                margin: 0;
+                border-radius: calc(0.5rem - 1px);
+            }
+        }
+
+        .admin-floating-controls {
+            position: static;
+            margin: 1rem 0 0;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+        }
+
+        // Production bars stick under the topbar; inside stacked examples
+        // that leaves a stray bar over the next figure. Keep `relative` so
+        // overflow chevrons still position against the wrapper, and zero
+        // `top` so the sticky offset does not become a relative shift.
+        .tabs-scroller--bar,
+        ul.tabs:not(.tabs--segmented) {
+            position: relative;
+            top: auto;
+            z-index: auto;
+        }
+    }
+
+    .styleguide-table {
+        width: 100%;
+        margin: 0;
+        font-size: 0.875rem;
+
+        th,
+        td {
+            padding: 0.5rem 0.65rem;
+            text-align: left;
         }
     }
 }
