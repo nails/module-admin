@@ -1,0 +1,105 @@
+// Plugins: Tab Scroller
+// =====================
+// Overlay chevrons for a tab track that overflows. The JS wraps `ul.tabs`
+// and `.js-screen-tabs` in `.tabs-scroller`; without JS the track still
+// scrolls natively (see Tabs.scss / ScreenTabs.scss).
+
+@import '../admin-ui/variables/palette';
+
+$tabs-scroller-btn-width: 2.35rem;
+$tabs-scroller-sticky-top: 63px;
+$tabs-scroller-sticky-z: 500;
+
+.tabs-scroller {
+    --tabs-scroller-fade: #{$white};
+
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+    min-width: 0;
+
+    &:has(> ul.tabs.tabs--segmented) {
+        --tabs-scroller-fade: #{$pale-slate};
+    }
+
+    &:has(> .screen-tabs) {
+        --tabs-scroller-fade: #{$light-slate};
+    }
+
+    // Underline bars span the content width so they join the panel as a card.
+    &--bar {
+        width: 100%;
+        position: sticky;
+        top: $tabs-scroller-sticky-top;
+        z-index: $tabs-scroller-sticky-z;
+
+        > ul.tabs {
+            position: static;
+        }
+    }
+
+    // Fieldset headers already own stickiness.
+    &--inset {
+        position: relative;
+        width: 100%;
+    }
+
+    &__btn {
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 2;
+        align-items: center;
+        justify-content: center;
+        width: $tabs-scroller-btn-width;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        color: $dark-slate;
+        font-size: 0.75rem;
+        cursor: pointer;
+        background: transparent;
+
+        i {
+            pointer-events: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid rgb($brand-color-highlight);
+            outline-offset: -2px;
+        }
+
+        &--prev {
+            left: 0;
+            background: linear-gradient(
+                to right,
+                var(--tabs-scroller-fade) 55%,
+                transparent
+            );
+        }
+
+        &--next {
+            right: 0;
+            background: linear-gradient(
+                to left,
+                var(--tabs-scroller-fade) 55%,
+                transparent
+            );
+        }
+    }
+
+    &.is-overflow-start &__btn--prev,
+    &.is-overflow-end &__btn--next {
+        display: flex;
+    }
+
+    &.is-overflowing > ul.tabs,
+    &.is-overflowing > .screen-tabs {
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+}
