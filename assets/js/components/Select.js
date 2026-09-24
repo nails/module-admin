@@ -24,7 +24,7 @@ class Select {
                 return;
             }
             if (this.raf) {
-                return;
+                window.cancelAnimationFrame(this.raf);
             }
             this.raf = window.requestAnimationFrame(() => {
                 this.raf = null;
@@ -66,7 +66,15 @@ class Select {
         this.fitAttempts = 0;
         window.addEventListener('scroll', this.onReposition, true);
         window.addEventListener('resize', this.onReposition);
+        //  Select2 has just run positionDropdown(); overwrite it now and
+        //  again on the next frame once the results list has a height.
+        this.fitMenu($el);
         this.scheduleFit($el);
+        window.setTimeout(() => {
+            if (this.$openEl && this.$openEl[0] === $el[0]) {
+                this.fitMenu($el);
+            }
+        }, 0);
         return this;
     }
 
@@ -94,19 +102,21 @@ class Select {
      */
     fitMenu($el) {
 
-        let $container = $();
-        let $drop = $();
+        //  Do not call $el.select2('container'): SelectInstance used to
+        //  overwrite data('select2'), and even now the open widget is the
+        //  .select2-dropdown-open container + singleton #select2-drop.
+        let $drop = $('#select2-drop');
+        let $container = $('.select2-container.select2-dropdown-open').first();
         let inst = $el.data('select2');
 
-        if (inst && inst.dropdown && inst.container) {
+        if (!$container.length && inst && inst.container) {
             $container = inst.container;
+        }
+        if (!$drop.length && inst && inst.dropdown) {
             $drop = inst.dropdown;
-        } else if (inst && inst.$dropdown && inst.$container) {
-            $container = inst.$container;
-            $drop = inst.$dropdown;
-        } else if ($el.data('select2')) {
-            $container = $el.select2('container');
-            $drop = $('#select2-drop');
+        }
+        if (!$container.length) {
+            $container = $el.next('.select2-container');
         }
 
         if (!$container.length || !$drop.length || !$drop.is(':visible')) {
@@ -119,16 +129,30 @@ class Select {
 
         this.fitAttempts = 0;
 
+        //  Force layout. Offset/rect can be 0,0 for a field that was in a
+        //  display:none tab until this click's ancestor reflow.
+        void $container[0].offsetWidth;
+
         let rect = $container[0].getBoundingClientRect();
         let width = rect.width;
-        let above = $drop.hasClass('select2-drop-above')
-            || $drop.hasClass('select2-dropdown--above')
-            || $container.hasClass('select2-drop-above')
-            || $container.hasClass('select2-container--above');
-
-        // Cover the field's joining 1px border so we can leave that border
-        // in-flow (zeroing it collapsed the row by a pixel).
         let join = 1;
+        let spaceBelow = window.innerHeight - rect.bottom;
+        let spaceAbove = rect.top;
+        let $results = $drop.find('.select2-results');
+        $results.css('max-height', '');
+        let naturalHeight = $drop.outerHeight();
+        let above = naturalHeight > spaceBelow && spaceAbove > spaceBelow;
+        let available = (above ? spaceAbove : spaceBelow) - join;
+
+        if (available < 80) {
+            above = spaceAbove > spaceBelow;
+            available = Math.max(spaceBelow, spaceAbove, 80) - join;
+        }
+
+        $results.css('max-height', Math.floor(Math.max(available - 8, 80)) + 'px');
+        $drop.toggleClass('select2-drop-above', above);
+        $container.toggleClass('select2-drop-above', above);
+
         let dropHeight = $drop.outerHeight();
         let top = above
             ? rect.top - dropHeight + join
@@ -180,14 +204,10 @@ class Select {
         $('select.select2:not(.select2-offscreen):not(.select2--processed):visible', domElement)
             .addClass('select2--processed')
             .each((index, element) => {
-                $(element)
-                    .data(
-                        'select2',
-                        new SelectInstance(
-                            this.adminController,
-                            element
-                        )
-                    );
+                new SelectInstance(
+                    this.adminController,
+                    element
+                );
             });
 
         return this;
@@ -213,7 +233,7 @@ class SelectInstance {
                 placeholder: this.placeholder,
                 multiple: this.isMultiple,
                 allowClear: this.isClearable,
-                width: this.$input.outerWidth()
+                width: '100%'
             });
     }
 
