@@ -103,11 +103,54 @@
     }
 }
 
-//  Last table in a fieldset sits flush with the card's bottom edge.
-fieldset > .table:last-child {
+//  Opt-in rounded table. Radius goes on the corner cells — overflow:hidden
+//  on the table would clip dropdowns and sticky bits. `border-collapse:
+//  separate` is required for cell radii to paint.
+$table-radius: 0.5rem;
+$table-radius-in-card: calc(#{$table-radius} - 1px);
+
+.table-rounded {
+    border-collapse: separate;
+    border-spacing: 0;
+
+    > thead > tr:first-child {
+        > :first-child,
+        > :first-child[style*="display: none"] + * {
+            border-top-left-radius: $table-radius;
+        }
+
+        > :last-child {
+            border-top-right-radius: $table-radius;
+        }
+    }
+
+    > tbody:last-child > tr:last-child,
+    > tfoot > tr:last-child {
+        > :first-child {
+            border-bottom-left-radius: $table-radius;
+        }
+
+        > :last-child {
+            border-bottom-right-radius: $table-radius;
+        }
+    }
+}
+
+//  Flush to a fieldset card: drop the table's outer margin and inset the
+//  bottom corners so they follow the card's inner curve.
+fieldset > .table-rounded:last-child {
     margin-bottom: 0;
-    border-bottom-left-radius: inherit;
-    border-bottom-right-radius: inherit;
+
+    > tbody:last-child > tr:last-child,
+    > tfoot > tr:last-child {
+        > :first-child {
+            border-bottom-left-radius: $table-radius-in-card;
+        }
+
+        > :last-child {
+            border-bottom-right-radius: $table-radius-in-card;
+        }
+    }
 }
 
 //  Opt-in sticky header. `.table-responsive` on the same element sets
