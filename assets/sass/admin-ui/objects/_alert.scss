@@ -139,11 +139,15 @@ $alert-warning-color: $dark-amber; // 7.2:1
     }
 
     //  Links take the alert's colour rather than the global link colour, which
-    //  would not be legible against most of these tints
+    //  would not be legible against most of these tints. Stack above the
+    //  dismiss hit area so body links stay clickable.
     a {
         &:not(.btn) {
+            position: relative;
+            z-index: 1;
             color: inherit;
             text-decoration: underline;
+            pointer-events: auto;
         }
     }
 
@@ -153,6 +157,9 @@ $alert-warning-color: $dark-amber; // 7.2:1
         position: absolute;
         top: 0;
         right: 0;
+        z-index: 2;
+        width: auto;
+        height: auto;
         padding: $alert-close-inset;
         color: inherit;
         font-size: 1.25rem;
