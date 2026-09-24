@@ -8,9 +8,12 @@
 @import '../admin-ui/variables/palette';
 
 $select2-border: #cccccc;
+$select2-focus-border: #86b7fe;
+$select2-focus-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 $select2-radius: 0.4rem;
 $select2-min-height: 34px;
 $select2-chip-pad: 4px 8px;
+$select2-chip-gap: 8px;
 
 .select2-hidden-accessible,
 .select2-offscreen {
@@ -30,22 +33,85 @@ $select2-chip-pad: 4px 8px;
     z-index: 10050;
 }
 
-// Do not radius every corner — that draws a second rounded box over the
-// field. Join the dropdown to the open control instead.
 .select2-dropdown {
     background: $white;
-    border-color: $select2-border;
-    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+    border: 1px solid $select2-border;
+    box-shadow: none;
 }
 
 .select2-dropdown--below {
+    margin-top: -1px;
     border-top: 0;
     border-radius: 0 0 $select2-radius $select2-radius;
 }
 
 .select2-dropdown--above {
+    display: flex;
+    flex-direction: column-reverse;
+    margin-bottom: -1px;
     border-bottom: 0;
     border-radius: $select2-radius $select2-radius 0 0;
+}
+
+.select2-container--open.select2-container--below {
+
+    .select2-selection--single,
+    .select2-selection--multiple,
+    .select2-choice,
+    .select2-choices {
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-bottom-color: transparent;
+    }
+}
+
+.select2-container--open.select2-container--above {
+
+    .select2-selection--single,
+    .select2-selection--multiple,
+    .select2-choice,
+    .select2-choices {
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+        border-top-color: transparent;
+    }
+}
+
+// Carry the focus ring onto the open menu so it reads as one control
+.select2-container--focus .select2-selection--single,
+.select2-container--focus .select2-selection--multiple,
+.select2-container--open .select2-selection--single,
+.select2-container--open .select2-selection--multiple {
+    border-color: $select2-focus-border;
+    box-shadow: $select2-focus-shadow;
+}
+
+.select2-container--open .select2-dropdown {
+    border-color: $select2-focus-border;
+    box-shadow: $select2-focus-shadow;
+}
+
+.select2-container--open.select2-container--below .select2-dropdown--below {
+    box-shadow: $select2-focus-shadow;
+}
+
+.select2-container--open.select2-container--above .select2-dropdown--above {
+    box-shadow: $select2-focus-shadow;
+}
+
+// Dropdown search is a typing row inside the menu, not a nested field
+.select2-search--dropdown {
+    padding: 6px 8px;
+}
+
+.select2-search--dropdown .select2-search__field {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background: transparent !important;
+    width: 100%;
+    padding: 2px 0;
 }
 
 .select2-results__message,
@@ -75,33 +141,16 @@ div.field {
         box-shadow: none;
     }
 
-    .select2-container--default.select2-container--open.select2-container--below {
-
-        .select2-selection--single,
-        .select2-selection--multiple {
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-    }
-
-    .select2-container--default.select2-container--open.select2-container--above {
-
-        .select2-selection--single,
-        .select2-selection--multiple {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-        }
-    }
-
     .select2-container--default .select2-selection--multiple {
         padding: 6px;
 
         .select2-selection__rendered {
-            padding: 0;
-            display: flex;
+            display: flex !important;
             flex-wrap: wrap;
             align-items: center;
-            gap: 6px;
+            column-gap: $select2-chip-gap;
+            row-gap: $select2-chip-gap;
+            padding: 0;
         }
 
         .select2-selection__choice {
@@ -117,7 +166,6 @@ div.field {
             padding: 0;
         }
 
-        // Sit the remove control in flow so chip padding is even all round
         .select2-selection__choice__remove {
             position: static;
             top: auto;
@@ -132,8 +180,6 @@ div.field {
         }
     }
 
-    // The inline search box inside Select2 multi-selects should not look
-    // like a second input within an input (v3 + v4 class names)
     .select2-search--inline .select2-search__field,
     .select2-container .select2-search__field,
     .select2-container .select2-input,
@@ -148,7 +194,6 @@ div.field {
         padding: 0;
     }
 
-    // Select2 v3 multi-select (Searcher fields)
     .select2-choices {
         border: 1px solid $select2-border;
         border-radius: $select2-radius;
@@ -156,18 +201,18 @@ div.field {
         box-shadow: none;
         min-height: $select2-min-height;
         padding: 6px;
-    }
-
-    .select2-dropdown-open .select2-choices {
-        border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        column-gap: $select2-chip-gap;
+        row-gap: $select2-chip-gap;
     }
 
     .select2-choices .select2-search-choice {
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        margin: 0 6px 0 0;
+        margin: 0;
         padding: $select2-chip-pad;
         line-height: 1.2;
     }
@@ -179,7 +224,6 @@ div.field {
         margin: 0;
     }
 
-    // Select2 v3 single-select
     .select2-choice {
         border: 1px solid $select2-border;
         border-radius: $select2-radius;
@@ -190,16 +234,23 @@ div.field {
     }
 }
 
-// v3 drop is appended to <body>
 .select2-drop {
     margin-top: -1px;
     background: $white;
-    border-color: $select2-border;
+    border: 1px solid $select2-border;
+    border-top: 0;
     border-radius: 0 0 $select2-radius $select2-radius;
-    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+    box-shadow: none;
 }
 
 .select2-drop.select2-drop-above {
     margin-top: 0;
+    margin-bottom: -1px;
+    border-top: 1px solid $select2-border;
+    border-bottom: 0;
     border-radius: $select2-radius $select2-radius 0 0;
+}
+
+.select2-drop-active {
+    border-color: $select2-focus-border;
 }
