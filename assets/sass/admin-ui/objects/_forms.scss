@@ -355,17 +355,6 @@ div.field {
 
         small.char-count {
             color: #b52130;
-            padding-left: 16px;
-            position: relative;
-
-            &:before {
-                font-family: "Font Awesome 6 Free";
-                content: '\f057';
-                display: block;
-                position: absolute;
-                top: -4px;
-                color: #b52130;
-            }
         }
     }
 
