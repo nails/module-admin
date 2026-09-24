@@ -245,7 +245,7 @@ class ScreenTabGroup {
 
         let slug = firstError || (this.hashEnabled && this.slugFromHash()) || this.order[0];
 
-        this.activate(slug, false, false);
+        this.activate(slug, true, false);
     }
 }
 
