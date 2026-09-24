@@ -305,35 +305,29 @@ export default {
             this.saveGrid();
         },
 
+        escapeHtml(value) {
+            let el = document.createElement('div');
+            el.textContent = value == null ? '' : String(value);
+            return el.innerHTML;
+        },
         remove(instance) {
 
-            let p = document.createElement('p');
-            let confirm = document.createElement('button');
-            let cancel = document.createElement('button');
-
-            p.classList.add('d-grid', 'gap-2');
-
-            confirm.classList.add('btn', 'btn-danger');
-            confirm.innerText = 'Remove Widget';
-            confirm.addEventListener('click', () => {
-                this.removeItem(instance);
-                this.modals.confirm.hide();
-            });
-
-            cancel.classList.add('btn', 'btn-secondary');
-            cancel.innerText = 'Cancel';
-            cancel.addEventListener('click', () => {
-                this.modals.confirm.hide();
-            });
-
-            p.appendChild(confirm);
-            p.appendChild(cancel);
+            let title = instance.title || 'this';
+            let body = '<p>Remove the <strong>' + this.escapeHtml(title) + '</strong> widget from your dashboard?</p>'
+                + '<p>You can add it again later. This does not delete any underlying data.</p>';
 
             this.modals.confirm
-                .setBody(p)
+                .setTitle('Remove widget')
+                .setBody(body)
+                .clearActions()
+                .addAction('Remove', ['btn-danger'], (event, modal) => {
+                    this.removeItem(instance);
+                    modal.hide();
+                })
+                .addAction('Cancel', ['btn-secondary'], (event, modal) => {
+                    modal.hide();
+                })
                 .show();
-
-            confirm.focus();
         },
 
         /**

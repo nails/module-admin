@@ -90,7 +90,7 @@
                     <a
                         href="#"
                         class="sidenav__item sidenav__item--small text-center"
-                        v-on:click="resetNav"
+                        v-on:click.prevent="resetNav"
                     >
                         Reset Nav
                     </a>
@@ -204,7 +204,7 @@
                     <a
                         href="#"
                         class="sidenav__item sidenav__item--small text-center"
-                        v-on:click="resetNav"
+                        v-on:click.prevent="resetNav"
                     >
                         Reset Nav
                     </a>
@@ -249,7 +249,8 @@ export default {
     data() {
         return {
             items: [],
-            isMobileMenuOpen: false
+            isMobileMenuOpen: false,
+            resetModal: null
         };
     },
     computed: {
@@ -276,21 +277,25 @@ export default {
         this.items = [...this.menuItems];
     },
     methods: {
+        getResetModal() {
+            if (!this.resetModal) {
+                this.resetModal = window.NAILS.ADMIN.getInstance('Modal').create();
+            }
+            return this.resetModal;
+        },
         async resetNav() {
             await axios.post('/api/admin/nav/reset', {});
-            this.$swal({
-                title: 'Reset complete',
-                text: 'Your navigation has been reset, changes will take hold on the next page reload.',
-                showCancelButton: true,
-                showCloseButton: true,
-                cancelButtonText: 'Close',
-                confirmButtonText: 'Reload',
-                focusConfirm: false,
-            }).then((result) => {
-                if (result.isConfirmed) {
+            this.getResetModal()
+                .setTitle('Reset complete')
+                .setBody('Your navigation has been reset. Changes will take hold on the next page reload.')
+                .clearActions()
+                .addAction('Reload', ['btn-primary'], () => {
                     location.reload();
-                }
-            });
+                })
+                .addAction('Close', ['btn-secondary'], (event, modal) => {
+                    modal.hide();
+                })
+                .show();
         },
         openAll() {
             this.sidebarItems = [
