@@ -688,13 +688,19 @@ class Helper
             <?php
             foreach ($aTabs as &$aTab) {
                 ?>
-                <div class="tab-page tab-<?=$aTab['slug']?> <?=$aTab['active']?> fieldset">
+                <div class="tab-page tab-<?=$aTab['slug']?> <?=$aTab['active']?>">
                     <?php
+                    ob_start();
                     if (is_callable($aTab['content'])) {
                         echo $aTab['content']();
                     } else {
                         echo $aTab['content'];
                     }
+                    $sContent = (string) ob_get_clean();
+                    if ($sContent !== '' && !str_contains($sContent, '<fieldset')) {
+                        $sContent = '<fieldset>' . $sContent . '</fieldset>';
+                    }
+                    echo $sContent;
                     ?>
                 </div>
                 <?php
