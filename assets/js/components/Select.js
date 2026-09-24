@@ -233,7 +233,7 @@ class SelectInstance {
                 placeholder: this.placeholder,
                 multiple: this.isMultiple,
                 allowClear: this.isClearable,
-                width: '100%'
+                width: this.$input.closest('div.field').length ? '100%' : 'off'
             });
     }
 

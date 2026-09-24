@@ -324,21 +324,35 @@ div.field {
         input[type=time],
         textarea {
             cursor: not-allowed;
-            padding-left: 30px;
-            width: 325px;
+            padding-left: 1.75rem;
             box-sizing: border-box;
         }
 
         .input {
             &:before {
                 font-family: "Font Awesome 6 Free";
+                font-weight: 900;
                 content: '\f023';
-                display: block;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 position: absolute;
-                left: 9px;
-                top: 4px;
+                left: 0;
+                top: 50%;
+                z-index: 2;
+                width: 1.75rem;
+                height: 1em;
                 color: #aaaaaa;
+                pointer-events: none;
+                line-height: 1;
+                transform: translateY(-50%);
             }
+        }
+
+        // First line of a textarea, not the middle of the box
+        &.textarea .input:before {
+            top: 8px;
+            transform: none;
         }
     }
 

@@ -18,6 +18,8 @@ $tabs-radius: 0.5rem;
 $tabs-border-width: 1px;
 $tabs-border-color: $light-slate;
 $tabs-bg: $white;
+$tabs-page-padding: 1.1rem;
+$tabs-inner-radius: calc(#{$tabs-radius} - #{$tabs-border-width});
 $tabs-sticky-top: 63px; // .topbar height; see layouts/_topbar.scss
 $tabs-sticky-z: 500; // below .topbar (1000)
 $tabs-bar-shadow: 0 1px 2px rgba($dark-slate, 0.08);
@@ -42,6 +44,29 @@ $tabs-segmented-border: $light-slate;
 $tabs-segmented-active-bg: $dark-slate;
 $tabs-segmented-active-color: $white;
 $tabs-segmented-height: 36px;
+
+@mixin tabs-undo-field-flush {
+    > div.field,
+    > div.fieldset,
+    > table {
+        margin-left: 0;
+        margin-right: 0;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    > div.field:last-child,
+    > div.fieldset:last-child > div.field:last-child {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+}
 
 // Bar
 // ---
@@ -144,7 +169,7 @@ section.tabs {
         border-radius: 0 0 $tabs-radius $tabs-radius;
         // Padding, not child margins: a 0-width top border does not stop
         // margin collapse, which opened a gap between the bar and the page.
-        padding: 1.1rem;
+        padding: $tabs-page-padding;
         box-shadow: $tabs-bar-shadow;
 
         > p,
@@ -153,7 +178,7 @@ section.tabs {
         > fieldset,
         > form,
         > ul:not(.tabs) {
-            margin: 0 0 1.1rem;
+            margin: 0 0 $tabs-page-padding;
 
             &:last-child {
                 margin-bottom: 0;
@@ -175,15 +200,41 @@ section.tabs {
             background: $pale-slate;
             border: none;
             border-bottom: 1px solid $light-slate;
-            padding: 0.75rem 1.1rem;
-            margin: -1.1rem -1.1rem 1.1rem;
+            padding: 0.75rem $tabs-page-padding;
+            margin: (-$tabs-page-padding) (-$tabs-page-padding) $tabs-page-padding;
             position: sticky;
             top: $tabs-heading-sticky-top;
             z-index: $tabs-sticky-z - 1;
         }
 
+        // Fields (and tables) dropped straight into the panel sit flush with
+        // the card, the same way they do inside a fieldset. Copy, alerts and
+        // nested <fieldset> cards keep the inset. `div.fieldset` is a legacy
+        // wrapper (not a card) used by some module views.
+        > div.field,
+        > div.fieldset,
+        > table {
+            margin-left: -$tabs-page-padding;
+            margin-right: -$tabs-page-padding;
+
+            &:first-child {
+                margin-top: -$tabs-page-padding;
+            }
+
+            &:last-child {
+                margin-bottom: -$tabs-page-padding;
+            }
+        }
+
+        > div.field:last-child,
+        > div.fieldset:last-child > div.field:last-child {
+            border-bottom-left-radius: $tabs-inner-radius;
+            border-bottom-right-radius: $tabs-inner-radius;
+        }
+
         table {
-            margin: 0;
+            margin-top: 0;
+            margin-bottom: 0;
         }
 
         &.active {
@@ -266,6 +317,8 @@ section.tabs.tabs--segmented {
         box-shadow: none;
         padding: 0;
 
+        @include tabs-undo-field-flush;
+
         > .padded {
             margin: 0.25rem 0 1rem;
         }
@@ -302,6 +355,8 @@ fieldset {
             border-radius: 0;
             box-shadow: none;
             padding: 0;
+
+            @include tabs-undo-field-flush;
 
             > form {
                 margin: 0;

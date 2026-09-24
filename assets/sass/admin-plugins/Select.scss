@@ -36,10 +36,19 @@ $select2-chip-gap: 8px;
     white-space: nowrap !important;
 }
 
+// Select2's own CSS is not loaded in admin. The widget is a <div>, so without
+// this it stretches like a block — fine in a form row, fatal in a toolbar.
 .select2-container {
-    width: 100% !important;
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
     max-width: 100%;
     box-sizing: border-box;
+}
+
+div.field .select2-container {
+    display: block;
+    width: 100% !important;
 }
 
 .select2-focus-shell {
