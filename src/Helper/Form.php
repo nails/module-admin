@@ -100,7 +100,7 @@ class Form
                     <tr>
                         <td colspan="$sColSpan">
                             <a href="#" class="btn btn-xs btn-primary js-admin-dynamic-table__add">
-                                &plus; Add Row
+                                &plus; Add Item
                             </a>
                         </td>
                     </tr>

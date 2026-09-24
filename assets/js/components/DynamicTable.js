@@ -52,6 +52,8 @@ class DynamicTable {
             this.add($table, $body, data[i], false);
         }
 
+        this.adminController.refreshUi($table);
+
         $table.trigger('dynamic-table:ready');
 
         return this;

@@ -48,7 +48,8 @@ $tabs-segmented-height: 36px;
 @mixin tabs-undo-field-flush {
     > div.field,
     > div.fieldset,
-    > table {
+    > table,
+    > .form-builder {
         margin-left: 0;
         margin-right: 0;
 
@@ -213,7 +214,8 @@ section.tabs {
         // wrapper (not a card) used by some module views.
         > div.field,
         > div.fieldset,
-        > table {
+        > table,
+        > .form-builder {
             margin-left: -$tabs-page-padding;
             margin-right: -$tabs-page-padding;
 
