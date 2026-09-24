@@ -5,18 +5,25 @@
 // hide rule (v4 `.select2-hidden-accessible`, v3 `.select2-offscreen`) and
 // tidy the field chrome.
 //
-// The menu is re-parented into `.select2-container` on open (see Select.js)
-// so the field and dropdown can share one radius and one focus ring.
+// Admin loads Select2 3.5.4. Its menu is `#select2-drop` on <body> — do not
+// re-parent it. Join field and menu visually: flatten the shared edge, keep
+// the same white fill / blue border, and clip each ring so the glow meets
+// instead of doubling. v4 class names are kept for anything still on 4.x.
 
 @import '../admin-ui/variables/palette';
 
 $select2-border: #cccccc;
 $select2-focus-border: #86b7fe;
-$select2-focus-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+$select2-focus-spread: 0.25rem;
+$select2-focus-shadow: 0 0 0 $select2-focus-spread rgba(13, 110, 253, 0.25);
 $select2-radius: 0.4rem;
 $select2-min-height: 34px;
 $select2-chip-pad: 4px 8px;
 $select2-chip-gap: 8px;
+
+// Clip the joining edge of the focus ring so field + menu read as one control.
+$select2-glow-clip-below: inset(-#{$select2-focus-spread} -#{$select2-focus-spread} 0 -#{$select2-focus-spread});
+$select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-spread} -#{$select2-focus-spread});
 
 .select2-hidden-accessible,
 .select2-offscreen {
@@ -38,84 +45,87 @@ $select2-chip-gap: 8px;
     box-sizing: border-box;
 }
 
+.select2-container-active,
 .select2-container--focus:not(.select2-container--open) {
 
+    .select2-choice,
+    .select2-choices,
     .select2-selection--single,
     .select2-selection--multiple {
-        border-color: $select2-focus-border;
-        box-shadow: $select2-focus-shadow;
+        border-color: $select2-focus-border !important;
+        box-shadow: $select2-focus-shadow !important;
+        background: $white !important;
+        background-image: none !important;
     }
 }
 
+.select2-dropdown-open,
 .select2-container--open {
     z-index: 10050;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    border-radius: $select2-radius;
+}
+
+// Kill Select2 3's grey inset "open" treatment — field stays the focused control
+.select2-dropdown-open .select2-choice,
+.select2-dropdown-open .select2-choices,
+.select2-container--open .select2-selection--single,
+.select2-container--open .select2-selection--multiple {
+    background: $white !important;
+    background-image: none !important;
+    border-color: $select2-focus-border !important;
+    box-shadow: $select2-focus-shadow !important;
+}
+
+.select2-dropdown-open:not(.select2-drop-above) .select2-choice,
+.select2-dropdown-open:not(.select2-drop-above) .select2-choices,
+.select2-container--open.select2-container--below .select2-selection--single,
+.select2-container--open.select2-container--below .select2-selection--multiple {
+    border-bottom-color: transparent !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    clip-path: $select2-glow-clip-below;
+}
+
+.select2-dropdown-open.select2-drop-above .select2-choice,
+.select2-dropdown-open.select2-drop-above .select2-choices,
+.select2-container--open.select2-container--above .select2-selection--single,
+.select2-container--open.select2-container--above .select2-selection--multiple {
+    border-top-color: transparent !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: $select2-radius !important;
+    border-bottom-right-radius: $select2-radius !important;
+    clip-path: $select2-glow-clip-above;
+}
+
+// Menu lives on <body> (v3 `#select2-drop`, v4 `.select2-dropdown`)
+.select2-drop,
+.select2-dropdown {
+    background: $white;
+    border: 1px solid $select2-focus-border;
     box-shadow: $select2-focus-shadow;
 }
 
-.select2-container--open.select2-container--above {
-    flex-direction: column-reverse;
+.select2-drop:not(.select2-drop-above),
+.select2-dropdown--below {
+    margin-top: -1px;
+    margin-bottom: 0;
+    border-top: 0;
+    border-radius: 0 0 $select2-radius $select2-radius;
+    clip-path: $select2-glow-clip-above;
 }
 
-.select2-container--open .select2-dropdown,
-.select2-container--open .select2-drop {
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
-    width: 100% !important;
-    transform: none !important;
-    box-shadow: none !important;
-    background: $white;
-    border: 1px solid $select2-focus-border;
+.select2-drop.select2-drop-above,
+.select2-dropdown--above {
+    margin-top: 0;
+    margin-bottom: -1px;
+    border-top: 1px solid $select2-focus-border;
+    border-bottom: 0;
+    border-radius: $select2-radius $select2-radius 0 0;
+    clip-path: $select2-glow-clip-below;
 }
 
-.select2-container--open .select2-selection--single,
-.select2-container--open .select2-selection--multiple,
-.select2-container--open .select2-choice,
-.select2-container--open .select2-choices {
-    box-shadow: none !important;
+.select2-drop-active {
     border-color: $select2-focus-border;
-}
-
-.select2-container--open.select2-container--below {
-
-    .select2-selection--single,
-    .select2-selection--multiple,
-    .select2-choice,
-    .select2-choices {
-        border-bottom-left-radius: 0 !important;
-        border-bottom-right-radius: 0 !important;
-        border-bottom-width: 0 !important;
-    }
-
-    .select2-dropdown,
-    .select2-drop {
-        margin: 0;
-        border-top: 0;
-        border-radius: 0 0 $select2-radius $select2-radius;
-    }
-}
-
-.select2-container--open.select2-container--above {
-
-    .select2-selection--single,
-    .select2-selection--multiple,
-    .select2-choice,
-    .select2-choices {
-        border-top-left-radius: 0 !important;
-        border-top-right-radius: 0 !important;
-        border-top-width: 0 !important;
-    }
-
-    .select2-dropdown,
-    .select2-drop {
-        margin: 0;
-        border-bottom: 0;
-        border-radius: $select2-radius $select2-radius 0 0;
-    }
 }
 
 .select2-search--dropdown {
@@ -240,6 +250,7 @@ div.field {
         border: 1px solid $select2-border;
         border-radius: $select2-radius;
         background: $white;
+        background-image: none;
         box-shadow: none;
         height: $select2-min-height;
         line-height: 30px;
