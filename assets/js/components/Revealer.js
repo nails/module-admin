@@ -214,7 +214,7 @@ class Element {
             : null;
 
         if (this.values !== null) {
-            this.values = this.values.split(this.delimiter)
+            this.values = this.values.split(this.delimiter).map((value) => value.trim());
         }
 
         this.bangValues = element.hasAttribute('data-reveal-not-on')
@@ -222,7 +222,7 @@ class Element {
             : null;
 
         if (this.bangValues !== null) {
-            this.bangValues = this.bangValues.split(this.delimiter)
+            this.bangValues = this.bangValues.split(this.delimiter).map((value) => value.trim());
         }
     }
 
