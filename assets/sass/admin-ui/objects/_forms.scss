@@ -432,6 +432,11 @@ textarea {
     &.select2-input {
         width: 100%;
         margin: 0;
+
+        &:focus {
+            border-color: transparent;
+            box-shadow: none;
+        }
     }
 }
 
