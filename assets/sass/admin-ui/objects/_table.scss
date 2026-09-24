@@ -9,6 +9,15 @@
         line-height: 1.75em;
     }
 
+    //  Child combinators match Bootstrap's table cell selectors so this
+    //  wins over Reboot/BS3 `vertical-align: top` on mixed stacks.
+    > thead > tr > th,
+    > tbody > tr > th,
+    > tbody > tr > td,
+    > tfoot > tr > td {
+        vertical-align: middle;
+    }
+
     thead,
     tfoot {
         tr {
@@ -107,7 +116,6 @@
 //  on the table would clip dropdowns and sticky bits. `border-collapse:
 //  separate` is required for cell radii to paint.
 $table-radius: 0.5rem;
-$table-radius-in-card: calc(#{$table-radius} - 1px);
 
 .table-rounded {
     border-collapse: separate;
@@ -136,19 +144,26 @@ $table-radius-in-card: calc(#{$table-radius} - 1px);
     }
 }
 
-//  Flush to a fieldset card: drop the table's outer margin and inset the
-//  bottom corners so they follow the card's inner curve.
-fieldset > .table-rounded:last-child {
+//  Flush to a fieldset card: the card already provides the radius, so drop
+//  `.table-rounded` on the corner cells and the table's outer margin.
+fieldset > .table-rounded,
+fieldset > .table-rounded:last-child,
+fieldset > :last-child:not(legend) > .table-rounded {
     margin-bottom: 0;
+
+    > thead > tr:first-child {
+        > :first-child,
+        > :first-child[style*="display: none"] + *,
+        > :last-child {
+            border-radius: 0;
+        }
+    }
 
     > tbody:last-child > tr:last-child,
     > tfoot > tr:last-child {
-        > :first-child {
-            border-bottom-left-radius: $table-radius-in-card;
-        }
-
+        > :first-child,
         > :last-child {
-            border-bottom-right-radius: $table-radius-in-card;
+            border-radius: 0;
         }
     }
 }
