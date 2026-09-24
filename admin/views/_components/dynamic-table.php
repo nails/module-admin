@@ -100,8 +100,8 @@ $sBodyClass = implode(' ', array_filter([
     <tfoot>
         <tr>
             <td colspan="5">
-                <button type="button" class="btn btn-xs btn-success js-admin-dynamic-table__add">
-                    &plus; Add
+                <button type="button" class="btn btn-xs btn-primary js-admin-dynamic-table__add">
+                    &plus; Add Item
                 </button>
             </td>
         </tr>
