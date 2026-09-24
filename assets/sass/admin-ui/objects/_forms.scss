@@ -338,15 +338,21 @@ div.field {
                 justify-content: center;
                 position: absolute;
                 left: 0;
-                top: 0;
+                top: 50%;
                 z-index: 2;
                 width: 1.75rem;
-                // Height of a single-line control, not the char-count channel
-                height: calc(1em * 1.2 + 16px + 2px);
+                height: 1em;
                 color: #aaaaaa;
                 pointer-events: none;
                 line-height: 1;
+                transform: translateY(-50%);
             }
+        }
+
+        // First line of a textarea, not the middle of the box
+        &.textarea .input:before {
+            top: 8px;
+            transform: none;
         }
     }
 
