@@ -24,8 +24,19 @@
         }
     }
 
+    > tfoot > tr > * {
+        --bs-table-accent-bg: transparent;
+        background-color: $white;
+        box-shadow: none;
+    }
+
     tbody {
         tr {
+            td,
+            th {
+                vertical-align: middle;
+            }
+
             td {
                 &.action,
                 &.actions {
@@ -89,5 +100,24 @@
                 }
             }
         }
+    }
+}
+
+//  Last table in a fieldset sits flush with the card's bottom edge.
+fieldset > .table:last-child {
+    margin-bottom: 0;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+}
+
+//  Opt-in sticky header. `.table-responsive` on the same element sets
+//  overflow-x which would kill `position: sticky`, so restore visible overflow.
+.table-sticky {
+    overflow: visible;
+
+    > thead > tr > th {
+        position: sticky;
+        top: 63px; //  .topbar height
+        z-index: 3;
     }
 }

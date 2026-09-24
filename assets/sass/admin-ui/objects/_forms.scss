@@ -32,9 +32,26 @@ div.field {
         padding: 0;
     }
 
-    //  So tips are always the same colour - badly designed form helper
+    //  Question-mark tips sit in the label, after the title. The label column
+    //  is right-aligned, so force the hint copy left and keep overflow visible
+    //  so the balloon is not clipped by the fieldset card.
     .tip {
-        color: #747a90;
+        display: inline;
+        position: static;
+        margin-left: 0.35rem;
+        color: $slate;
+        font-weight: 400;
+        vertical-align: middle;
+        cursor: help;
+        text-align: left;
+
+        [class*='hint--'] {
+            text-align: left;
+        }
+
+        .fa {
+            font-size: 1rem;
+        }
     }
 
     span {
@@ -66,12 +83,12 @@ div.field {
             }
 
             &.with-tip {
-                padding-right: 25px;
+                padding-right: 0;
 
                 .tip {
                     position: absolute;
                     right: 0;
-                    top: 1px;
+                    top: 0.35rem;
                 }
             }
 
@@ -264,12 +281,6 @@ div.field {
             align-items: center;
             gap: 0.5rem 1rem;
             padding-left: 0;
-
-            .tip {
-                top: -9px;
-                left: 10px;
-                position: relative;
-            }
 
             //  Sit beside the switch (the old 100px toggle did this with
             //  margin-top: 0). Width auto so it does not drop onto its own

@@ -10,11 +10,12 @@
 $aData      = htmlentities(json_encode($aData));
 $sBodyClass = implode(' ', array_filter([
     'js-admin-dynamic-table__body',
+    'align-middle',
     $bIsSortable ? 'js-admin-sortable' : null,
-]))
+]));
 
 ?>
-<table class="js-admin-dynamic-table table table-striped table-hover table-bordered table-responsive" data-data="<?=$aData?>">
+<table class="js-admin-dynamic-table table table-striped table-hover table-responsive" data-data="<?=$aData?>">
     <thead class="table-dark">
         <tr>
             <?php
@@ -96,7 +97,7 @@ $sBodyClass = implode(' ', array_filter([
         </td>
     </tr>
     </script>
-    <tbody>
+    <tfoot>
         <tr>
             <td colspan="5">
                 <button type="button" class="btn btn-xs btn-success js-admin-dynamic-table__add">
@@ -104,5 +105,5 @@ $sBodyClass = implode(' ', array_filter([
                 </button>
             </td>
         </tr>
-    </tbody>
+    </tfoot>
 </table>

@@ -123,7 +123,7 @@ use Nails\Admin\Resource\Export;
     <div id="export-recent-container" class="hidden">
         <hr>
         <h2>Recent exports</h2>
-        <table class="table table-striped table-hover table-bordered table-responsive">
+        <table class="table table-striped table-hover table-responsive">
             <thead class="table-dark">
                 <tr>
                     <th class="export-source">Export</th>
