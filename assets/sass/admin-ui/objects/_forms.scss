@@ -70,6 +70,13 @@ div.field {
                 display: block;
                 font-weight: normal;
             }
+
+            .field-required {
+                color: rgb($brand-color-highlight);
+                font-weight: 700;
+                margin-left: 0.15em;
+                cursor: help;
+            }
         }
 
         &.input {

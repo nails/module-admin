@@ -148,6 +148,35 @@ fieldset {
         top: $fieldset-heading-sticky-top;
         margin: 0;
     }
+
+    //  Overflow stays visible so dropdowns and tips are not clipped, so the
+    //  last full-bleed child has to carry the bottom radii — its square fill
+    //  would otherwise cover the card's curve. Chrome also often ignores
+    //  border-radius on the fieldset box itself.
+    $fieldset-inner-radius: calc(#{$fieldset-radius} - #{$fieldset-border-width});
+
+    > :last-child:not(legend) {
+        border-bottom-left-radius: $fieldset-inner-radius;
+        border-bottom-right-radius: $fieldset-inner-radius;
+    }
+
+    > div.field:last-child,
+    > :last-child > div.field:last-child {
+        border-bottom: 0;
+        border-bottom-left-radius: $fieldset-inner-radius;
+        border-bottom-right-radius: $fieldset-inner-radius;
+    }
+
+    //  jQuery .toggle() leaves a display:none last child in the tree
+    > :nth-last-child(2):has(+ [hidden], + [style*="display: none"]) {
+        border-bottom-left-radius: $fieldset-inner-radius;
+        border-bottom-right-radius: $fieldset-inner-radius;
+
+        &:is(div.field),
+        > div.field:last-child {
+            border-bottom: 0;
+        }
+    }
 }
 
 // Collapsible
