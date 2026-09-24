@@ -15,7 +15,6 @@ import MenuToggle from './components/admin-ui/MenuToggle.vue';
 import ModalButton from './components/admin-ui/ModalButton.vue';
 import SearchModal from './components/admin-ui/SearchModal.vue';
 import SideNav from './components/admin-ui/SideNav.vue';
-import VueSweetalert2 from 'vue-sweetalert2';
 
 const emitter = mitt();
 const $bus = {
@@ -47,7 +46,6 @@ for (let el of document.getElementsByClassName('admin-vue-app')) {
         app.component(name, component);
     });
 
-    app.use(VueSweetalert2);
     app.config.globalProperties.$bus = $bus;
     app.mount(el);
 }
