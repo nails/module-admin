@@ -11,12 +11,13 @@
 // v4 class names are kept for anything still on 4.x.
 
 @import '../admin-ui/variables/palette';
+@import '../admin-ui/variables/misc';
 
-$select2-border: #cccccc;
-$select2-focus-border: #86b7fe;
-$select2-focus-spread: 0.25rem;
-$select2-focus-shadow: 0 0 0 $select2-focus-spread rgba(13, 110, 253, 0.25);
-$select2-radius: 0.4rem;
+$select2-border: $input-border;
+$select2-focus-border: $input-focus-border;
+$select2-focus-spread: $input-focus-spread;
+$select2-focus-shadow: $input-focus-shadow;
+$select2-radius: $input-radius;
 $select2-min-height: 34px;
 $select2-chip-pad: 4px 8px;
 $select2-chip-gap: 8px;
