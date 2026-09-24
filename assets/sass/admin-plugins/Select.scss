@@ -79,7 +79,7 @@ $select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-sp
 .select2-dropdown-open:not(.select2-drop-above) .select2-choices,
 .select2-container--open.select2-container--below .select2-selection--single,
 .select2-container--open.select2-container--below .select2-selection--multiple {
-    border-bottom-color: transparent !important;
+    border-bottom-width: 0 !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     clip-path: $select2-glow-clip-below;
@@ -89,7 +89,7 @@ $select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-sp
 .select2-dropdown-open.select2-drop-above .select2-choices,
 .select2-container--open.select2-container--above .select2-selection--single,
 .select2-container--open.select2-container--above .select2-selection--multiple {
-    border-top-color: transparent !important;
+    border-top-width: 0 !important;
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
     border-bottom-left-radius: $select2-radius !important;
@@ -97,9 +97,13 @@ $select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-sp
     clip-path: $select2-glow-clip-above;
 }
 
-// Menu lives on <body> (v3 `#select2-drop`, v4 `.select2-dropdown`)
+// Menu lives on <body> (v3 `#select2-drop`, v4 `.select2-dropdown`).
+// Select2 3 uses margin-top: -1px to overlap the field — that stacks the two
+// rings. Sit flush instead and clip each glow at the join.
 .select2-drop,
 .select2-dropdown {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
     background: $white;
     border: 1px solid $select2-focus-border;
     box-shadow: $select2-focus-shadow;
@@ -107,19 +111,14 @@ $select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-sp
 
 .select2-drop:not(.select2-drop-above),
 .select2-dropdown--below {
-    margin-top: -1px;
-    margin-bottom: 0;
-    border-top: 0;
+    border-top-width: 0 !important;
     border-radius: 0 0 $select2-radius $select2-radius;
     clip-path: $select2-glow-clip-above;
 }
 
 .select2-drop.select2-drop-above,
 .select2-dropdown--above {
-    margin-top: 0;
-    margin-bottom: -1px;
-    border-top: 1px solid $select2-focus-border;
-    border-bottom: 0;
+    border-bottom-width: 0 !important;
     border-radius: $select2-radius $select2-radius 0 0;
     clip-path: $select2-glow-clip-below;
 }
