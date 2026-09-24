@@ -85,7 +85,7 @@ fieldset {
     border-radius: $fieldset-radius;
     background: $fieldset-bg;
     box-sizing: border-box;
-    overflow: hidden;
+    overflow: visible;
 
     // Elements
     // --------
@@ -174,6 +174,8 @@ $fieldset-collapse-closed: 'closed', 'collapsed', 'close', 'false', '0';
 fieldset[data-collapse]:not(.fieldset--collapsible):not(.fieldset--collapse-ignored) {
     @each $value in $fieldset-collapse-closed {
         &[data-collapse='#{$value}']:not(:has(div.field.error, .system-alert.error, .alert.alert-danger, .error.show-in-tabs)) {
+            overflow: hidden;
+
             > *:not(legend) {
                 display: none;
             }
@@ -261,6 +263,8 @@ fieldset.fieldset--collapsible {
     //  the card's, and drops the gap the `:has()` rule above opens beneath it
     //  for loose content — there is no content left below to hold off.
     &.fieldset--collapsed {
+
+        overflow: hidden;
 
         > *:not(legend) {
             display: none;
