@@ -10,6 +10,7 @@ class Revealer {
     constructor(adminController) {
 
         this.groups = {};
+        this.elements = [];
         this.adminController = adminController;
 
         this.adminController
@@ -57,11 +58,55 @@ class Revealer {
                     return;
                 }
 
-                this.groups[group] = new Group(this.adminController, group, element);
-                this.groups[group].findNewElements(domElement);
+                this.groups[group] = new Group(this, group, element);
+            });
+
+        this.findElements(domElement);
+        this.elements.forEach((element) => element.sync());
+
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Binds target elements. An element may list several groups in
+     * `data-revealer` (comma-separated); it is shown if any listed group
+     * matches `data-reveal-on`.
+     * @param {HTMLElement} domElement
+     * @returns {Revealer}
+     */
+    findElements(domElement) {
+
+        $('[data-revealer]', domElement)
+            .filter(':not(.revealer--processed)')
+            .filter('[data-reveal-on], [data-reveal-not-on]')
+            .filter(':not(input[type=checkbox], select)')
+            .addClass('revealer--processed')
+            .each((index, element) => {
+                this.elements.push(new Element(this, element));
             });
 
         return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Re-evaluate every element that listens to this group
+     * @param {String} group
+     */
+    evaluateForGroup(group) {
+
+        this.adminController.log('Toggling elements for group', group);
+
+        for (let i = 0; i < this.elements.length; i++) {
+            if (this.elements[i].listensTo(group)) {
+                this.elements[i].sync();
+            }
+        }
+
+        this.adminController.refreshUi();
     }
 
     // --------------------------------------------------------------------------
@@ -73,12 +118,22 @@ class Revealer {
     destroy(domElement) {
         for (let key in this.groups) {
             if (this.groups.hasOwnProperty(key)) {
-                if (domElement === null || $.contains(domElement, this.groups[key].$control)) {
+                if (domElement === null || $.contains(domElement, this.groups[key].$control[0] || this.groups[key].$control)) {
                     this.groups[key].destroy();
                     delete this.groups[key];
                 }
             }
         }
+
+        this.elements = this.elements.filter((element) => {
+            if (element.groupNames.every((name) => typeof this.groups[name] === 'undefined')) {
+                element.destroy();
+                return false;
+            }
+
+            element.sync();
+            return true;
+        });
     }
 }
 
@@ -89,47 +144,21 @@ class Group {
 
     /**
      * Construct Group.
+     * @param revealer {Revealer}
      * @param group {String} The string this group represents
      * @param control {HTMLElement} The DOM element responsible for controlling this group
      */
-    constructor(adminController, group, control) {
+    constructor(revealer, group, control) {
 
-        this.adminController = adminController;
+        this.revealer = revealer;
+        this.adminController = revealer.adminController;
         this.group = group;
         this.$control = $(control);
-        this.elements = [];
 
         this.$control
-            .on('change', () => {
-                this.toggle(
-                    this.getControlValue()
-                );
+            .on('change.revealer', () => {
+                this.revealer.evaluateForGroup(this.group);
             });
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
-     * Looks for new elements to add to the group
-     * @param domElement {HTMLElement} The DOM element to restrict the search to
-     * @returns {Group}
-     */
-    findNewElements(domElement) {
-
-        $(`[data-revealer="${this.group}"]:not(.revealer--processed)`, domElement)
-            .filter(':not(input[type=checkbox], select)')
-            .addClass('revealer--processed')
-            .each((index, element) => {
-                this
-                    .elements
-                    .push(
-                        new Element(element)
-                    )
-            });
-
-        this.$control.trigger('change');
-
-        return this;
     }
 
     // --------------------------------------------------------------------------
@@ -152,31 +181,11 @@ class Group {
     // --------------------------------------------------------------------------
 
     /**
-     * Shows/hides the elements based on whether they should be shown or not
-     * @param value {String|Boolean} The value to test
-     */
-    toggle(value) {
-        this.adminController.log('Toggling elements for value', value);
-        for (let i = 0; i < this.elements.length; i++) {
-            if (this.elements[i].isShown(value)) {
-                this.elements[i].show();
-            } else {
-                this.elements[i].hide();
-            }
-        }
-        this.adminController.refreshUi();
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
      * Destroys the group
      */
     destroy() {
+        this.$control.off('change.revealer');
         this.$control.removeClass('revealer--processed');
-        for (let i = 0; i < this.elements.length; i++) {
-            this.elements[i].destroy();
-        }
     }
 }
 
@@ -187,12 +196,18 @@ class Element {
 
     /**
      * Construct Element.
+     * @param revealer {Revealer}
      * @param element {HTMLElement} The DOM element
      */
-    constructor(element) {
+    constructor(revealer, element) {
 
+        this.revealer = revealer;
         this.$element = $(element);
         this.delimiter = this.$element.data('reveal-delimiter') || ',';
+        this.groupNames = (element.getAttribute('data-revealer') || '')
+            .split(this.delimiter)
+            .map((name) => name.trim())
+            .filter(Boolean);
 
         this.values = element.hasAttribute('data-reveal-on')
             ? element.getAttribute('data-reveal-on')
@@ -209,6 +224,37 @@ class Element {
         if (this.bangValues !== null) {
             this.bangValues = this.bangValues.split(this.delimiter)
         }
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Whether this element listens to the named group
+     * @param {String} group
+     * @returns {boolean}
+     */
+    listensTo(group) {
+        return this.groupNames.indexOf(group) > -1;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Show or hide based on every listed group (OR)
+     * @returns {Element}
+     */
+    sync() {
+        let show = false;
+
+        for (let i = 0; i < this.groupNames.length; i++) {
+            let group = this.revealer.groups[this.groupNames[i]];
+            if (group && this.isShown(group.getControlValue())) {
+                show = true;
+                break;
+            }
+        }
+
+        return show ? this.show() : this.hide();
     }
 
     // --------------------------------------------------------------------------
