@@ -324,20 +324,28 @@ div.field {
         input[type=time],
         textarea {
             cursor: not-allowed;
-            padding-left: 30px;
-            width: 325px;
+            padding-left: 1.75rem;
             box-sizing: border-box;
         }
 
         .input {
             &:before {
                 font-family: "Font Awesome 6 Free";
+                font-weight: 900;
                 content: '\f023';
-                display: block;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 position: absolute;
-                left: 9px;
-                top: 4px;
+                left: 0;
+                top: 0;
+                z-index: 2;
+                width: 1.75rem;
+                // Height of a single-line control, not the char-count channel
+                height: calc(1em * 1.2 + 16px + 2px);
                 color: #aaaaaa;
+                pointer-events: none;
+                line-height: 1;
             }
         }
     }
