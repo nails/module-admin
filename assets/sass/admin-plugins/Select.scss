@@ -6,9 +6,9 @@
 // tidy the field chrome.
 //
 // Admin loads Select2 3.5.4. Its menu is `#select2-drop` on <body> — do not
-// re-parent it. Join field and menu visually: flatten the shared edge, keep
-// the same white fill / blue border, and clip each ring so the glow meets
-// instead of doubling. v4 class names are kept for anything still on 4.x.
+// re-parent it. Flatten the shared edge and let `.select2-focus-shell` (see
+// Select.js) draw one ring around field + menu so the glows cannot stack.
+// v4 class names are kept for anything still on 4.x.
 
 @import '../admin-ui/variables/palette';
 
@@ -20,10 +20,6 @@ $select2-radius: 0.4rem;
 $select2-min-height: 34px;
 $select2-chip-pad: 4px 8px;
 $select2-chip-gap: 8px;
-
-// Clip the joining edge of the focus ring so field + menu read as one control.
-$select2-glow-clip-below: inset(-#{$select2-focus-spread} -#{$select2-focus-spread} 0 -#{$select2-focus-spread});
-$select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-spread} -#{$select2-focus-spread});
 
 .select2-hidden-accessible,
 .select2-offscreen {
@@ -40,9 +36,22 @@ $select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-sp
 }
 
 .select2-container {
-    width: 100%;
+    width: 100% !important;
     max-width: 100%;
     box-sizing: border-box;
+}
+
+.select2-focus-shell {
+    position: absolute;
+    z-index: 9998;
+    pointer-events: none;
+    border-radius: $select2-radius;
+    box-shadow: $select2-focus-shadow;
+    background: transparent;
+}
+
+.select2-focus-shell[hidden] {
+    display: none !important;
 }
 
 .select2-container-active,
@@ -72,7 +81,7 @@ $select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-sp
     background: $white !important;
     background-image: none !important;
     border-color: $select2-focus-border !important;
-    box-shadow: $select2-focus-shadow !important;
+    box-shadow: none !important;
 }
 
 .select2-dropdown-open:not(.select2-drop-above) .select2-choice,
@@ -82,7 +91,6 @@ $select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-sp
     border-bottom-width: 0 !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
-    clip-path: $select2-glow-clip-below;
 }
 
 .select2-dropdown-open.select2-drop-above .select2-choice,
@@ -94,33 +102,30 @@ $select2-glow-clip-above: inset(0 -#{$select2-focus-spread} -#{$select2-focus-sp
     border-top-right-radius: 0 !important;
     border-bottom-left-radius: $select2-radius !important;
     border-bottom-right-radius: $select2-radius !important;
-    clip-path: $select2-glow-clip-above;
 }
 
 // Menu lives on <body> (v3 `#select2-drop`, v4 `.select2-dropdown`).
-// Select2 3 uses margin-top: -1px to overlap the field — that stacks the two
-// rings. Sit flush instead and clip each glow at the join.
 .select2-drop,
 .select2-dropdown {
+    z-index: 10051;
+    box-sizing: border-box;
     margin-top: 0 !important;
     margin-bottom: 0 !important;
     background: $white;
     border: 1px solid $select2-focus-border;
-    box-shadow: $select2-focus-shadow;
+    box-shadow: none !important;
 }
 
 .select2-drop:not(.select2-drop-above),
 .select2-dropdown--below {
     border-top-width: 0 !important;
     border-radius: 0 0 $select2-radius $select2-radius;
-    clip-path: $select2-glow-clip-above;
 }
 
 .select2-drop.select2-drop-above,
 .select2-dropdown--above {
     border-bottom-width: 0 !important;
     border-radius: $select2-radius $select2-radius 0 0;
-    clip-path: $select2-glow-clip-below;
 }
 
 .select2-drop-active {
