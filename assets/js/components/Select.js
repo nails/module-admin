@@ -9,10 +9,50 @@ class Select {
      */
     constructor(adminController) {
 
+        this.adminController = adminController;
+
+        // Select2 mounts the menu on <body>, so the field and dropdown cannot
+        // share a radius or focus ring. Re-parent it into the container on
+        // open; CSS then lays them out as one control (including opening up).
+        $(document)
+            .on('select2:open.select2-shell', (e) => {
+                this.nestDropdown($(e.target));
+            })
+            .on('select2-open.select2-shell', (e) => {
+                this.nestDropdown($(e.target));
+            });
+
         adminController
             .onRefreshUi((e, domElement) => {
                 this.init(domElement);
             });
+
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Put the open dropdown inside the Select2 container
+     * @param {jQuery} $el The original select/input
+     * @returns {Select}
+     */
+    nestDropdown($el) {
+
+        let inst = $el.data('select2');
+
+        if (inst && inst.$dropdown && inst.$container) {
+            inst.$dropdown.appendTo(inst.$container);
+            return this;
+        }
+
+        // v3: container() + #select2-drop
+        let $container = $el.data('select2') ? $el.select2('container') : $();
+        let $drop = $('#select2-drop');
+
+        if ($container && $container.length && $drop.length) {
+            $drop.appendTo($container);
+        }
 
         return this;
     }
