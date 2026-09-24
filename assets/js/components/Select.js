@@ -74,10 +74,13 @@ class Select {
             left: left + 'px'
         });
 
+        // Cover the field's joining 1px border so we can leave that border
+        // in-flow (zeroing it collapsed the row by a pixel).
+        let join = 1;
         let dropHeight = $drop.outerHeight();
         let top = above
-            ? rect.top + window.scrollY - dropHeight
-            : rect.bottom + window.scrollY;
+            ? rect.top + window.scrollY - dropHeight + join
+            : rect.bottom + window.scrollY - join;
 
         $drop.css({
             top: top + 'px'
@@ -88,7 +91,7 @@ class Select {
                 top: (above ? top : rect.top + window.scrollY) + 'px',
                 left: left + 'px',
                 width: width + 'px',
-                height: (rect.height + dropHeight) + 'px'
+                height: (rect.height + dropHeight - join) + 'px'
             })
             .removeAttr('hidden');
 

@@ -84,11 +84,13 @@ $select2-chip-gap: 8px;
     box-shadow: none !important;
 }
 
+// Keep the joining border's width so the in-flow field does not shrink
+// when opened; the menu overlaps that 1px instead (see Select.js).
 .select2-dropdown-open:not(.select2-drop-above) .select2-choice,
 .select2-dropdown-open:not(.select2-drop-above) .select2-choices,
 .select2-container--open.select2-container--below .select2-selection--single,
 .select2-container--open.select2-container--below .select2-selection--multiple {
-    border-bottom-width: 0 !important;
+    border-bottom-color: transparent !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
 }
@@ -97,7 +99,7 @@ $select2-chip-gap: 8px;
 .select2-dropdown-open.select2-drop-above .select2-choices,
 .select2-container--open.select2-container--above .select2-selection--single,
 .select2-container--open.select2-container--above .select2-selection--multiple {
-    border-top-width: 0 !important;
+    border-top-color: transparent !important;
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
     border-bottom-left-radius: $select2-radius !important;
