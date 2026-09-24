@@ -15,7 +15,7 @@ $sBodyClass = implode(' ', array_filter([
 ]));
 
 ?>
-<table class="js-admin-dynamic-table table table-striped table-hover table-responsive" data-data="<?=$aData?>">
+<table class="js-admin-dynamic-table table table-striped table-hover table-responsive table-rounded" data-data="<?=$aData?>">
     <thead class="table-dark">
         <tr>
             <?php
