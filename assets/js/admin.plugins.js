@@ -11,6 +11,7 @@ let _ADMIN, _ADMIN_PROXY;
  */
 import '../sass/admin.plugins.scss';
 import Alerts from './components/Alerts.js';
+import CharacterCount from './components/CharacterCount.js';
 import CollapsibleFieldsets from './components/admin-ui/CollapsibleFieldsets.js';
 import Confirm from './components/Confirm.js';
 import CopyToClipboard from './components/CopyToClipboard.js';
@@ -298,6 +299,7 @@ window
     .NAILS
     .ADMIN
     .registerPlugin(namespace, 'Alerts', (controller) => new Alerts(controller))
+    .registerPlugin(namespace, 'CharacterCount', (controller) => new CharacterCount(controller))
     .registerPlugin(namespace, 'CollapsibleFieldsets', (controller) => new CollapsibleFieldsets(controller))
     .registerPlugin(namespace, 'Confirm', (controller) => new Confirm(controller))
     .registerPlugin(namespace, 'CopyToClipboard', (controller) => new CopyToClipboard(controller))

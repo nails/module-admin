@@ -1,0 +1,59 @@
+// Character counts sit in a channel along the bottom of the control, out of
+// the form's vertical rhythm so neighbouring fields stay easy to scan.
+
+@import '../admin-ui/variables/palette';
+
+div.field {
+
+    // Before the plugin wraps, pull the caption out of flow so the form does
+    // not jump once JS runs.
+    span.input > small.char-count {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+    }
+
+    .char-count-wrap {
+        position: relative;
+        display: block;
+        width: 100%;
+
+        .field-input {
+            padding-bottom: 1.375rem;
+        }
+
+        small.char-count {
+            position: absolute;
+            left: 1px;
+            right: 1px;
+            bottom: 1px;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            height: 1.25rem;
+            margin: 0;
+            padding: 0 0.6rem;
+            pointer-events: none;
+            font-size: 0.6875rem;
+            font-variant-numeric: tabular-nums;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            color: $slate;
+            background: $pale-slate;
+            border-radius: 0 0 0.3rem 0.3rem;
+            box-shadow: inset 0 1px 0 $light-slate;
+        }
+    }
+
+    &.max-length-exceeded {
+
+        .char-count-wrap small.char-count {
+            color: #b52130;
+            background: #fce8ea;
+            box-shadow: inset 0 1px 0 #f0c4c8;
+        }
+    }
+}
