@@ -10,6 +10,7 @@
 $select2-border: #cccccc;
 $select2-radius: 0.4rem;
 $select2-min-height: 34px;
+$select2-chip-pad: 4px 8px;
 
 .select2-hidden-accessible,
 .select2-offscreen {
@@ -29,10 +30,31 @@ $select2-min-height: 34px;
     z-index: 10050;
 }
 
+// Do not radius every corner — that draws a second rounded box over the
+// field. Join the dropdown to the open control instead.
 .select2-dropdown {
-    border-radius: $select2-radius;
+    background: $white;
     border-color: $select2-border;
-    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+}
+
+.select2-dropdown--below {
+    border-top: 0;
+    border-radius: 0 0 $select2-radius $select2-radius;
+}
+
+.select2-dropdown--above {
+    border-bottom: 0;
+    border-radius: $select2-radius $select2-radius 0 0;
+}
+
+.select2-results__message,
+.select2-results .select2-searching,
+.select2-results .select2-no-results,
+.select2-container--default .select2-results__option--disabled,
+.select2-container--default .select2-results__option[aria-disabled='true'] {
+    background: transparent !important;
+    color: $slate;
 }
 
 div.field {
@@ -53,22 +75,60 @@ div.field {
         box-shadow: none;
     }
 
-    // Multi-select chips sit optically high; favour a little more room
-    // above the pills than below
+    .select2-container--default.select2-container--open.select2-container--below {
+
+        .select2-selection--single,
+        .select2-selection--multiple {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+    }
+
+    .select2-container--default.select2-container--open.select2-container--above {
+
+        .select2-selection--single,
+        .select2-selection--multiple {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    }
+
     .select2-container--default .select2-selection--multiple {
-        padding: 4px 6px 1px;
+        padding: 6px;
 
         .select2-selection__rendered {
             padding: 0;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 2px;
+            gap: 6px;
         }
 
         .select2-selection__choice {
-            margin-top: 0;
-            margin-bottom: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin: 0;
+            padding: $select2-chip-pad;
+            line-height: 1.2;
+        }
+
+        .select2-selection__choice__display {
+            padding: 0;
+        }
+
+        // Sit the remove control in flow so chip padding is even all round
+        .select2-selection__choice__remove {
+            position: static;
+            top: auto;
+            left: auto;
+            border: 0;
+            border-radius: 0;
+            padding: 0;
+            margin: 0;
+            font-size: inherit;
+            line-height: 1;
+            background: transparent;
         }
     }
 
@@ -84,6 +144,8 @@ div.field {
         background: transparent !important;
         outline: none !important;
         min-height: 0;
+        margin: 0;
+        padding: 0;
     }
 
     // Select2 v3 multi-select (Searcher fields)
@@ -93,12 +155,28 @@ div.field {
         background: $white;
         box-shadow: none;
         min-height: $select2-min-height;
-        padding: 4px 6px 1px;
+        padding: 6px;
+    }
+
+    .select2-dropdown-open .select2-choices {
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
     }
 
     .select2-choices .select2-search-choice {
-        margin-top: 2px;
-        margin-bottom: 2px;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin: 0 6px 0 0;
+        padding: $select2-chip-pad;
+        line-height: 1.2;
+    }
+
+    .select2-search-choice-close {
+        position: static;
+        display: inline-block;
+        float: none;
+        margin: 0;
     }
 
     // Select2 v3 single-select
@@ -110,4 +188,18 @@ div.field {
         height: $select2-min-height;
         line-height: 30px;
     }
+}
+
+// v3 drop is appended to <body>
+.select2-drop {
+    margin-top: -1px;
+    background: $white;
+    border-color: $select2-border;
+    border-radius: 0 0 $select2-radius $select2-radius;
+    box-shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+}
+
+.select2-drop.select2-drop-above {
+    margin-top: 0;
+    border-radius: $select2-radius $select2-radius 0 0;
 }
