@@ -96,7 +96,7 @@ class Form
                 <script type="text/x-template" class="js-admin-dynamic-table__template">
                 <tr>$sBodyCells</tr>
                 </script>
-                <tbody>
+                <tfoot>
                     <tr>
                         <td colspan="$sColSpan">
                             <a href="#" class="btn btn-xs btn-primary js-admin-dynamic-table__add">
@@ -104,7 +104,7 @@ class Form
                             </a>
                         </td>
                     </tr>
-                </tbody>
+                </tfoot>
             </table>
         EOT;
     }

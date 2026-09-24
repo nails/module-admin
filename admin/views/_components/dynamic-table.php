@@ -97,7 +97,7 @@ $sBodyClass = implode(' ', array_filter([
         </td>
     </tr>
     </script>
-    <tbody>
+    <tfoot>
         <tr>
             <td colspan="5">
                 <button type="button" class="btn btn-xs btn-success js-admin-dynamic-table__add">
@@ -105,5 +105,5 @@ $sBodyClass = implode(' ', array_filter([
                 </button>
             </td>
         </tr>
-    </tbody>
+    </tfoot>
 </table>
