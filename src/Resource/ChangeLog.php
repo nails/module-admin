@@ -78,7 +78,7 @@ class ChangeLog extends Entity
     public function getChangesAsTable(
         $sTableClass = 'table table-striped table-hover table-responsive',
         $sTableHeadClass = 'table-dark',
-        $sTablebodyClass = ''
+        $sTablebodyClass = 'align-middle'
     ): string {
         $aChanges = json_decode($this->changes);
         if (empty($aChanges)) {

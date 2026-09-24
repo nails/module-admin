@@ -26,6 +26,11 @@
 
     tbody {
         tr {
+            td,
+            th {
+                vertical-align: middle;
+            }
+
             td {
                 &.action,
                 &.actions {
@@ -92,22 +97,21 @@
     }
 }
 
-//  `.table-bordered` is leftover Bootstrap grid chrome. Index tables, dynamic
-//  tables, and un-updated markup all drop the cell grid and keep stripe/hover.
-.table-bordered {
-    border: 0;
+//  Last table in a fieldset sits flush with the card's bottom edge.
+fieldset > .table:last-child {
+    margin-bottom: 0;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+}
 
-    > :not(caption) > *,
-    > :not(caption) > * > * {
-        border-width: 0;
-    }
+//  Opt-in sticky header. `.table-responsive` on the same element sets
+//  overflow-x which would kill `position: sticky`, so restore visible overflow.
+.table-sticky {
+    overflow: visible;
 
-    > thead > tr > th,
-    > tbody > tr > th,
-    > tfoot > tr > th,
-    > thead > tr > td,
-    > tbody > tr > td,
-    > tfoot > tr > td {
-        border: 0;
+    > thead > tr > th {
+        position: sticky;
+        top: 63px; //  .topbar height
+        z-index: 3;
     }
 }

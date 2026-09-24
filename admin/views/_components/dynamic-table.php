@@ -10,8 +10,9 @@
 $aData      = htmlentities(json_encode($aData));
 $sBodyClass = implode(' ', array_filter([
     'js-admin-dynamic-table__body',
+    'align-middle',
     $bIsSortable ? 'js-admin-sortable' : null,
-]))
+]));
 
 ?>
 <table class="js-admin-dynamic-table table table-striped table-hover table-responsive" data-data="<?=$aData?>">
