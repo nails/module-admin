@@ -92,7 +92,7 @@ class Form
                         $sHeaderCells
                     </tr>
                 </thead>
-                <tbody class="js-admin-dynamic-table__body align-middle $sSortableClass" data-handle=".handle"></tbody>
+                <tbody class="js-admin-dynamic-table__body $sSortableClass" data-handle=".handle"></tbody>
                 <script type="text/x-template" class="js-admin-dynamic-table__template">
                 <tr>$sBodyCells</tr>
                 </script>
