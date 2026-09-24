@@ -91,6 +91,8 @@ class Instance {
             //  Add to DOM
             document.body.appendChild(this.container);
         }
+
+        this.syncActionsVisibility();
     }
 
     // --------------------------------------------------------------------------
@@ -236,6 +238,9 @@ class Instance {
 
     clearActions() {
         this.actionButtons = [];
+        if (this.actions) {
+            this.renderActions();
+        }
         return this;
     }
 
@@ -277,6 +282,7 @@ class Instance {
 
     setActions(elements) {
         this.setAreaContents(this.actions, elements)
+        this.syncActionsVisibility();
         this.adminController.refreshUi(this.actions);
         return this;
     }
@@ -304,7 +310,22 @@ class Instance {
     // --------------------------------------------------------------------------
 
     renderActions() {
-        this.setAreaContents(this.actions, this.actionButtons)
+        this.setAreaContents(this.actions, this.actionButtons);
+        this.syncActionsVisibility();
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Hide the action bar when it has no buttons or other controls
+     * @returns {Instance}
+     */
+    syncActionsVisibility() {
+        if (this.actions) {
+            this.actions.hidden = !this.actions.childElementCount;
+        }
+        return this;
     }
 
     // --------------------------------------------------------------------------

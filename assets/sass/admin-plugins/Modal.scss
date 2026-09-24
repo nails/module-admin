@@ -84,7 +84,7 @@
         max-height: calc(80vh - 120px); // Adjust based on title and actions height
     }
 
-    // Actions section - sticky at the bottom
+    // Actions section - sticky at the bottom. Hidden when empty (no buttons).
     &__actions {
         padding: 16px;
         border-top: 1px solid #d9d9d9; // Visibly distinct from body
@@ -93,6 +93,11 @@
         background-color: #f9f9f9;
         box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
         z-index: 5;
+
+        &:empty,
+        &[hidden] {
+            display: none;
+        }
 
         .btn {
             margin-right: 5px;
