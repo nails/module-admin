@@ -410,12 +410,18 @@ input[type='email'],
 input[type='url'],
 input[type='number'],
 input[type='color'],
+input[type='search'],
+input[type='tel'],
+input[type='date'],
+input[type='datetime-local'],
+input[type='time'],
+input[type='month'],
+input[type='week'],
 textarea {
-    border: 1px solid #cccccc;
+    border: 1px solid $input-border;
     padding: 8px 6px;
     outline: none;
-    border-radius: 0.4rem;
-    //font: 13px Helvetica, Arial, sans-serif;
+    border-radius: $input-radius;
     color: #444444;
     margin: 0;
     width: 210px;
@@ -425,13 +431,24 @@ textarea {
     background: #ffffff;
 
     &:focus {
-        border: 1px solid #aaaaaa;
+        border-color: $input-focus-border;
         color: #444444;
-        box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+        box-shadow: $input-focus-shadow;
     }
 
     &.select2-input {
         width: 100%;
         margin: 0;
+
+        &:focus {
+            border-color: transparent;
+            box-shadow: none;
+        }
     }
+}
+
+select:focus {
+    border-color: $input-focus-border;
+    box-shadow: $input-focus-shadow;
+    outline: none;
 }

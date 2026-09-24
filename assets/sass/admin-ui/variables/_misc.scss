@@ -1,2 +1,10 @@
 // Variables: Misc
 // ===============
+
+//  Shared focus chrome for text fields, selects, and Select2. 1px blue
+//  border + a 4px translucent ring, same as Bootstrap's form-control focus.
+$input-border: #cccccc;
+$input-focus-border: #86b7fe;
+$input-focus-spread: 0.25rem;
+$input-focus-shadow: 0 0 0 $input-focus-spread rgba(13, 110, 253, 0.25);
+$input-radius: 0.4rem;

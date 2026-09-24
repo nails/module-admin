@@ -1,0 +1,276 @@
+// Plugins: Select2
+// ================
+// Admin never ships Select2's own CSS, so the native <select> stays visible
+// under the widget and chips look like a second input. Replicate the library
+// hide rule (v4 `.select2-hidden-accessible`, v3 `.select2-offscreen`) and
+// tidy the field chrome.
+//
+// Admin loads Select2 3.5.4. Its menu is `#select2-drop` on <body> — do not
+// re-parent it. Flatten the shared edge and let `.select2-focus-shell` (see
+// Select.js) draw one ring around field + menu so the glows cannot stack.
+// v4 class names are kept for anything still on 4.x.
+
+@import '../admin-ui/variables/palette';
+@import '../admin-ui/variables/misc';
+
+$select2-border: $input-border;
+$select2-focus-border: $input-focus-border;
+$select2-focus-spread: $input-focus-spread;
+$select2-focus-shadow: $input-focus-shadow;
+$select2-radius: $input-radius;
+$select2-min-height: 34px;
+$select2-chip-pad: 4px 8px;
+$select2-chip-gap: 8px;
+
+.select2-hidden-accessible,
+.select2-offscreen {
+    border: 0 !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    height: 1px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    position: absolute !important;
+    width: 1px !important;
+    white-space: nowrap !important;
+}
+
+.select2-container {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.select2-focus-shell {
+    position: fixed;
+    z-index: 9998;
+    pointer-events: none;
+    border-radius: $select2-radius;
+    box-shadow: $select2-focus-shadow;
+    background: transparent;
+}
+
+.select2-focus-shell[hidden] {
+    display: none !important;
+}
+
+.select2-container-active:not(.select2-dropdown-open),
+.select2-container--focus:not(.select2-container--open) {
+
+    .select2-choice,
+    .select2-choices,
+    .select2-selection--single,
+    .select2-selection--multiple {
+        border-color: $select2-focus-border !important;
+        box-shadow: $select2-focus-shadow !important;
+        background: $white !important;
+        background-image: none !important;
+    }
+}
+
+.select2-dropdown-open,
+.select2-container--open {
+    z-index: 10050;
+}
+
+// Kill Select2 3's grey inset "open" treatment — field stays the focused control
+.select2-dropdown-open .select2-choice,
+.select2-dropdown-open .select2-choices,
+.select2-container--open .select2-selection--single,
+.select2-container--open .select2-selection--multiple {
+    background: $white !important;
+    background-image: none !important;
+    border-color: $select2-focus-border !important;
+    box-shadow: none !important;
+}
+
+// Keep the joining border's width so the in-flow field does not shrink
+// when opened; the menu overlaps that 1px instead (see Select.js).
+.select2-dropdown-open:not(.select2-drop-above) .select2-choice,
+.select2-dropdown-open:not(.select2-drop-above) .select2-choices,
+.select2-container--open.select2-container--below .select2-selection--single,
+.select2-container--open.select2-container--below .select2-selection--multiple {
+    border-bottom-color: transparent !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.select2-dropdown-open.select2-drop-above .select2-choice,
+.select2-dropdown-open.select2-drop-above .select2-choices,
+.select2-container--open.select2-container--above .select2-selection--single,
+.select2-container--open.select2-container--above .select2-selection--multiple {
+    border-top-color: transparent !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: $select2-radius !important;
+    border-bottom-right-radius: $select2-radius !important;
+}
+
+// Menu lives on <body> (v3 `#select2-drop`, v4 `.select2-dropdown`).
+.select2-drop,
+.select2-dropdown {
+    z-index: 10051;
+    box-sizing: border-box;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    background: $white;
+    border: 1px solid $select2-focus-border;
+    box-shadow: none !important;
+}
+
+.select2-drop:not(.select2-drop-above),
+.select2-dropdown--below {
+    border-top-width: 0 !important;
+    border-radius: 0 0 $select2-radius $select2-radius;
+}
+
+.select2-drop.select2-drop-above,
+.select2-dropdown--above {
+    border-bottom-width: 0 !important;
+    border-radius: $select2-radius $select2-radius 0 0;
+}
+
+.select2-drop-active {
+    border-color: $select2-focus-border;
+}
+
+.select2-search,
+.select2-search--dropdown {
+    padding: 6px 8px;
+}
+
+.select2-search--dropdown .select2-search__field,
+.select2-drop .select2-input,
+.select2-drop input,
+.select2-search input,
+input.select2-input {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    background: transparent !important;
+    width: 100%;
+    padding: 2px 0;
+
+    &:focus {
+        border: 0 !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+}
+
+.select2-results__message,
+.select2-results .select2-searching,
+.select2-results .select2-no-results,
+.select2-container--default .select2-results__option--disabled,
+.select2-container--default .select2-results__option[aria-disabled='true'] {
+    background: transparent !important;
+    color: $slate;
+}
+
+div.field {
+
+    .select2-container--default .select2-selection--single,
+    .select2-container--default .select2-selection--multiple {
+        border: 1px solid $select2-border;
+        border-radius: $select2-radius;
+        min-height: $select2-min-height;
+        box-sizing: border-box;
+        background: $white;
+        box-shadow: none;
+    }
+
+    .select2-container--default .select2-selection--multiple {
+        padding: 6px;
+
+        .select2-selection__rendered {
+            display: flex !important;
+            flex-wrap: wrap;
+            align-items: center;
+            column-gap: $select2-chip-gap;
+            row-gap: $select2-chip-gap;
+            padding: 0;
+        }
+
+        .select2-selection__choice {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin: 0;
+            padding: $select2-chip-pad;
+            line-height: 1.2;
+        }
+
+        .select2-selection__choice__display {
+            padding: 0;
+        }
+
+        .select2-selection__choice__remove {
+            position: static;
+            top: auto;
+            left: auto;
+            border: 0;
+            border-radius: 0;
+            padding: 0;
+            margin: 0;
+            font-size: inherit;
+            line-height: 1;
+            background: transparent;
+        }
+    }
+
+    .select2-search--inline .select2-search__field,
+    .select2-container .select2-search__field,
+    .select2-container .select2-input,
+    .select2-choices .select2-input,
+    .select2-search-field input[type='text'] {
+        border: 0 !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        outline: none !important;
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    .select2-choices {
+        border: 1px solid $select2-border;
+        border-radius: $select2-radius;
+        background: $white;
+        box-shadow: none;
+        min-height: $select2-min-height;
+        padding: 6px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        column-gap: $select2-chip-gap;
+        row-gap: $select2-chip-gap;
+    }
+
+    .select2-choices .select2-search-choice {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin: 0;
+        padding: $select2-chip-pad;
+        line-height: 1.2;
+    }
+
+    .select2-search-choice-close {
+        position: static;
+        display: inline-block;
+        float: none;
+        margin: 0;
+    }
+
+    .select2-choice {
+        border: 1px solid $select2-border;
+        border-radius: $select2-radius;
+        background: $white;
+        background-image: none;
+        box-shadow: none;
+        height: $select2-min-height;
+        line-height: 30px;
+    }
+}
