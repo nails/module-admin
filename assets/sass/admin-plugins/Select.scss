@@ -42,7 +42,7 @@ $select2-chip-gap: 8px;
 }
 
 .select2-focus-shell {
-    position: absolute;
+    position: fixed;
     z-index: 9998;
     pointer-events: none;
     border-radius: $select2-radius;
