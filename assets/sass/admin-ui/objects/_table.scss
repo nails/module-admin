@@ -24,6 +24,12 @@
         }
     }
 
+    > tfoot > tr > * {
+        --bs-table-accent-bg: transparent;
+        background-color: $white;
+        box-shadow: none;
+    }
+
     tbody {
         tr {
             td,
