@@ -1,5 +1,7 @@
 // Character counts sit in a channel along the bottom of the control, out of
 // the form's vertical rhythm so neighbouring fields stay easy to scan.
+// The channel stays closed until the field is focused. An over-limit count
+// keeps it open whether or not the field has focus.
 
 @import '../admin-ui/variables/palette';
 
@@ -27,10 +29,6 @@ div.field {
         display: block;
         width: 100%;
 
-        .field-input {
-            padding-bottom: $char-count-channel;
-        }
-
         small.char-count {
             position: absolute;
             left: 1px;
@@ -44,6 +42,7 @@ div.field {
             margin: 0;
             padding: 0 6px;
             pointer-events: none;
+            visibility: hidden;
             font-size: 0.6875rem;
             font-variant-numeric: tabular-nums;
             line-height: 1;
@@ -52,11 +51,20 @@ div.field {
             background: transparent;
             border-radius: 0 0 0.3rem 0.3rem;
         }
+
+        &:focus-within {
+            .field-input {
+                padding-bottom: $char-count-channel;
+            }
+
+            small.char-count {
+                visibility: visible;
+            }
+        }
     }
 
-    //  The wrap is taller than the text row (channel underneath). Centre the
-    //  padlock on the text row and hide the one on `.input`, which would sit
-    //  too low.
+    //  Hide the padlock on `.input` (it would sit too low) and draw one on the
+    //  wrap, centred on the text row.
     &.readonly {
         &:has(.char-count-wrap) .input:before {
             content: none;
@@ -74,21 +82,36 @@ div.field {
             top: 0;
             z-index: 2;
             width: 1.75rem;
-            // Channel replaced the input's 8px bottom padding, so add it back
-            // and the box matches a normal control (where 50% is the text).
-            height: calc(100% - #{$char-count-channel} + #{$input-padding-y});
+            // While the channel is closed the wrap is the text row, so 100%
+            // centres the padlock. Open it and the channel has to be subtracted.
+            height: 100%;
             color: #aaaaaa;
             pointer-events: none;
             line-height: 1;
+        }
+
+        .char-count-wrap:focus-within:before {
+            height: calc(100% - #{$char-count-channel} + #{$input-padding-y});
         }
     }
 
     &.max-length-exceeded {
 
-        .char-count-wrap small.char-count {
-            color: #b52130;
-            background: #fce8ea;
-            box-shadow: inset 0 1px 0 #f0c4c8;
+        .char-count-wrap {
+            .field-input {
+                padding-bottom: $char-count-channel;
+            }
+
+            small.char-count {
+                visibility: visible;
+                color: #b52130;
+                background: #fce8ea;
+                box-shadow: inset 0 1px 0 #f0c4c8;
+            }
+        }
+
+        &.readonly .char-count-wrap:before {
+            height: calc(100% - #{$char-count-channel} + #{$input-padding-y});
         }
     }
 }
