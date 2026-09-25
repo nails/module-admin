@@ -233,7 +233,66 @@ class Group {
             }
         }
 
+        this.openNestedWorkspaces();
+
         this.adminController.refreshUi();
+    }
+
+    /**
+     * Nested groups inside a panel that was hidden at init can come up with
+     * no active page. Give each one a visible page once this panel is shown.
+     */
+    openNestedWorkspaces() {
+
+        for (let i = 0; i < this.panels.length; i++) {
+
+            if (!this.panels[i].isActive()) {
+                continue;
+            }
+
+            let lists = this.panels[i].element.querySelectorAll('ul.tabs');
+
+            for (let j = 0; j < lists.length; j++) {
+
+                let group = lists[j].dataset.tabgroup;
+
+                if (!group) {
+                    continue;
+                }
+
+                let section = this.panels[i].element.querySelector(
+                    'section.tabs[data-tabgroup="' + group + '"]'
+                );
+
+                if (!section || section.querySelector(':scope > .tab-page.active')) {
+                    continue;
+                }
+
+                let link = lists[j].querySelector(':scope > li.tab > a');
+                let target = link ? link.dataset.tab : '';
+
+                if (!target) {
+                    continue;
+                }
+
+                let items = lists[j].querySelectorAll(':scope > li.tab');
+
+                for (let k = 0; k < items.length; k++) {
+
+                    let anchor = items[k].querySelector('a');
+                    items[k].classList.toggle(
+                        'active',
+                        !!(anchor && anchor.dataset.tab === target)
+                    );
+                }
+
+                let pages = section.querySelectorAll(':scope > .tab-page');
+
+                for (let k = 0; k < pages.length; k++) {
+                    pages[k].classList.toggle('active', pages[k].classList.contains(target));
+                }
+            }
+        }
     }
 }
 
