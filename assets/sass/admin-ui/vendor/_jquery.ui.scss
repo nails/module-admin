@@ -1,4 +1,497 @@
-.ui-datepicker
-{
-    z-index: 1001 !important; // Higher than .topbar
+// Vendor: jQuery UI datepicker / timepicker
+// =========================================
+// Admin still uses jQuery UI 1.12 (Smoothness) plus the timepicker addon —
+// both load from the CDN. This file does not replace those stylesheets; it
+// paints over them so the popup reads as an admin card (fieldset radius,
+// slate border, Open Sans) rather than the 2010 grey bevel.
+//
+// Markup (datepicker, appended to <body>):
+//
+//     #ui-datepicker-div.ui-datepicker
+//       .ui-datepicker-header
+//         a.ui-datepicker-prev / .ui-datepicker-next > span.ui-icon
+//         .ui-datepicker-title > select.ui-datepicker-month/year
+//       table.ui-datepicker-calendar
+//       .ui-timepicker-div            (datetime / time only)
+//       .ui-datepicker-buttonpane     Now / Done
+//
+// Specificity has to beat Smoothness (`.ui-widget-content`, `.ui-state-*`
+// gradients). Scope extra chrome to `.ui-datepicker` so a stray slider
+// elsewhere is not restyled.
+
+$datepicker-radius: 0.5rem;
+$datepicker-border: $light-slate;
+$datepicker-shadow: 0 4px 16px rgba($dark-slate, 0.12), 0 1px 2px rgba($dark-slate, 0.06);
+$datepicker-pad: 0.65rem;
+$datepicker-day-size: 2rem;
+$datepicker-z: 1050; // above .topbar (1000); below Select2 (10050)
+
+.ui-datepicker {
+    box-sizing: border-box;
+    z-index: $datepicker-z !important;
+    width: 19.5rem;
+    padding: 0;
+    border: 1px solid $datepicker-border;
+    border-radius: $datepicker-radius;
+    background: $white;
+    background-image: none;
+    box-shadow: $datepicker-shadow;
+    color: $dark-slate;
+    font-family: $font-base-regular;
+    font-size: 0.875rem;
+    line-height: 1.3;
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    // jQuery UI's clearfix pseudos become extra flex items; drop them wherever
+    // we take over layout with flex.
+    &.ui-helper-clearfix::before,
+    &.ui-helper-clearfix::after,
+    .ui-helper-clearfix::before,
+    .ui-helper-clearfix::after {
+        display: none;
+        content: none;
+    }
+
+    &.ui-widget,
+    &.ui-widget-content {
+        border-color: $datepicker-border;
+        background: $white;
+        background-image: none;
+        color: $dark-slate;
+        font-family: $font-base-regular;
+    }
+
+    .ui-widget-header,
+    .ui-widget-content {
+        background: transparent;
+        background-image: none;
+        border: 0;
+        color: inherit;
+    }
+
+    // Header
+    // ------
+    // Markup order is prev, next, title — reorder so the month sits between
+    // the chevrons the way a fieldset legend / toolbar would.
+    .ui-datepicker-header {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin: 0;
+        padding: 0.5rem $datepicker-pad;
+        border: 0;
+        border-bottom: 1px solid $datepicker-border;
+        border-radius: $datepicker-radius $datepicker-radius 0 0;
+        background: $pale-slate;
+        background-image: none;
+        color: $dark-slate;
+        font-weight: 600;
+    }
+
+    .ui-datepicker-prev,
+    .ui-datepicker-next {
+        position: static;
+        top: auto;
+        left: auto;
+        right: auto;
+        float: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 1.875rem;
+        height: 1.875rem;
+        margin: 0;
+        padding: 0;
+        border: 1px solid transparent;
+        border-radius: $input-radius;
+        background: transparent;
+        background-image: none;
+        cursor: pointer;
+        text-decoration: none;
+        color: $dark-slate;
+
+        &:hover,
+        &:focus,
+        &.ui-state-hover,
+        &.ui-datepicker-prev-hover,
+        &.ui-datepicker-next-hover {
+            top: auto;
+            left: auto;
+            right: auto;
+            border-color: $soft-slate;
+            background: $white;
+            background-image: none;
+        }
+
+        &.ui-state-disabled {
+            cursor: default;
+            opacity: 0.4;
+
+            &:hover {
+                border-color: transparent;
+                background: transparent;
+            }
+        }
+
+        .ui-icon {
+            display: none;
+        }
+
+        &::before {
+            content: '';
+            display: block;
+            width: 0.45rem;
+            height: 0.45rem;
+            border-style: solid;
+            border-color: $dark-slate;
+        }
+    }
+
+    .ui-datepicker-prev {
+        order: 1;
+
+        &::before {
+            border-width: 0 0 2px 2px;
+            transform: rotate(45deg);
+            margin-left: 0.1rem;
+        }
+    }
+
+    .ui-datepicker-next {
+        order: 3;
+
+        &::before {
+            border-width: 2px 2px 0 0;
+            transform: rotate(45deg);
+            margin-right: 0.1rem;
+        }
+    }
+
+    .ui-datepicker-title {
+        order: 2;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        margin: 0;
+        line-height: 1.3;
+        text-align: center;
+        color: $dark-slate;
+        font-weight: 600;
+    }
+
+    select.ui-datepicker-month,
+    select.ui-datepicker-year {
+        width: auto;
+        max-width: 48%;
+        margin: 0;
+        padding: 0.2rem 0.4rem;
+        border: 1px solid $input-border;
+        border-radius: $input-radius;
+        background: $white;
+        color: $dark-slate;
+        font-family: $font-base-regular;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        line-height: 1.3;
+        appearance: auto;
+
+        &:focus {
+            border-color: $input-focus-border;
+            box-shadow: $input-focus-shadow;
+            outline: none;
+        }
+    }
+
+    // Calendar
+    // --------
+    .ui-datepicker-calendar {
+        width: calc(100% - #{$datepicker-pad * 2});
+        margin: $datepicker-pad;
+        table-layout: fixed;
+        border-collapse: separate;
+        border-spacing: 2px;
+        font-size: 0.8125rem;
+    }
+
+    th {
+        width: 14.285%;
+        padding: 0 0 0.35rem;
+        border: 0;
+        color: $slate;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    td {
+        width: 14.285%;
+        padding: 0;
+        border: 0;
+
+        span,
+        a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: $datepicker-day-size;
+            height: $datepicker-day-size;
+            margin: 0 auto;
+            padding: 0;
+            border: 1px solid transparent;
+            border-radius: $input-radius;
+            background: transparent;
+            background-image: none;
+            color: $dark-slate;
+            font-weight: 400;
+            line-height: 1;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        a.ui-state-default {
+            background: transparent;
+            background-image: none;
+            border-color: transparent;
+            color: $dark-slate;
+        }
+
+        a.ui-state-hover,
+        a.ui-state-focus {
+            background: $pale-slate;
+            background-image: none;
+            border-color: $light-slate;
+            color: $dark-slate;
+        }
+
+        a.ui-state-highlight,
+        a.ui-state-highlight.ui-state-hover {
+            background: $pale-blue;
+            background-image: none;
+            border-color: $soft-blue;
+            color: $dark-blue;
+            font-weight: 600;
+        }
+
+        a.ui-state-active,
+        a.ui-state-active.ui-state-highlight,
+        a.ui-state-active.ui-state-hover {
+            background: $steel-blue;
+            background-image: none;
+            border-color: $deep-blue;
+            color: $white;
+            font-weight: 600;
+        }
+    }
+
+    .ui-datepicker-other-month {
+
+        span,
+        a {
+            color: $soft-slate;
+        }
+    }
+
+    .ui-datepicker-unselectable .ui-state-default,
+    .ui-state-disabled .ui-state-default {
+        background: transparent;
+        background-image: none;
+        border-color: transparent;
+        color: $soft-slate;
+        opacity: 1;
+        cursor: default;
+    }
+
+    // Timepicker addon
+    // ----------------
+    .ui-timepicker-div {
+        margin: 0 $datepicker-pad $datepicker-pad;
+        padding: $datepicker-pad 0 0;
+        border-top: 1px solid $datepicker-border;
+
+        .ui-widget-header {
+            display: none;
+        }
+
+        dl {
+            display: grid;
+            grid-template-columns: 4.25rem 1fr;
+            gap: 0.5rem 0.75rem;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        dt {
+            float: none;
+            clear: none;
+            margin: 0;
+            padding: 0;
+            color: $slate;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        dd {
+            float: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ui_tpicker_time_label {
+            align-self: center;
+        }
+
+        .ui_tpicker_time_input {
+            display: block;
+            box-sizing: border-box;
+            width: 100%;
+            margin: 0;
+            padding: 0.35rem 0.5rem;
+            border: 1px solid $input-border;
+            border-radius: $input-radius;
+            background: $white;
+            color: $dark-slate;
+            font-family: $font-base-regular;
+            font-size: 0.8125rem;
+            font-variant-numeric: tabular-nums;
+            outline: none;
+
+            &:focus {
+                border-color: $input-focus-border;
+                box-shadow: $input-focus-shadow;
+            }
+        }
+
+        .ui_tpicker_unit_hide,
+        .ui_tpicker_unit_hide + dd {
+            display: none;
+        }
+    }
+
+    // Sliders (hour / minute / second)
+    // --------------------------------
+    .ui-slider {
+        height: 0.35rem;
+        margin: 0.55rem 0.45rem 0.55rem 0;
+        border: 0;
+        border-radius: 10rem;
+        background: $light-slate;
+        background-image: none;
+    }
+
+    .ui-slider-horizontal {
+        height: 0.35rem;
+    }
+
+    .ui-slider-handle {
+        top: 50%;
+        width: 0.9rem;
+        height: 0.9rem;
+        margin: 0 0 0 -0.45rem;
+        border: 1px solid $soft-slate;
+        border-radius: 10rem;
+        background: $white;
+        background-image: none;
+        box-shadow: 0 1px 2px rgba($dark-slate, 0.12);
+        outline: none;
+        cursor: grab;
+        transform: translateY(-50%);
+
+        &.ui-state-default,
+        &.ui-state-hover,
+        &.ui-state-focus,
+        &.ui-state-active {
+            background: $white;
+            background-image: none;
+            border-color: $steel-blue;
+        }
+
+        &:focus-visible {
+            box-shadow: $input-focus-shadow;
+        }
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+
+    // Button pane
+    // -----------
+    .ui-datepicker-buttonpane {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0.55rem $datepicker-pad 0.65rem;
+        border: 0;
+        border-top: 1px solid $datepicker-border;
+        border-radius: 0 0 $datepicker-radius $datepicker-radius;
+        background: $pale-slate;
+        background-image: none;
+
+        button {
+            float: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 1.875rem;
+            margin: 0;
+            padding: 0.3125rem 0.75rem;
+            border: 1px solid $soft-slate;
+            border-radius: 0.25rem;
+            background: $white;
+            background-image: none;
+            box-shadow: none;
+            color: $dark-slate;
+            font-family: $font-heading-regular;
+            font-size: 0.8125rem;
+            font-weight: 400;
+            line-height: 1.25;
+            cursor: pointer;
+
+            &:hover {
+                background: $light-slate;
+                border-color: $mid-slate;
+            }
+
+            &:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba($slate, 0.3);
+            }
+
+            &.ui-priority-primary,
+            &.ui-datepicker-close {
+                margin-left: auto;
+                background: $steel-blue;
+                border-color: $deep-blue;
+                color: $white;
+
+                &:hover {
+                    background: $deep-blue;
+                    border-color: $dark-blue;
+                    color: $white;
+                }
+
+                &:focus {
+                    box-shadow: 0 0 0 3px rgba($steel-blue, 0.4);
+                }
+            }
+        }
+
+        button.ui-datepicker-current {
+            float: none;
+        }
+    }
 }
