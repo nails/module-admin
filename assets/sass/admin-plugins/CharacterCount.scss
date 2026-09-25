@@ -1,5 +1,7 @@
 // Character counts sit in a channel along the bottom of the control, out of
 // the form's vertical rhythm so neighbouring fields stay easy to scan.
+// The channel stays closed until the field is focused. An over-limit count
+// keeps it open whether or not the field has focus.
 
 @import '../admin-ui/variables/palette';
 
@@ -8,6 +10,8 @@
 // back when measuring the text row so the padlock centres like a normal input.
 $char-count-channel: 1.375rem;
 $input-padding-y: 8px;
+$char-count-ease: 0.22s ease;
+$char-count-fade: opacity 0.22s ease, color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
 
 div.field {
 
@@ -28,7 +32,7 @@ div.field {
         width: 100%;
 
         .field-input {
-            padding-bottom: $char-count-channel;
+            transition: padding-bottom $char-count-ease;
         }
 
         small.char-count {
@@ -44,6 +48,9 @@ div.field {
             margin: 0;
             padding: 0 6px;
             pointer-events: none;
+            visibility: hidden;
+            opacity: 0;
+            transition: $char-count-fade, visibility 0s linear 0.22s;
             font-size: 0.6875rem;
             font-variant-numeric: tabular-nums;
             line-height: 1;
@@ -52,11 +59,22 @@ div.field {
             background: transparent;
             border-radius: 0 0 0.3rem 0.3rem;
         }
+
+        &:focus-within {
+            .field-input {
+                padding-bottom: $char-count-channel;
+            }
+
+            small.char-count {
+                visibility: visible;
+                opacity: 1;
+                transition: $char-count-fade, visibility 0s linear 0s;
+            }
+        }
     }
 
-    //  The wrap is taller than the text row (channel underneath). Centre the
-    //  padlock on the text row and hide the one on `.input`, which would sit
-    //  too low.
+    //  Hide the padlock on `.input` (it would sit too low) and draw one on the
+    //  wrap, centred on the text row.
     &.readonly {
         &:has(.char-count-wrap) .input:before {
             content: none;
@@ -74,21 +92,47 @@ div.field {
             top: 0;
             z-index: 2;
             width: 1.75rem;
-            // Channel replaced the input's 8px bottom padding, so add it back
-            // and the box matches a normal control (where 50% is the text).
-            height: calc(100% - #{$char-count-channel} + #{$input-padding-y});
+            // While the channel is closed the wrap is the text row, so 100%
+            // centres the padlock. Open it and the channel has to be subtracted.
+            height: 100%;
             color: #aaaaaa;
             pointer-events: none;
             line-height: 1;
+            transition: height $char-count-ease;
+        }
+
+        .char-count-wrap:focus-within:before {
+            height: calc(100% - #{$char-count-channel} + #{$input-padding-y});
         }
     }
 
     &.max-length-exceeded {
 
-        .char-count-wrap small.char-count {
-            color: #b52130;
-            background: #fce8ea;
-            box-shadow: inset 0 1px 0 #f0c4c8;
+        .char-count-wrap {
+            .field-input {
+                padding-bottom: $char-count-channel;
+            }
+
+            small.char-count {
+                visibility: visible;
+                opacity: 1;
+                transition: $char-count-fade, visibility 0s linear 0s;
+                color: #b52130;
+                background: #fce8ea;
+                box-shadow: inset 0 1px 0 #f0c4c8;
+            }
         }
+
+        &.readonly .char-count-wrap:before {
+            height: calc(100% - #{$char-count-channel} + #{$input-padding-y});
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    div.field .char-count-wrap .field-input,
+    div.field .char-count-wrap small.char-count,
+    div.field.readonly .char-count-wrap:before {
+        transition: none;
     }
 }
