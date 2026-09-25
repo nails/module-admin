@@ -43,6 +43,7 @@ import Tabs from './components/Tabs.js';
 import TabScroller from './components/TabScroller.js';
 import TimeCode from './components/TimeCode.js';
 import Toggles from './components/admin-ui/Toggles.js';
+import UnsavedChanges from './components/UnsavedChanges.js';
 import Wysiwyg from './components/Wysiwyg.js';
 
 /**
@@ -330,4 +331,5 @@ window
     .registerPlugin(namespace, 'TabScroller', (controller) => new TabScroller(controller))
     .registerPlugin(namespace, 'TimeCode', (controller) => new TimeCode(controller))
     .registerPlugin(namespace, 'Toggles', (controller) => new Toggles(controller))
+    .registerPlugin(namespace, 'UnsavedChanges', (controller) => new UnsavedChanges(controller))
     .registerPlugin(namespace, 'Wysiwyg', (controller) => new Wysiwyg(controller));
