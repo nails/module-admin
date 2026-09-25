@@ -110,7 +110,7 @@ class ScreenTabGroup {
 
             let tab = tabs[i];
             let slug = tab.dataset.screen;
-            let panel = this.scope.querySelector(`${SELECTOR_PANEL}[data-screen="${slug}"]`);
+            let panel = this.panelFor(slug);
 
             if (panel) {
                 this.panels[slug] = {tab: tab, panel: panel};
@@ -126,6 +126,41 @@ class ScreenTabGroup {
         this.activateInitial();
 
         nav.classList.add(CLASS_READY);
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * The panel that belongs to this nav. Searching the whole form binds
+     * every group to the first match, so a later group drives the first
+     * group's panels and its own stay hidden.
+     * @param {String} slug
+     * @returns {HTMLElement|null}
+     */
+    panelFor(slug) {
+
+        let el = this.nav.nextElementSibling;
+
+        while (el) {
+
+            if (el.matches(SELECTOR_NAV) || el.querySelector(SELECTOR_NAV)) {
+                break;
+            }
+
+            if (el.matches(`${SELECTOR_PANEL}[data-screen="${slug}"]`)) {
+                return el;
+            }
+
+            let nested = el.querySelector(`${SELECTOR_PANEL}[data-screen="${slug}"]`);
+
+            if (nested) {
+                return nested;
+            }
+
+            el = el.nextElementSibling;
+        }
+
+        return null;
     }
 
     // --------------------------------------------------------------------------
