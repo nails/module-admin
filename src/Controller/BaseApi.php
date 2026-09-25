@@ -2,7 +2,10 @@
 
 namespace Nails\Admin\Controller;
 
+use Nails\Admin\Constants;
+use Nails\Admin\Service\Permission;
 use Nails\Api\Controller\Base;
+use Nails\Factory;
 
 abstract class BaseApi extends Base
 {
@@ -20,9 +23,15 @@ abstract class BaseApi extends Base
      * @param string $sMethod     The method being called
      *
      * @return bool
+     * @throws \Nails\Common\Exception\FactoryException
      */
     public static function isAuthenticated($sHttpMethod = '', $sMethod = '')
     {
-        return parent::isAuthenticated($sHttpMethod, $sMethod) && isAdmin();
+        /** @var Permission $oPermissionService */
+        $oPermissionService = Factory::service('Permission', Constants::MODULE_SLUG);
+
+        return parent::isAuthenticated($sHttpMethod, $sMethod)
+            && $oPermissionService->isIpAllowed()
+            && isAdmin();
     }
 }

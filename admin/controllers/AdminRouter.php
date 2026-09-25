@@ -12,6 +12,7 @@
 
 use Nails\Admin\Constants;
 use Nails\Admin\Service\Controller;
+use Nails\Admin\Service\Permission;
 use Nails\Common\Controller\Base;
 use Nails\Common\Exception\FactoryException;
 use Nails\Factory;
@@ -30,7 +31,14 @@ class AdminRouter extends Base
      */
     public function index(): void
     {
-        if (!isAdmin()) {
+        /** @var Permission $oPermissionService */
+        $oPermissionService = Factory::service('Permission', Constants::MODULE_SLUG);
+
+        //  Requests from outside the IP whitelist are told admin doesn't exist
+        if (!$oPermissionService->isIpAllowed()) {
+            show404();
+
+        } elseif (!isAdmin()) {
             unauthorised();
         }
 

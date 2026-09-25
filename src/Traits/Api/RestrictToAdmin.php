@@ -2,6 +2,10 @@
 
 namespace Nails\Admin\Traits\Api;
 
+use Nails\Admin\Constants;
+use Nails\Admin\Service\Permission;
+use Nails\Factory;
+
 trait RestrictToAdmin
 {
     /**
@@ -11,10 +15,15 @@ trait RestrictToAdmin
      * @param string $sMethod     The controller method being executed
      *
      * @return bool
+     * @throws \Nails\Common\Exception\FactoryException
      */
     public static function isAuthenticated($sHttpMethod = '', $sMethod = '')
     {
+        /** @var Permission $oPermissionService */
+        $oPermissionService = Factory::service('Permission', Constants::MODULE_SLUG);
+
         return parent::isAuthenticated($sHttpMethod, $sMethod)
+            && $oPermissionService->isIpAllowed()
             && isAdmin()
             && (!static::requirePermission() || userHasPermission(static::requirePermission()));
     }
