@@ -746,6 +746,9 @@ class Helper
     /**
      * Renders the floating control bar
      *
+     * Pass `unsaved_changes` => true to opt the enclosing form into the
+     * dirty-form notice beside Save. Forms may also set `data-unsaved-changes`.
+     *
      * @param array $aConfig The bar config
      *
      * @return string

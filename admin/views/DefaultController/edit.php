@@ -51,7 +51,10 @@ if (!empty($oItem)) {
     <?php
 
     echo $CONFIG['EDIT_HTML_HEADER'];
-    echo form_open();
+    echo form_open(
+        '',
+        !empty($CONFIG['FLOATING_CONFIG']['unsaved_changes']) ? 'data-unsaved-changes' : ''
+    );
     echo Helper::tabs($aTabs);
     echo Helper::floatingControls($CONFIG['FLOATING_CONFIG']);
     echo form_close();

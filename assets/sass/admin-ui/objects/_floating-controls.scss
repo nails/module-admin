@@ -17,4 +17,23 @@
         padding-right: 1.25rem;
         font-weight: 600;
     }
+
+    &__unsaved {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 0.75rem;
+        padding: 0.35rem 0.75rem;
+        vertical-align: middle;
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.2;
+        color: $dark-amber;
+        background: $pale-amber;
+        border: 1px solid $soft-amber;
+        border-radius: 0.4rem;
+
+        &[hidden] {
+            display: none;
+        }
+    }
 }
