@@ -139,7 +139,14 @@ class ScreenTabGroup {
      */
     panelFor(slug) {
 
-        let el = this.nav.nextElementSibling;
+        //  The tab scroller wraps this nav, so the panels are siblings of
+        //  the wrapper, not of the nav.
+        let start = this.nav.parentElement
+            && this.nav.parentElement.classList.contains('tabs-scroller')
+            ? this.nav.parentElement
+            : this.nav;
+
+        let el = start.nextElementSibling;
 
         while (el) {
 
