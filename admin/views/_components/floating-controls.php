@@ -32,8 +32,10 @@ $sNotesBtnClass = $aFloatingConfig['notes']['button']['class'] ?? 'btn btn-defau
 $sNotesModel    = $aFloatingConfig['notes']['model'] ?? null;
 $sNotesProvider = $aFloatingConfig['notes']['provider'] ?? null;
 
+$bUnsavedChanges = (bool) ($aFloatingConfig['unsaved_changes'] ?? false);
+
 ?>
-<div class="admin-floating-controls">
+<div class="admin-floating-controls"<?=$bUnsavedChanges ? ' data-unsaved-changes' : ''?>>
     <?php
 
     echo $sHtmlLeft;

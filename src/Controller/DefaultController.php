@@ -413,6 +413,11 @@ abstract class DefaultController extends Base
     const EDIT_MODIFIED_CHECK_ENABLED = true;
 
     /**
+     * Opt the edit form into the unsaved-changes notice beside Save
+     */
+    const EDIT_UNSAVED_CHANGES_ENABLED = true;
+
+    /**
      * The ID of the "modified" hidden input
      */
     const EDIT_MODIFIED_CHECK_ID_MODIFIED = 'default-controller-modified';
@@ -1488,6 +1493,7 @@ abstract class DefaultController extends Base
                     'model'    => static::CONFIG_MODEL_NAME,
                     'provider' => static::CONFIG_MODEL_PROVIDER,
                 ],
+                'unsaved_changes' => static::EDIT_UNSAVED_CHANGES_ENABLED,
             ],
         ];
 
