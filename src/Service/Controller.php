@@ -344,29 +344,6 @@ class Controller
     // --------------------------------------------------------------------------
 
     /**
-     * @return bool
-     * @throws \Nails\Common\Exception\FactoryException
-     */
-    protected function isUserAuthorised(): bool
-    {
-        /** @var \Nails\Common\Service\Input $oInput */
-        $oInput = Factory::service('Input');
-
-        $aWhitelistIp = (array) appSetting('whitelist', 'admin');
-
-        if (!empty($aWhitelistIp) && !isIpInRange($oInput->ipAddress(), $aWhitelistIp)) {
-            return false;
-
-        } elseif (!isAdmin()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    // --------------------------------------------------------------------------
-
-    /**
      * @param array                      $aGroupsOut
      * @param array                      $aIconsOut
      * @param \Nails\Admin\Factory\Nav[] $aGroupsIn

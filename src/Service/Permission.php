@@ -11,6 +11,7 @@ use Nails\Admin\Exception\AdminException;
 use Nails\Admin\Exception\PermissionException;
 use Nails\Admin\Factory\Nav;
 use Nails\Admin\Model\Admin;
+use Nails\Admin\Settings;
 use Nails\Auth\Resource\User;
 use Nails\Auth\Resource\User\Group;
 use Nails\Common\Factory\Component;
@@ -138,6 +139,49 @@ class Permission
         $oUser  = $oUser ?? activeUser();
         $oGroup = $oUser ? $oUser->group() : null;
         return !empty($oGroup->acl);
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Determines whether an IP address may access admin, as defined by the
+     * "Allowed IPs" admin setting. An empty whitelist allows every IP.
+     *
+     * @param string|null $sIpAddress The IP to test; defaults to the request's IP
+     *
+     * @return bool
+     * @throws \Nails\Common\Exception\FactoryException
+     */
+    public function isIpAllowed(?string $sIpAddress = null): bool
+    {
+        $aWhitelist = $this->getIpWhitelist();
+        if (empty($aWhitelist)) {
+            return true;
+        }
+
+        if ($sIpAddress === null) {
+            /** @var \Nails\Common\Service\Input $oInput */
+            $oInput     = Factory::service('Input');
+            $sIpAddress = $oInput->ipAddress();
+        }
+
+        return isIpInRange($sIpAddress, $aWhitelist);
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Returns the IPs and ranges which may access admin
+     *
+     * @return string[]
+     */
+    public function getIpWhitelist(): array
+    {
+        return array_values(
+            array_filter(
+                (array) appSetting(Settings\Admin::KEY_IP_WHITELIST, Constants::MODULE_SLUG)
+            )
+        );
     }
 
     // --------------------------------------------------------------------------
