@@ -14,6 +14,8 @@ class Select {
             .appendTo(document.body);
         this.$openEl = null;
         this.fitAttempts = 0;
+        this.dropObserver = null;
+        this.watchedDrop = null;
 
         // Viewport coords + position:fixed. Mixing getBoundingClientRect with
         // scrollY for an absolute menu is wrong until the first scroll, which
@@ -43,6 +45,21 @@ class Select {
             })
             .on('select2-close.select2-shell select2:close.select2-shell', () => {
                 this.close();
+            });
+
+        // Ajax success fires select2-loaded; ajax *failure* does not. Select2
+        // then positionDropdown()s with document coords, which fights our
+        // position:fixed until something re-measures (scroll, resize).
+        $(document)
+            .on('ajaxComplete.select2-shell ajaxError.select2-shell', () => {
+                if (this.$openEl) {
+                    this.scheduleFit(this.$openEl);
+                    window.setTimeout(() => {
+                        if (this.$openEl) {
+                            this.fitMenu(this.$openEl);
+                        }
+                    }, 0);
+                }
             });
 
         adminController
@@ -75,6 +92,56 @@ class Select {
                 this.fitMenu($el);
             }
         }, 0);
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Re-fit when Searching / Loading failed / results rewrite the menu
+     * @param {HTMLElement} drop
+     * @returns {Select}
+     */
+    watchDrop(drop) {
+
+        if (this.watchedDrop === drop) {
+            return this;
+        }
+
+        this.unwatchDrop();
+
+        if (!drop || typeof MutationObserver === 'undefined') {
+            return this;
+        }
+
+        this.watchedDrop = drop;
+        this.dropObserver = new MutationObserver(() => {
+            if (this.$openEl) {
+                this.scheduleFit(this.$openEl);
+            }
+        });
+        this.dropObserver.observe(drop, {
+            childList: true,
+            subtree: true
+        });
+
+        return this;
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Stop watching the open menu
+     * @returns {Select}
+     */
+    unwatchDrop() {
+
+        if (this.dropObserver) {
+            this.dropObserver.disconnect();
+            this.dropObserver = null;
+        }
+
+        this.watchedDrop = null;
         return this;
     }
 
@@ -128,6 +195,7 @@ class Select {
         }
 
         this.fitAttempts = 0;
+        this.watchDrop($drop[0]);
 
         //  Force layout. Offset/rect can be 0,0 for a field that was in a
         //  display:none tab until this click's ancestor reflow.
@@ -186,6 +254,7 @@ class Select {
     close() {
 
         this.$openEl = null;
+        this.unwatchDrop();
         window.removeEventListener('scroll', this.onReposition, true);
         window.removeEventListener('resize', this.onReposition);
         this.$shell.attr('hidden', true);
