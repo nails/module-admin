@@ -95,6 +95,21 @@ styleguideExample(null, static function () {
                 ],
             ],
         ]);
+        echo form_field_datetime([
+            'key'     => 'sg-forms-published-at',
+            'label'   => 'Published at',
+            'default' => '2026-09-25 10:30:00',
+        ]);
+        echo form_field_date([
+            'key'     => 'sg-forms-date',
+            'label'   => 'Date',
+            'default' => '2026-09-25',
+        ]);
+        echo form_field_time([
+            'key'     => 'sg-forms-time',
+            'label'   => 'Time',
+            'default' => '10:30:00',
+        ]);
         echo form_field([
             'key'      => 'sg-forms-readonly',
             'label'    => 'Identifier',
