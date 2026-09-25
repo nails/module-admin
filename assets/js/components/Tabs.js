@@ -154,6 +154,13 @@ class Group {
             this.defaultTabSet = true;
         }
 
+        //  An explicit request (a deep link) wins over the error scan.
+        //  A value that matches no tab is not a selection: leave the default path.
+        if (this.input.length && this.input[0].dataset.explicit === '1' && this.hasControl(this.input[0].value)) {
+            this.goTo(this.input[0].value);
+            return this;
+        }
+
         //  Set the first tab which contains an error
         for (let i = 0; i < this.controls.length; i++) {
 
@@ -170,7 +177,7 @@ class Group {
         }
 
         //  If theres an "active tab" input, go to that one
-        if (this.input.length && this.input[0].value.length) {
+        if (this.input.length && this.hasControl(this.input[0].value)) {
             this.goTo(this.input[0].value);
             return this;
         }
@@ -206,10 +213,34 @@ class Group {
     }
 
     /**
+     * @param {String} target
+     * @returns {Boolean}
+     */
+    hasControl(target) {
+
+        if (!target) {
+            return false;
+        }
+
+        for (let i = 0; i < this.controls.length; i++) {
+            if (this.controls[i].targets(target)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Goes to particular tab
      * @param {String} target The target tab
      */
     goTo(target) {
+
+        if (!this.hasControl(target)) {
+            return this;
+        }
+
         let i;
         for (i = 0; i < this.controls.length; i++) {
             if (this.controls[i].targets(target)) {
