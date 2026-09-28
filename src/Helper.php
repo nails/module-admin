@@ -697,7 +697,12 @@ class Helper
                         echo $aTab['content'];
                     }
                     $sContent = (string) ob_get_clean();
-                    if ($sContent !== '' && !str_contains($sContent, '<fieldset')) {
+                    // data-no-fieldset opts out of the automatic card wrap.
+                    if (
+                        $sContent !== ''
+                        && !str_contains($sContent, '<fieldset')
+                        && !str_contains($sContent, 'data-no-fieldset')
+                    ) {
                         $sContent = '<fieldset>' . $sContent . '</fieldset>';
                     }
                     echo $sContent;

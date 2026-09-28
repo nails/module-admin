@@ -195,7 +195,7 @@ class UnsavedChanges {
     // --------------------------------------------------------------------------
 
     /**
-     * Insert the notice beside the save button
+     * Insert the notice as its own row above the buttons
      * @param {HTMLFormElement} form
      * @returns {UnsavedChanges}
      */
@@ -207,21 +207,13 @@ class UnsavedChanges {
             return this;
         }
 
-        let $alert = $('<span>', {
+        $('<div>', {
             class: CLASS_ALERT,
-            text: 'Unsaved changes',
             hidden: true,
             role: 'status',
             'aria-live': 'polite',
-        });
-
-        let $save = $bar.find('button[type="submit"]').first();
-
-        if ($save.length) {
-            $save.after($alert);
-        } else {
-            $bar.prepend($alert);
-        }
+            html: '<i class="fa fa-exclamation-circle" aria-hidden="true"></i> Unsaved changes',
+        }).prependTo($bar);
 
         return this;
     }
@@ -244,6 +236,13 @@ class UnsavedChanges {
             }
 
             if (/csrf/i.test(el.name)) {
+                return;
+            }
+
+            //  Tab state is UI, not content. Including it makes the form look
+            //  dirty whenever the active tab changes, and clean again when
+            //  the original tab is restored.
+            if (el.hasAttribute('data-tabgroup') || /^tab-group(?:-|$)/.test(el.name)) {
                 return;
             }
 

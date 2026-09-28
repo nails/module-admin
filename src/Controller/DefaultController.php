@@ -870,7 +870,7 @@ abstract class DefaultController extends Base
         // --------------------------------------------------------------------------
 
         $this
-            ->setBreadcrumbTrail('Create', static::url('create'))
+            ->setBreadcrumbTrail('Create')
             ->loadView('edit');
     }
 
@@ -1039,7 +1039,7 @@ abstract class DefaultController extends Base
         // --------------------------------------------------------------------------
 
         $this
-            ->setBreadcrumbTrail('Edit', static::url('edit/' . $oItem->id))
+            ->setBreadcrumbTrail('Edit')
             ->loadView('edit');
     }
 
@@ -1285,7 +1285,7 @@ abstract class DefaultController extends Base
         $aSections = $this->sortItemsIntoSections($aItems);
 
         $this
-            ->setBreadcrumbTrail('Sort', static::url('sort'))
+            ->setBreadcrumbTrail('Sort')
             ->setData('aSections', $aSections)
             ->loadView('order');
     }
@@ -1832,6 +1832,10 @@ abstract class DefaultController extends Base
     /**
      * Seed the trail with Admin › {index label}, optionally pushing a further tip
      *
+     * The current page is not linked. That is the index crumb when there is no
+     * tip, and the tip itself otherwise. Pass $sTipUrl when the tip should be
+     * a link anyway.
+     *
      * @param string|null $sTipLabel Extra crumb after the index (e.g. Create, Edit)
      * @param string|null $sTipUrl   Optional URL for the extra crumb
      *
@@ -1840,7 +1844,10 @@ abstract class DefaultController extends Base
      */
     protected function setBreadcrumbTrail(?string $sTipLabel = null, ?string $sTipUrl = null): self
     {
-        $this->addBreadcrumb($this->getIndexBreadcrumbLabel(), static::url());
+        $this->addBreadcrumb(
+            $this->getIndexBreadcrumbLabel(),
+            $sTipLabel === null ? null : static::url()
+        );
 
         if ($sTipLabel !== null) {
             $this->addBreadcrumb($sTipLabel, $sTipUrl);
