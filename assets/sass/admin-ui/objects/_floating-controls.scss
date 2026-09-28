@@ -19,18 +19,29 @@
     }
 
     &__unsaved {
-        display: inline-flex;
+        display: flex;
         align-items: center;
-        margin-left: 0.75rem;
-        padding: 0.35rem 0.75rem;
-        vertical-align: middle;
-        font-size: 0.875rem;
-        font-weight: 600;
-        line-height: 1.2;
-        color: $dark-amber;
+        gap: 0.5rem;
+        flex: 1 0 100%;
+        box-sizing: border-box;
+        width: calc(100% + 2rem);
+        margin: -1rem -1rem 0.75rem;
+        padding: 0.55rem 1rem;
         background: $pale-amber;
-        border: 1px solid $soft-amber;
-        border-radius: 0.4rem;
+        color: $dark-amber;
+        border-bottom: 1px solid $soft-amber;
+        border-radius: 0;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        line-height: 1.3;
+        pointer-events: none;
+        user-select: none;
+
+        .fa {
+            flex: 0 0 auto;
+            font-size: 0.95rem;
+            line-height: 1;
+        }
 
         &[hidden] {
             display: none;

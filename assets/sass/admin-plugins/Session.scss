@@ -9,34 +9,36 @@
         position: sticky;
         top: 5px;
         z-index: 1;
+        margin-bottom: 1rem;
+        padding: 1rem 1.25rem;
         background-color: rgb(241, 112, 0);
         border-color: rgb(200, 93, 0);
         color: #ffffff;
 
         ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
             li {
-                display: inline-block;
+                display: inline;
                 margin: 0;
-                margin-right: 0.25rem;
+                padding: 0;
+                line-height: 1.5;
 
                 &:after {
-                    content: ',';
-                    display: inline-block;
+                    content: ', ';
                 }
 
                 &:first-child {
                     &:after {
-                        content: '';
-                        display: none;
+                        content: ' ';
                     }
                 }
 
                 &:last-child {
-                    margin-right: 0;
-
                     &:after {
                         content: '';
-                        display: none;
                     }
                 }
             }

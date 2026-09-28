@@ -161,7 +161,7 @@ class Instance {
      */
     show() {
         this.container.classList.add(this.classes.show);
-        document.body.classList.add('noscroll');
+        document.body.classList.add('no-scroll');
 
         if (this.actionButtons.length) {
             this.actionButtons[0].focus();
@@ -196,7 +196,7 @@ class Instance {
      */
     hide() {
         this.container.classList.remove(this.classes.show);
-        document.body.classList.remove('noscroll');
+        document.body.classList.remove('no-scroll');
 
         this.onHideCallback();
 

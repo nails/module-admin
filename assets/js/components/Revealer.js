@@ -1,6 +1,12 @@
 /* export Revealer */
 
 /* globals $, jQuery */
+/**
+ * Shows and hides elements from a checkbox, select, or radio.
+ *
+ * A radio set is one group: put the same `data-revealer` on each radio.
+ * The checked radio's value is what `data-reveal-on` is compared with.
+ */
 class Revealer {
 
     /**
@@ -46,7 +52,7 @@ class Revealer {
 
         $(selector, domElement)
             .filter(':input')
-            .filter('input[type=checkbox], select, input[data-api]')
+            .filter('input[type=checkbox], input[type=radio], select, input[data-api]')
             .addClass('revealer--processed')
             .each((index, element) => {
 
@@ -54,6 +60,11 @@ class Revealer {
                     .data('revealer');
 
                 if (typeof this.groups[group] !== 'undefined') {
+                    //  Every radio in a set shares one group. The first one owns it.
+                    if (element.type === 'radio' && this.groups[group].isRadio) {
+                        return;
+                    }
+
                     this.adminController.warn(`Duplicate group "${group}"`);
                     return;
                 }
@@ -153,7 +164,17 @@ class Group {
         this.revealer = revealer;
         this.adminController = revealer.adminController;
         this.group = group;
-        this.$control = $(control);
+        this.isRadio = control.type === 'radio';
+
+        if (this.isRadio) {
+            let name = control.name;
+            let scope = control.form || document;
+            this.$control = $('input[type="radio"]', scope).filter(function() {
+                return this.name === name && $(this).data('revealer') === group;
+            });
+        } else {
+            this.$control = $(control);
+        }
 
         this.$control
             .on('change.revealer', () => {
@@ -169,7 +190,10 @@ class Group {
      */
     getControlValue() {
         let value;
-        if (this.$control.is('[type=checkbox]')) {
+        if (this.isRadio) {
+            let $checked = this.$control.filter(':checked');
+            value = $checked.length ? $checked.val() : '';
+        } else if (this.$control.is('[type=checkbox]')) {
             value = this.$control.is(':checked');
         } else {
             value = this.$control.val();
