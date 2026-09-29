@@ -27,7 +27,7 @@ $toggle-height: 24px;
 $toggle-pad: 2px;
 $toggle-compact-width: 42px;
 $toggle-labeled-height: 28px;
-$toggle-labeled-min-width: 6.25rem;
+$toggle-labeled-min-width: 8rem;
 $toggle-thumb: $toggle-height - ($toggle-pad * 2);
 
 $toggle-off-bg: $soft-slate;
@@ -42,7 +42,8 @@ $toggle-ring-width: 3px;
 $toggle-ring: rgba($slate, 0.35);
 $toggle-label-size: 0.75rem;
 $toggle-label-weight: 600;
-$toggle-transition: background-color 0.15s ease, box-shadow 0.15s ease;
+$toggle-label-knob-gap: 0.25rem;
+$toggle-transition: background-color 0.15s ease, box-shadow 0.15s ease, grid-template-columns 0.15s ease;
 $toggle-thumb-transition: left 0.15s ease;
 $toggle-label-transition: opacity 0.15s ease;
 
@@ -108,42 +109,53 @@ $toggle-label-transition: opacity 0.15s ease;
     transition: $toggle-label-transition;
 }
 
-//  Both words occupy one grid cell so the wider one wins the width
+//  Two columns: a thumb-sized spacer and 1fr for the words. Off puts the
+//  spacer on the left; on puts it on the right. Each word lives in the 1fr
+//  so it centres in the track beside the knob, not in the pill as a whole.
 .admin-toggle--labeled {
     --admin-toggle-height: #{$toggle-labeled-height};
 
     display: inline-grid;
-    grid-template-areas: "stack";
+    grid-template-columns: var(--admin-toggle-thumb) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     align-items: center;
-    justify-items: center;
+    column-gap: $toggle-label-knob-gap;
     width: var(--admin-toggle-width, auto);
     min-width: $toggle-labeled-min-width;
-    padding-right: calc(var(--admin-toggle-thumb) + var(--admin-toggle-pad) + 0.7rem);
-    padding-left: calc(var(--admin-toggle-thumb) + var(--admin-toggle-pad) + 0.7rem);
+    padding: var(--admin-toggle-pad);
 
     .admin-toggle__label {
         display: block;
-        grid-area: stack;
+        grid-row: 1;
+        width: 100%;
+        min-width: 0;
         text-align: center;
     }
 
     .admin-toggle__label--on {
+        grid-column: 1;
         color: $toggle-on-color;
         opacity: 0;
     }
 
     .admin-toggle__label--off {
+        grid-column: 2;
         color: $toggle-off-color;
         opacity: 1;
     }
 }
 
 .admin-toggle--labeled.admin-toggle--on {
+    grid-template-columns: minmax(0, 1fr) var(--admin-toggle-thumb);
+    padding: var(--admin-toggle-pad);
+
     .admin-toggle__label--on {
+        grid-column: 1;
         opacity: 1;
     }
 
     .admin-toggle__label--off {
+        grid-column: 2;
         opacity: 0;
     }
 }

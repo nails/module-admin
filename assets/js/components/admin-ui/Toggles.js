@@ -262,6 +262,11 @@ class ToggleInstance {
 
         this.element.append(this.labelOn, this.labelOff, this.thumb);
 
+        if (this.labeled && typeof ResizeObserver !== 'undefined') {
+            this.resizeObserver = new ResizeObserver(() => this.applyOpticalShift());
+            this.resizeObserver.observe(this.element);
+        }
+
         this.checkbox.classList.add(CLASS_INPUT);
         this.checkbox.setAttribute('tabindex', '-1');
         this.checkbox.setAttribute('aria-hidden', 'true');
@@ -418,6 +423,51 @@ class ToggleInstance {
                 this.element.classList.remove(CLASS_NO_ANIMATE);
             });
         }
+
+        this.applyOpticalShift();
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * A word centred in the rectangular slot still looks pushed into the round
+     * cap, and a fixed nudge over-corrects short words. Shift toward the knob
+     * only as far as the word actually reaches into that cap.
+     */
+    applyOpticalShift() {
+
+        if (!this.labeled || !this.element.isConnected) {
+            return;
+        }
+
+        let styles = window.getComputedStyle(this.element);
+        let pad = (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
+        let gap = parseFloat(styles.columnGap) || 0;
+        let slot = this.element.clientWidth - pad - gap - this.thumb.offsetWidth;
+        let radius = this.element.clientHeight / 2;
+
+        if (slot <= 0 || radius <= 0) {
+            return;
+        }
+
+        //  The curve is felt for about a pill-height in from the cap
+        let influence = this.element.clientHeight;
+
+        let shiftFor = (label) => {
+            let range = document.createRange();
+            range.selectNodeContents(label);
+            let textWidth = range.getBoundingClientRect().width;
+            let sideGap = Math.max(0, (slot - textWidth) / 2);
+            let blend = Math.min(1, Math.max(0, (influence - sideGap) / influence));
+
+            return (radius / 2) * blend;
+        };
+
+        let shiftOn = shiftFor(this.labelOn);
+        let shiftOff = shiftFor(this.labelOff);
+
+        this.labelOn.style.transform = shiftOn ? `translateX(${shiftOn}px)` : '';
+        this.labelOff.style.transform = shiftOff ? `translateX(${-shiftOff}px)` : '';
     }
 
     // --------------------------------------------------------------------------
@@ -453,6 +503,11 @@ class ToggleInstance {
         this.element.removeEventListener('click', this.onActivate);
         this.element.removeEventListener('keydown', this.onKeydown);
         this.checkbox.removeEventListener('change', this.onCheckboxChange);
+
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+            this.resizeObserver = null;
+        }
 
         this.element.replaceChildren();
         this.element.removeAttribute('role');
