@@ -43,6 +43,10 @@ $toggle-ring: rgba($slate, 0.35);
 $toggle-label-size: 0.75rem;
 $toggle-label-weight: 600;
 $toggle-label-knob-gap: 0.25rem;
+//  The pill's round cap eats visual weight at the outer end, so a word
+//  centred in the remaining track looks pushed away from the middle. Nudge
+//  each label toward the knob (the pill centre) by a fraction of the radius.
+$toggle-label-optical: 0.35rem;
 $toggle-transition: background-color 0.15s ease, box-shadow 0.15s ease, grid-template-columns 0.15s ease;
 $toggle-thumb-transition: left 0.15s ease;
 $toggle-label-transition: opacity 0.15s ease;
@@ -136,12 +140,14 @@ $toggle-label-transition: opacity 0.15s ease;
         grid-column: 1;
         color: $toggle-on-color;
         opacity: 0;
+        padding-left: $toggle-label-optical;
     }
 
     .admin-toggle__label--off {
         grid-column: 2;
         color: $toggle-off-color;
         opacity: 1;
+        padding-right: $toggle-label-optical;
     }
 }
 
