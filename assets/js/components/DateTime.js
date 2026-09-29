@@ -3,7 +3,6 @@
 /* globals $, jQuery */
 
 const STORAGE_KEY = 'nails.admin.datetime.alternateTimezones';
-const CATALOGUE_ID = 'js-timezone-catalogue';
 const CLASS_WRAP = 'timezone-channel-wrap';
 const CLASS_FOOTER = 'ui-datepicker-timezones';
 
@@ -159,7 +158,7 @@ class DateTime {
     // --------------------------------------------------------------------------
 
     /**
-     * English labels keyed by IANA id, emitted once by the field helper
+     * English labels keyed by IANA id, queued once via Asset as window.NAILS.TIMEZONE_CATALOGUE
      * @returns {Object<string, string>}
      */
     getCatalogue() {
@@ -168,19 +167,13 @@ class DateTime {
             return this.catalogue;
         }
 
-        let node = document.getElementById(CATALOGUE_ID);
-        if (!node) {
-            this.catalogue = {};
+        let catalogue = window.NAILS && window.NAILS.TIMEZONE_CATALOGUE;
+        if (catalogue && typeof catalogue === 'object') {
+            this.catalogue = catalogue;
             return this.catalogue;
         }
 
-        try {
-            this.catalogue = JSON.parse(node.textContent) || {};
-        } catch (e) {
-            this.catalogue = {};
-        }
-
-        return this.catalogue;
+        return {};
     }
 
     // --------------------------------------------------------------------------
