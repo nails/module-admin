@@ -42,6 +42,7 @@ $toggle-ring-width: 3px;
 $toggle-ring: rgba($slate, 0.35);
 $toggle-label-size: 0.75rem;
 $toggle-label-weight: 600;
+$toggle-label-inset: 0.7rem;
 $toggle-transition: background-color 0.15s ease, box-shadow 0.15s ease;
 $toggle-thumb-transition: left 0.15s ease;
 $toggle-label-transition: opacity 0.15s ease;
@@ -108,7 +109,8 @@ $toggle-label-transition: opacity 0.15s ease;
     transition: $toggle-label-transition;
 }
 
-//  Both words occupy one grid cell so the wider one wins the width
+//  Both words occupy one grid cell so the wider one wins the width.
+//  Pad only the knob side so each word centres in the remaining track.
 .admin-toggle--labeled {
     --admin-toggle-height: #{$toggle-labeled-height};
 
@@ -118,8 +120,9 @@ $toggle-label-transition: opacity 0.15s ease;
     justify-items: center;
     width: var(--admin-toggle-width, auto);
     min-width: $toggle-labeled-min-width;
-    padding-right: calc(var(--admin-toggle-thumb) + var(--admin-toggle-pad) + 0.7rem);
-    padding-left: calc(var(--admin-toggle-thumb) + var(--admin-toggle-pad) + 0.7rem);
+    padding-right: $toggle-label-inset;
+    padding-left: calc(var(--admin-toggle-thumb) + var(--admin-toggle-pad) + #{$toggle-label-inset});
+    transition: $toggle-transition, padding 0.15s ease;
 
     .admin-toggle__label {
         display: block;
@@ -139,6 +142,9 @@ $toggle-label-transition: opacity 0.15s ease;
 }
 
 .admin-toggle--labeled.admin-toggle--on {
+    padding-right: calc(var(--admin-toggle-thumb) + var(--admin-toggle-pad) + #{$toggle-label-inset});
+    padding-left: $toggle-label-inset;
+
     .admin-toggle__label--on {
         opacity: 1;
     }
