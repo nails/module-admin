@@ -83,7 +83,7 @@ div.field {
         .char-count-wrap:before {
             font-family: "Font Awesome 6 Free";
             font-weight: 900;
-            content: '\f023';
+            content: #{"\"\\f023\""};
             display: flex;
             align-items: center;
             justify-content: center;
