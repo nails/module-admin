@@ -41,7 +41,7 @@ $aNotesBtnAttributes = array_filter([
     'class="' . $sNotesBtnClass . ' js-admin-notes"',
     $sNotesModel ? 'data-model-name="' . $sNotesModel . '"' : null,
     $sNotesProvider ? 'data-model-provider="' . $sNotesProvider . '"' : null,
-    $oItem->id ? 'data-id="' . $oItem->id . '"' : null,
+    isset($oItem->id) && $oItem->id ? 'data-id="' . $oItem->id . '"' : null,
     $sNotesBtnShowCount ? 'data-show-count="true"' : null,
 ]);
 
