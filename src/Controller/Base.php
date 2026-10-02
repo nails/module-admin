@@ -273,9 +273,6 @@ abstract class Base implements Controller
             //  hint.css
             ->load('https://cdnjs.cloudflare.com/ajax/libs/hint.css/2.6.0/hint.min.css')
 
-            //  Retina.js
-            ->load('https://cdnjs.cloudflare.com/ajax/libs/retina.js/1.3.0/retina.min.js')
-
             //  Bootstrap
             ->load('https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js')
 
