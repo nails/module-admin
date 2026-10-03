@@ -41,6 +41,11 @@
         padding: 0 14px;
         align-items: center;
 
+        picture {
+            display: flex;
+            flex-shrink: 0;
+        }
+
         //  Use a brand secondary style of button
         //.btn {
         //    border-radius: 10rem;
@@ -58,11 +63,11 @@
     &__avatar {
         width: 36px;
         height: 36px;
-        background-position: center;
+        object-fit: cover;
+        object-position: center;
         border: 4px solid rgb(var(--brand-color-highlight));
         border-radius: 100%;
         margin-left: 5px;
-        background-size: cover;
         flex-shrink: 0;
     }
 

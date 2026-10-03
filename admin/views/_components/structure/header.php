@@ -1,6 +1,8 @@
 <?php
 
 use Nails\Admin\Constants;
+use Nails\Cdn\Helper\Picture;
+use Nails\Cdn\Resource\CdnObject;
 use Nails\Common\Service;
 use Nails\Config;
 use Nails\Environment;
@@ -132,9 +134,31 @@ if (empty($isModal)) {
                 </a>
             </div>
             <div class="topbar__account">
-                <div class="topbar__avatar"
-                     style="background-image: url('<?=cdnAvatar(activeUser('id'))?>')"
-                ></div>
+                <?php
+
+                $mProfileImg = activeUser('profile_img');
+                $sAvatarAlt  = htmlspecialchars((string) activeUser('name'), ENT_QUOTES, 'UTF-8');
+
+                //  Picture only applies to a CDN object. 200px is the 2x crop
+                //  of the 100px avatar, already a permitted dimension.
+                if ($mProfileImg) {
+                    $mCdnObject = $mProfileImg instanceof CdnObject
+                        ? $mProfileImg
+                        : (int) (is_object($mProfileImg) ? $mProfileImg->id : $mProfileImg);
+
+                    echo (new Picture($mCdnObject, 100, 100, $sAvatarAlt, null, [
+                        'class' => 'topbar__avatar',
+                    ]))->source(200, 200, null, 2);
+
+                } else {
+                    echo img([
+                        'src'   => (string) cdnBlankAvatar(100, 100, (string) activeUser('gender')),
+                        'alt'   => $sAvatarAlt,
+                        'class' => 'topbar__avatar',
+                    ]);
+                }
+
+                ?>
                 <h3 class="topbar__name heading--sm color--white bold  u-md-ml5 u-ml15 u-mb0 d-none d-md-inline">
                     <?=activeUser('name')?>
                 </h3>
