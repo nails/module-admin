@@ -85,7 +85,8 @@
                 "nails/module-cdn": {
                     "permitted-image-dimensions": [
                         "30x30",
-                        "35x35"
+                        "35x35",
+                        "70x70"
                     ]
                 }
             }
