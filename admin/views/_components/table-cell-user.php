@@ -1,16 +1,29 @@
 <?php
 
+use Nails\Cdn\Helper\Picture;
+use Nails\Cdn\Resource\CdnObject;
+
 $sNoDataClass = isset($id) && $id ? '' : 'text-muted';
+
+$sName = !empty($first_name) ? $first_name . ' ' : '';
+$sName .= !empty($last_name) ? $last_name . ' ' : '';
+$sName = $sName ?: 'Unknown User';
 
 ?>
 <td class="user-cell <?=$sNoDataClass?>">
     <?php
 
-    //  Profile image
+    //  70px is the 2x crop. Picture requests it as its own CDN URL, so a
+    //  cached 35px file is never probed with an @2x suffix.
     if (isset($profile_img) && $profile_img) {
+        $mCdnObject = $profile_img instanceof CdnObject
+            ? $profile_img
+            : (int) (is_object($profile_img) ? $profile_img->id : $profile_img);
+
         echo anchor(
             cdnServe($profile_img),
-            img(cdnCrop($profile_img, 35, 35)),
+            (string) (new Picture($mCdnObject, 35, 35, htmlspecialchars($sName, ENT_QUOTES, 'UTF-8')))
+                ->source(70, 70, null, 2),
             'class="fancybox"'
         );
 
@@ -22,10 +35,6 @@ $sNoDataClass = isset($id) && $id ? '' : 'text-muted';
     ?>
     <span class="user-data">
         <?php
-
-        $sName = !empty($first_name) ? $first_name . ' ' : '';
-        $sName .= !empty($last_name) ? $last_name . ' ' : '';
-        $sName = $sName ?: 'Unknown User';
 
         if (!empty($id) && userHasPermission(\Nails\Auth\Admin\Permission\Users\Edit::class)) {
             echo anchor(
