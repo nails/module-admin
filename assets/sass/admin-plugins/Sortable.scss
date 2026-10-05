@@ -1,5 +1,8 @@
 .js-admin-sortable {
     &__handle {
+        touch-action: none;
+        user-select: none;
+
         &:hover {
             cursor: move; /* fallback if grab cursor is unsupported */
             cursor: grab;
@@ -15,33 +18,64 @@
         }
     }
 
-    // Height on the <tr> is ignored, so the slot is painted on the cells.
-    // The &nbsp; jQuery UI inserts must not add a second line.
-    &__placeholder {
-        > td {
-            background-color: #f4f7fb;
-            color: transparent;
-            font-size: 0;
-            line-height: 0;
-            border-top: 1px dashed #c5d0dc;
-            border-bottom: 1px dashed #c5d0dc;
-
-            &:first-child {
-                border-left: 1px dashed #c5d0dc;
-            }
-
-            &:last-child {
-                border-right: 1px dashed #c5d0dc;
-            }
-        }
+    // The hole left behind. One dashed frame, inset from the row edges.
+    &__placeholder > td {
+        position: relative;
+        z-index: 0;
+        background: transparent !important;
+        box-shadow: none !important;
+        border: 0 !important;
+        color: transparent;
     }
 
-    &__helper {
-        background-color: #fff;
-        border-collapse: collapse;
-        border-spacing: 0;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    &__placeholder > td:first-child {
+        z-index: 1;
+    }
+
+    &__placeholder > td:first-child::after {
+        content: "";
+        position: absolute;
+        z-index: 1;
+        top: 4px;
+        right: auto;
+        bottom: 4px;
+        left: 4px;
+        width: calc(var(--sortable-row-width) - 8px);
+        box-sizing: border-box;
+        border: 1px dashed #7d92a6;
+        padding: 4px;
+        background-color: rgba(244, 247, 251, 0.95);
+        background-clip: content-box;
         pointer-events: none;
-        table-layout: fixed;
     }
+
+    &__placeholder:not(tr) {
+        box-sizing: border-box;
+        border: 4px solid transparent;
+        outline: 1px dashed #7d92a6;
+        outline-offset: -4px;
+        padding: 4px;
+        background-color: rgba(244, 247, 251, 0.95);
+        background-clip: content-box;
+    }
+}
+
+// The grabbed copy stays solid and sits above the dashed slot.
+.js-admin-sortable__helper {
+    background: #fff;
+    border: 1px solid #d5dde6;
+    box-shadow: 0 12px 28px rgba(20, 30, 40, 0.22);
+    box-sizing: border-box;
+    opacity: 1;
+}
+
+.js-admin-sortable__source {
+    display: none !important;
+}
+
+.js-admin-sortable--dragging,
+.js-admin-sortable--dragging * {
+    cursor: grabbing !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
 }
