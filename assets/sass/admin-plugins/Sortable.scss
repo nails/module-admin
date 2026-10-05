@@ -14,4 +14,34 @@
             cursor: -webkit-grabbing !important;
         }
     }
+
+    // Height on the <tr> is ignored, so the slot is painted on the cells.
+    // The &nbsp; jQuery UI inserts must not add a second line.
+    &__placeholder {
+        > td {
+            background-color: #f4f7fb;
+            color: transparent;
+            font-size: 0;
+            line-height: 0;
+            border-top: 1px dashed #c5d0dc;
+            border-bottom: 1px dashed #c5d0dc;
+
+            &:first-child {
+                border-left: 1px dashed #c5d0dc;
+            }
+
+            &:last-child {
+                border-right: 1px dashed #c5d0dc;
+            }
+        }
+    }
+
+    &__helper {
+        background-color: #fff;
+        border-collapse: collapse;
+        border-spacing: 0;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+        pointer-events: none;
+        table-layout: fixed;
+    }
 }
