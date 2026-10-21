@@ -168,6 +168,18 @@ fieldset > :last-child:not(legend) > .table-rounded {
     }
 }
 
+//  `.table` carries a bottom margin so it separates from whatever follows.
+//  The card's border stops that margin collapsing out, so a table that ends
+//  the fieldset leaves an empty strip inside the card. A trailing element
+//  hidden by jQuery `.toggle()` still counts as ending the card — same case
+//  the fieldset radius rules treat as last.
+fieldset > table:last-child,
+fieldset > :last-child:not(legend) > table:last-child,
+fieldset > table:nth-last-child(2):has(+ [hidden], + [style*="display: none"]),
+fieldset > :nth-last-child(2):has(+ [hidden], + [style*="display: none"]) > table:last-child {
+    margin-bottom: 0;
+}
+
 //  Opt-in sticky header. `.table-responsive` on the same element sets
 //  overflow-x which would kill `position: sticky`, so restore visible overflow.
 .table-sticky {
