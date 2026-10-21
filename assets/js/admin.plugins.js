@@ -28,6 +28,7 @@ import Modal from './components/Modal.js';
 import Modalize from './components/Modalize.js';
 //import Navigation from './components/Navigation.js';
 import Notes from './components/Notes.js';
+import Progress from './components/Progress.js';
 import Repeater from './components/Repeater.js';
 import Revealer from './components/Revealer.js';
 import ScrollToFirstError from './components/ScrollToFirstError.js'
@@ -316,6 +317,7 @@ window
     .registerPlugin(namespace, 'Modal', (controller) => new Modal(controller))
     .registerPlugin(namespace, 'Modalize', (controller) => new Modalize(controller))
     .registerPlugin(namespace, 'Notes', (controller) => new Notes(controller))
+    .registerPlugin(namespace, 'Progress', (controller) => new Progress(controller))
     .registerPlugin(namespace, 'Repeater', (controller) => new Repeater(controller))
     .registerPlugin(namespace, 'Revealer', (controller) => new Revealer(controller))
     .registerPlugin(namespace, 'ScrollToFirstError', (controller) => new ScrollToFirstError(controller))

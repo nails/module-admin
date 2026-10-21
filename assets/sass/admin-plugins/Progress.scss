@@ -1,0 +1,24 @@
+.js-admin-progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.js-admin-progress__track {
+    flex: 1;
+    height: 0.5rem;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: #e9ecef;
+}
+
+.js-admin-progress__bar {
+    display: block;
+    height: 100%;
+    background: #337ab7;
+}
+
+.js-admin-progress__label {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
