@@ -21,6 +21,7 @@ class PackageTest extends TestCase
                 NAILS_DB_PREFIX . 'admin_session',
                 NAILS_DB_PREFIX . 'admin_changelog',
                 NAILS_DB_PREFIX . 'admin_export',
+                NAILS_DB_PREFIX . 'admin_dashboard_widget',
                 NAILS_DB_PREFIX . 'user_meta_admin.nav_state',
             ],
             (new Package())->hidden()
@@ -33,7 +34,6 @@ class PackageTest extends TestCase
             [
                 NAILS_DB_PREFIX . 'admin_help_video.vimeo_id',
                 NAILS_DB_PREFIX . 'admin_note.item_model',
-                NAILS_DB_PREFIX . 'admin_dashboard_widget.config',
             ],
             (new Package())->readOnly()
         );
