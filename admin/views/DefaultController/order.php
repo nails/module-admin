@@ -19,8 +19,8 @@ foreach ($aSections as $oSection) {
         <?php
     }
     ?>
-    <table>
-        <thead>
+    <table class="table table-striped table-hover table-responsive table-sticky">
+        <thead class="table-dark">
             <tr>
                 <th width="50"></th>
                 <?php
