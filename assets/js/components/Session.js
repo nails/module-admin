@@ -10,6 +10,8 @@ class Session {
 
         this.adminController = adminController;
         this.bpm = 10;
+        this.hiddenPulseInterval = 60 * 1000; // Background tabs are throttled to ~1/min anyway
+        this.eventsBound = false;
         this.inactiveAfter = 60 * 5 * 1000; // 5 mins
         this.token = null;
         this.active = true;
@@ -64,6 +66,7 @@ class Session {
             .then((res) => {
 
                 this.token = res.data.data.token;
+                this.active = true;
                 this.adminController.log('Starting new session', this.token);
                 this
                     .bindEvents()
@@ -94,28 +97,59 @@ class Session {
      */
     bindEvents() {
 
+        if (this.eventsBound) {
+            return this;
+        }
+        this.eventsBound = true;
+
         ['mousemove', 'keyup', 'click'].map((event) => {
             document
                 .addEventListener(event, () => {
-                    this.setActive();
+                    // Interaction implies the tab is in use; ignore synthetic input while hidden
+                    if (!document.hidden) {
+                        this.setActive();
+                    }
                 });
         });
 
         /**
-         * Unreliable at best, but if we can, try to delete the session
-         * Support for these event handlers is patchy, so try both and
-         * accept that in some circumstances (e.g. mobile app switcher)
-         * we just can't reliably detect a page being closed and must
-         * rely on heartbeat expiration
+         * pagehide is the only reliable "going away" signal (beforeunload fires
+         * even when navigation is cancelled, unload is unreliable and blocks the
+         * bfcache). The explicit leave means the server-side heartbeat expiry
+         * is only a fallback for crashes and lost connections.
          */
         window
-            .addEventListener('beforeunload', () => {
+            .addEventListener('pagehide', () => {
                 this.destroy();
             });
 
+        /**
+         * Page restored from the back/forward cache: pagehide destroyed our
+         * session, so start a fresh one
+         */
         window
-            .addEventListener('unload', () => {
-                this.destroy();
+            .addEventListener('pageshow', (e) => {
+                if (e.persisted && !this.token && this.state === 'READY') {
+                    this.create();
+                }
+            });
+
+        /**
+         * Hidden tabs are marked inactive immediately and heartbeat slowly;
+         * returning to the tab makes us active again straight away
+         */
+        document
+            .addEventListener('visibilitychange', () => {
+                if (!this.token) {
+                    return;
+                }
+                if (document.hidden) {
+                    clearTimeout(this.inactiveTimeout);
+                    this.setInactive();
+                } else {
+                    this.setActive();
+                }
+                this.pulse();
             });
 
         return this;
@@ -153,7 +187,7 @@ class Session {
                 this.pulse();
             }
 
-        }, (60 / this.bpm) * 1000);
+        }, document.hidden ? this.hiddenPulseInterval : (60 / this.bpm) * 1000);
 
         return this;
     }
