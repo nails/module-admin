@@ -486,3 +486,147 @@ select:focus {
     box-shadow: $input-focus-shadow;
     outline: none;
 }
+
+// ------------------------------------------------------------------------------
+// Narrow admin. The desktop row is a 220px label beside the control. That fits a
+// desktop column and an iPad in landscape. It does not fit a phone, and on a
+// tablet it only fits if the label gives up some of that width.
+//
+// Phone: the label, its hint and the control stack. The control and any button
+// in it (Open Widget Editor, and the same kind of field button) are the full
+// width of the field. Type is 16px so focusing a field does not zoom the page.
+//
+// Tablet: the row stays, so a long form does not become a single scrolling
+// column, but the label is left aligned and narrower. The control takes the
+// rest and cannot spill out of the card. A button fills that control column.
+
+@mixin field-control-fill {
+    float: none;
+    width: auto;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+}
+
+@include media('<=phone') {
+    div.field {
+        > label {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.35rem;
+        }
+
+        span.label {
+            @include field-control-fill;
+        }
+
+        span.input {
+            min-width: 0;
+            margin-left: 0;
+
+            > .btn:not(.btn-link) {
+                width: 100%;
+                min-height: 2.75rem;
+                white-space: normal;
+            }
+
+            input[type='text'],
+            input[type='password'],
+            input[type='email'],
+            input[type='number'],
+            input[type='url'],
+            input[type='color'],
+            input[type='search'],
+            input[type='tel'],
+            input[type='time'],
+            textarea,
+            select {
+                font-size: 16px;
+                min-height: 2.75rem;
+            }
+
+            textarea {
+                min-height: 6rem;
+            }
+        }
+
+        select {
+            top: auto;
+        }
+
+        input[type='radio'],
+        input[type='checkbox'] {
+            top: 0;
+            left: 0;
+            float: none;
+        }
+
+        // Extra options repeat an empty label so they line up with the first.
+        // Once the label sits above the control, that spacer is a blank row.
+        &.radio > label + label > span.label,
+        &.checkbox > label + label > span.label {
+            display: none;
+        }
+
+        span.file-download {
+            margin-left: 0;
+        }
+
+        &.date-picker span.input,
+        &.datetime-picker span.input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+
+            select {
+                width: auto;
+                flex: 1 1 5rem;
+            }
+        }
+    }
+}
+
+@include media('>phone', '<=tablet') {
+    div.field {
+        > label {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        span.label {
+            @include field-control-fill;
+            flex: 0 0 11rem;
+            width: 11rem;
+            margin-top: 0.4rem;
+        }
+
+        span.input {
+            flex: 1 1 auto;
+            min-width: 0;
+            margin-left: 0;
+
+            > .btn:not(.btn-link) {
+                width: 100%;
+                white-space: normal;
+            }
+
+            input[type='text'],
+            input[type='password'],
+            input[type='email'],
+            input[type='number'],
+            input[type='url'],
+            input[type='search'],
+            input[type='tel'],
+            textarea,
+            select {
+                font-size: 16px;
+            }
+        }
+
+        select {
+            top: auto;
+        }
+    }
+}
