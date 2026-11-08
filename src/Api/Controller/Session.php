@@ -38,6 +38,9 @@ class Session extends BaseApi
 
     // --------------------------------------------------------------------------
 
+    const ACTIVE_TIMEOUT_SECONDS   = 60;
+    const INACTIVE_TIMEOUT_MINUTES = 3;
+
     /** @var \Nails\Admin\Model\Session */
     protected $oModel;
 
@@ -336,11 +339,21 @@ class Session extends BaseApi
                 ['url', $oSession->url],
                 ['user_id !=', $oSession->user_id],
                 ['token !=', $oSession->token],
-                ['heartbeat >', 'DATE_SUB(NOW(), INTERVAL 1 MINUTE)', false],
+                ['heartbeat >', 'DATE_SUB(NOW(), INTERVAL ' . static::INACTIVE_TIMEOUT_MINUTES . ' MINUTE)', false],
             ],
         ]);
 
-        return array_map(function (Resource\Session $oSession) {
+        //  Active sessions pulse every few seconds so go stale quickly; inactive
+        //  (e.g. hidden) tabs pulse slowly so are given a longer grace period
+        $oCutoff = Factory::factory('DateTime');
+        $oCutoff->sub(new \DateInterval('PT' . static::ACTIVE_TIMEOUT_SECONDS . 'S'));
+
+        $aSessions = array_filter(
+            $aSessions,
+            fn(Resource\Session $oS) => !empty($oS->inactive) || $oS->heartbeat->getTimestamp() > $oCutoff->getTimestamp()
+        );
+
+        return array_values(array_map(function (Resource\Session $oSession) {
             return (object) [
                 'user'     => (object) [
                     'id'   => $oSession->user->id,
@@ -351,7 +364,7 @@ class Session extends BaseApi
                     ? $oSession->inactive->relative(false)
                     : null,
             ];
-        }, $aSessions);
+        }, $aSessions));
     }
 
     // --------------------------------------------------------------------------
