@@ -7,6 +7,10 @@
 
     @include media('<=tablet') {
         width: 0;
+        // This element is the menu's stacking context. An active page link
+        // and a sticky table header sit at z-index 3, so they paint through
+        // a context of 1. Match the topbar. The menu itself starts below it.
+        z-index: 1000;
     }
 
     .sidenav {
