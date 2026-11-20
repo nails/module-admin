@@ -1,7 +1,34 @@
+<?php
+
+$sSearchId = uniqid('admin-search-');
+
+?>
 <div class="search clearfix">
-    <div class="mask">
-        <b class="fa fa-refresh fa-2x"></b>
-    </div>
+    <button
+        type="button"
+        class="search__launch btn btn-default"
+        aria-expanded="false"
+        aria-controls="<?=$sSearchId?>"
+    >
+        <i class="fa fa-filter" aria-hidden="true"></i>
+        Filters
+    </button>
+    <div class="search__modal" id="<?=$sSearchId?>">
+        <div class="search__backdrop" data-search-close></div>
+        <div class="search__panel">
+            <div class="mask">
+                <b class="fa fa-refresh fa-2x"></b>
+            </div>
+            <div class="search__header">
+                <div class="search__title" id="<?=$sSearchId?>-title">
+                    Filters
+                </div>
+                <button type="button" class="btn btn-brand-secondary" data-search-close>
+                    <i class="fa fa-times-circle" aria-hidden="true"></i>
+                    <span class="btn__label">Close</span>
+                </button>
+            </div>
+            <div class="search__body">
     <?php
 
     $oInput = \Nails\Factory::service('Input');
@@ -167,7 +194,7 @@
     $resetUrl = uri_string();
     $resetUrl .= $aQuery ? '?' . http_build_query($aQuery) : '';
 
-    echo '<button type="submit" class="btn btn-xs btn-primary">Search</button> ';
+    echo '<button type="submit" class="btn btn-xs btn-primary">Search</button>';
     echo anchor($resetUrl, 'Reset', 'class="btn btn-xs btn-default"');
 
     echo '</div>';
@@ -177,4 +204,7 @@
     echo form_close();
 
     ?>
+            </div>
+        </div>
+    </div>
 </div>
