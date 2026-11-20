@@ -109,7 +109,7 @@
                                 >
                                     <i
                                         class="fa"
-                                        v-bind:class="item.icon['class']"
+                                        v-bind:class="item.icon['class'] || 'fa-cog'"
                                     />
                                 </div>
                                 <div class="u-flex u-flex-center-v w-100">
