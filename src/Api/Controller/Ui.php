@@ -191,7 +191,7 @@ class Ui extends BaseApi
                                         function (Result $oResult) {
                                             return (object) [
                                                 'icon'        => [
-                                                    'class' => $oResult->getIconClass() ?: Constants::ICON_FALLBACK,
+                                                    'class' => $oResult->getIconClass() ?: 'fa-cog',
                                                 ],
                                                 'label'       => $oResult->getLabel(),
                                                 'description' => $oResult->getDescription(),
