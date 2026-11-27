@@ -3,6 +3,7 @@
 namespace Nails\Admin\Service;
 
 use Nails\Admin\Admin\Controller\Dashboard;
+use Nails\Admin\Admin\Permission\Settings\Manage;
 use Nails\Admin\Admin\Permission\SuperUser;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\Base;
@@ -182,6 +183,21 @@ class Permission
                 (array) appSetting(Settings\Admin::KEY_IP_WHITELIST, Constants::MODULE_SLUG)
             )
         );
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Whether a user may open and save a settings page.
+     *
+     * Super users pass via userHasPermission(). Everyone else needs either
+     * the settings sudo permission (`Permission\Settings\Manage`) or the
+     * page's own permission.
+     */
+    public function userCanAccessSettings(string $sPermission, ?User $oUser = null): bool
+    {
+        return $this->userHasPermission(Manage::class, $oUser)
+            || $this->userHasPermission($sPermission, $oUser);
     }
 
     // --------------------------------------------------------------------------

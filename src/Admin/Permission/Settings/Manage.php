@@ -8,7 +8,7 @@ class Manage implements Permission
 {
     public function label(): string
     {
-        return 'Can manage application settings';
+        return 'Can manage all application settings';
     }
 
     public function group(): string
