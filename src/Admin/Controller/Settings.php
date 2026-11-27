@@ -2,7 +2,6 @@
 
 namespace Nails\Admin\Admin\Controller;
 
-use Nails\Admin\Admin\Permission;
 use Nails\Admin\Constants;
 use Nails\Admin\Controller\Base;
 use Nails\Admin\Factory\Nav;
@@ -43,33 +42,34 @@ class Settings extends Base
             ->setLabel('Settings')
             ->setIcon('fa-wrench');
 
-        if (userHasPermission(Permission\Settings\Manage::class)) {
+        static::discoverSettings();
 
-            static::discoverSettings();
+        foreach (static::$aSettings as $sSlug => $oSetting) {
 
-            foreach (static::$aSettings as $sSlug => $oSetting) {
-
-                $oNav->addAction(
-                    $oSetting->label,
-                    'index?setting=' . $sSlug,
-                    array_filter([
-
-                        $oSetting->component->type === 'driver'
-                            ? Factory::factory('NavAlert', Constants::MODULE_SLUG)
-                            ->setValue('Driver')
-                            ->setLabel($oSetting->component->forModule)
-                            ->setSeverity('warning')
-                            : null,
-
-                        $oSetting->component->type === 'skin'
-                            ? Factory::factory('NavAlert', Constants::MODULE_SLUG)
-                            ->setValue('Skin')
-                            ->setLabel($oSetting->component->forModule)
-                            ->setSeverity('info')
-                            : null,
-                    ])
-                );
+            if (!static::canAccess($oSetting)) {
+                continue;
             }
+
+            $oNav->addAction(
+                $oSetting->label,
+                'index?setting=' . $sSlug,
+                array_filter([
+
+                    $oSetting->component->type === 'driver'
+                        ? Factory::factory('NavAlert', Constants::MODULE_SLUG)
+                        ->setValue('Driver')
+                        ->setLabel($oSetting->component->forModule)
+                        ->setSeverity('warning')
+                        : null,
+
+                    $oSetting->component->type === 'skin'
+                        ? Factory::factory('NavAlert', Constants::MODULE_SLUG)
+                        ->setValue('Skin')
+                        ->setLabel($oSetting->component->forModule)
+                        ->setSeverity('info')
+                        : null,
+                ])
+            );
         }
 
         return $oNav;
@@ -121,10 +121,6 @@ class Settings extends Base
      */
     public function index()
     {
-        if (!userHasPermission(Permission\Settings\Manage::class)) {
-            unauthorised();
-        }
-
         /** @var Input $oInput */
         $oInput = Factory::service('Input');
         /** @var FormValidation $oFormValidation */
@@ -135,8 +131,13 @@ class Settings extends Base
         $oSetting = static::$aSettings[$oInput->get('setting')] ?? null;
         if (empty($oSetting)) {
             show404();
+        }
 
-        } elseif ($oInput->post()) {
+        if (!static::canAccess($oSetting)) {
+            unauthorised();
+        }
+
+        if ($oInput->post()) {
             try {
 
                 $oFormValidation
@@ -195,6 +196,19 @@ class Settings extends Base
             ))
             ->setTitles(['Manage Settings', $oSetting->label])
             ->loadView('index');
+    }
+
+    // --------------------------------------------------------------------------
+
+    /**
+     * Whether the current user may open and save this settings page
+     */
+    protected static function canAccess(stdClass $oSetting): bool
+    {
+        /** @var \Nails\Admin\Service\Permission $oPermission */
+        $oPermission = Factory::service('Permission', Constants::MODULE_SLUG);
+
+        return $oPermission->userCanAccessSettings($oSetting->instance->getPermission());
     }
 
     // --------------------------------------------------------------------------

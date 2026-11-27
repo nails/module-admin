@@ -2,6 +2,7 @@
 
 namespace Nails\Admin\Settings;
 
+use Nails\Admin\Admin\Permission;
 use Nails\Common\Helper\Form;
 use Nails\Common\Interfaces;
 use Nails\Common\Service\Input;
@@ -35,9 +36,9 @@ class Admin implements Interfaces\Component\Settings
     /**
      * @inheritDoc
      */
-    public function getPermissions(): array
+    public function getPermission(): string
     {
-        return [];
+        return Permission\Settings\Admin::class;
     }
 
     // --------------------------------------------------------------------------
